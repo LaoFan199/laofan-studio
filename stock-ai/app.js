@@ -3,12 +3,13 @@
   const STARTING_CASH = 1000;
   const MIN_CASH = 200;
   const MAX_POSITION = 200;
+  const API_BASE = document.querySelector('meta[name="api-base"]')?.content.replace(/\/$/, '') || '';
   const ideas = [
-    { symbol: 'MSFT', name: 'Microsoft', price: 421.18, score: 88, trend: '上升', risk: '中等' },
-    { symbol: 'GOOGL', name: 'Alphabet', price: 196.42, score: 85, trend: '上升', risk: '中等' },
-    { symbol: 'NVDA', name: 'NVIDIA', price: 181.62, score: 82, trend: '震荡', risk: '较高' },
-    { symbol: 'KO', name: 'Coca-Cola', price: 77.35, score: 79, trend: '稳定', risk: '较低' },
-    { symbol: 'SCHD', name: 'Dividend ETF', price: 29.14, score: 76, trend: '稳定', risk: '较低' }
+    { symbol: 'MSFT', name: 'Microsoft', price: 421.18, score: 88, changePercent: null, risk: '中等' },
+    { symbol: 'GOOGL', name: 'Alphabet', price: 196.42, score: 85, changePercent: null, risk: '中等' },
+    { symbol: 'NVDA', name: 'NVIDIA', price: 181.62, score: 82, changePercent: null, risk: '较高' },
+    { symbol: 'KO', name: 'Coca-Cola', price: 77.35, score: 79, changePercent: null, risk: '较低' },
+    { symbol: 'SCHD', name: 'Dividend ETF', price: 29.14, score: 76, changePercent: null, risk: '较低' }
   ];
 
   const saved = JSON.parse(localStorage.getItem('laofan-paper-account') || 'null');
@@ -16,6 +17,7 @@
   let selected = null;
   const $ = (id) => document.getElementById(id);
   const money = (n) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(n);
+  const percent = (n) => n == null ? '—' : `${n >= 0 ? '+' : ''}${n.toFixed(2)}%`;
 
   function save() { localStorage.setItem('laofan-paper-account', JSON.stringify(state)); }
   function currentPrice(symbol) { return ideas.find((item) => item.symbol === symbol)?.price || 0; }
@@ -24,7 +26,7 @@
   function renderIdeas() {
     $('ideas-body').innerHTML = ideas.map((item) => `<tr>
       <td><span class="ticker">${item.symbol}</span><span class="company">${item.name}</span></td>
-      <td>${money(item.price)}</td><td class="score">${item.score}/100</td><td>${item.trend}</td>
+      <td>${money(item.price)}</td><td class="score">${item.score}/100</td><td class="${item.changePercent >= 0 ? 'positive' : 'negative'}">${percent(item.changePercent)}</td>
       <td class="${item.risk === '较低' ? 'risk-low' : 'risk-medium'}">${item.risk}</td>
       <td><button class="trade-button" data-symbol="${item.symbol}">模拟买入</button></td>
     </tr>`).join('');
@@ -57,7 +59,7 @@
   function openOrder(symbol) {
     selected = ideas.find((item) => item.symbol === symbol);
     $('order-symbol').textContent = selected.symbol;
-    $('order-price').textContent = `演示成交价 ${money(selected.price)}`;
+    $('order-price').textContent = `模拟成交参考价 ${money(selected.price)}`;
     $('order-quantity').value = 1;
     validateOrder(); $('trade-dialog').showModal();
   }
@@ -89,6 +91,29 @@
     delete state.positions[symbol]; render();
   }
 
+  async function loadMarketData() {
+    if (!API_BASE) {
+      $('market-status').textContent = '演示行情 · 等待服务器连接';
+      return;
+    }
+    try {
+      const symbols = ideas.map((item) => item.symbol).join(',');
+      const response = await fetch(`${API_BASE}/api/market?symbols=${encodeURIComponent(symbols)}`);
+      if (!response.ok) throw new Error('market request failed');
+      const data = await response.json();
+      ideas.forEach((item) => {
+        const quote = data.quotes[item.symbol];
+        if (quote?.price) item.price = quote.price;
+        if (quote?.changePercent != null) item.changePercent = quote.changePercent;
+      });
+      const time = new Date(data.fetchedAt).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+      $('market-status').textContent = `${data.market.isOpen ? '交易中' : '已闭市'} · Alpaca IEX · ${time} 更新`;
+      renderIdeas(); render();
+    } catch {
+      $('market-status').textContent = '真实行情暂不可用 · 显示演示价格';
+    }
+  }
+
   document.addEventListener('click', (e) => {
     if (e.target.matches('[data-symbol]')) openOrder(e.target.dataset.symbol);
     if (e.target.matches('[data-sell]')) sell(e.target.dataset.sell);
@@ -96,5 +121,5 @@
   $('order-quantity').addEventListener('input', validateOrder);
   $('trade-form').addEventListener('submit', (e) => { e.preventDefault(); buy(); });
   $('reset-button').addEventListener('click', () => { if (confirm('确定清除全部模拟交易记录并恢复到 $1,000 吗？')) { state = { cash: STARTING_CASH, realized: 0, positions: {}, history: [] }; render(); } });
-  renderIdeas(); render();
+  renderIdeas(); render(); loadMarketData();
 })();

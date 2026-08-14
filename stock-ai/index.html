@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="LaoFan AI 美股模拟交易助手">
+  <meta name="api-base" content="">
   <title>LaoFan AI 模拟交易</title>
   <link rel="stylesheet" href="app.css">
 </head>
@@ -19,7 +20,7 @@
       <div>
         <p class="eyebrow">US STOCKS · PAPER PORTFOLIO</p>
         <h1>老范 AI 炒股助手</h1>
-        <p class="intro">先用 1,000 美元验证选股和风控。所有价格均为演示数据，交易仅保存在本机。</p>
+        <p class="intro">先用 1,000 美元验证选股和风控。交易仅保存在本机，不会向券商提交订单。</p>
       </div>
       <div class="risk-badge">风险级别<br><strong>保守</strong></div>
     </section>
@@ -52,11 +53,11 @@
         <article class="panel">
           <div class="panel-head">
             <div><p class="eyebrow">TODAY'S RESEARCH</p><h2>AI 候选股</h2></div>
-            <span class="updated">演示行情 · 非实时</span>
+            <span class="updated" id="market-status">等待连接真实行情</span>
           </div>
           <div class="table-wrap">
             <table>
-              <thead><tr><th>股票</th><th>演示价格</th><th>AI 分数</th><th>趋势</th><th>风险</th><th></th></tr></thead>
+              <thead><tr><th>股票</th><th>最新价格</th><th>AI 分数</th><th>涨跌幅</th><th>风险</th><th></th></tr></thead>
               <tbody id="ideas-body"></tbody>
             </table>
           </div>
