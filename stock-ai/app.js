@@ -5,11 +5,11 @@
   const MAX_POSITION = 200;
   const API_BASE = document.querySelector('meta[name="api-base"]')?.content.replace(/\/$/, '') || '';
   const ideas = [
-    { symbol: 'MSFT', name: 'Microsoft', price: 421.18, score: 88, changePercent: null, risk: '中等' },
-    { symbol: 'GOOGL', name: 'Alphabet', price: 196.42, score: 85, changePercent: null, risk: '中等' },
-    { symbol: 'NVDA', name: 'NVIDIA', price: 181.62, score: 82, changePercent: null, risk: '较高' },
-    { symbol: 'KO', name: 'Coca-Cola', price: 77.35, score: 79, changePercent: null, risk: '较低' },
-    { symbol: 'SCHD', name: 'Dividend ETF', price: 29.14, score: 76, changePercent: null, risk: '较低' }
+    { symbol: 'MSFT', name: 'Microsoft', price: 421.18, score: null, changePercent: null, risk: '待计算', reasons: [] },
+    { symbol: 'GOOGL', name: 'Alphabet', price: 196.42, score: null, changePercent: null, risk: '待计算', reasons: [] },
+    { symbol: 'NVDA', name: 'NVIDIA', price: 181.62, score: null, changePercent: null, risk: '待计算', reasons: [] },
+    { symbol: 'KO', name: 'Coca-Cola', price: 77.35, score: null, changePercent: null, risk: '待计算', reasons: [] },
+    { symbol: 'SCHD', name: 'Dividend ETF', price: 29.14, score: null, changePercent: null, risk: '待计算', reasons: [] }
   ];
 
   const saved = JSON.parse(localStorage.getItem('laofan-paper-account') || 'null');
@@ -25,8 +25,8 @@
 
   function renderIdeas() {
     $('ideas-body').innerHTML = ideas.map((item) => `<tr>
-      <td><span class="ticker">${item.symbol}</span><span class="company">${item.name}</span></td>
-      <td>${money(item.price)}</td><td class="score">${item.score}/100</td><td class="${item.changePercent >= 0 ? 'positive' : 'negative'}">${percent(item.changePercent)}</td>
+      <td><span class="ticker">${item.symbol}</span><span class="company">${item.name}</span><span class="reason">${item.reasons.join(' · ') || '等待历史数据计算'}</span></td>
+      <td>${money(item.price)}</td><td class="score">${item.score == null ? '待计算' : `${item.score}/100`}</td><td class="${item.changePercent >= 0 ? 'positive' : 'negative'}">${percent(item.changePercent)}</td>
       <td class="${item.risk === '较低' ? 'risk-low' : 'risk-medium'}">${item.risk}</td>
       <td><button class="trade-button" data-symbol="${item.symbol}">模拟买入</button></td>
     </tr>`).join('');
@@ -105,9 +105,16 @@
         const quote = data.quotes[item.symbol];
         if (quote?.price) item.price = quote.price;
         if (quote?.changePercent != null) item.changePercent = quote.changePercent;
+        if (quote?.analysis) {
+          item.score = quote.analysis.score;
+          item.risk = quote.analysis.risk;
+          item.reasons = quote.analysis.reasons || [];
+        }
       });
+      ideas.sort((a, b) => (b.score ?? -1) - (a.score ?? -1));
       const time = new Date(data.fetchedAt).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
-      $('market-status').textContent = `${data.market.isOpen ? '交易中' : '已闭市'} · Alpaca IEX · ${time} 更新`;
+      $('market-status').className = `updated ${data.market.isOpen ? 'market-open' : 'market-closed'}`;
+      $('market-status').textContent = `${data.market.isOpen ? '● 美股已开市' : '● 美股已收盘'} · Alpaca IEX · ${time} 更新`;
       renderIdeas(); render();
     } catch {
       $('market-status').textContent = '真实行情暂不可用 · 显示演示价格';
@@ -122,4 +129,5 @@
   $('trade-form').addEventListener('submit', (e) => { e.preventDefault(); buy(); });
   $('reset-button').addEventListener('click', () => { if (confirm('确定清除全部模拟交易记录并恢复到 $1,000 吗？')) { state = { cash: STARTING_CASH, realized: 0, positions: {}, history: [] }; render(); } });
   renderIdeas(); render(); loadMarketData();
+  setInterval(loadMarketData, 60 * 1000);
 })();
