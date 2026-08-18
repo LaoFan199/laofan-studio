@@ -7,7 +7,16 @@
   <meta name="api-base" content="https://laofan-studio.vercel.app">
   <title>LaoFan AI 模拟交易</title>
   <link rel="stylesheet" href="app.css">
-  <style>.updated{font-weight:700}.market-open{color:#36d399}.market-closed{color:#8fa3bb}.reason{display:block;color:#6f86a2;font-size:10px;line-height:1.45;margin-top:5px;max-width:250px}</style>
+  <style>
+    .updated{font-weight:700}.market-open{color:#36d399}.market-closed{color:#8fa3bb}.reason{display:block;color:#6f86a2;font-size:10px;line-height:1.45;margin-top:5px;max-width:250px}
+    .summary-grid{grid-template-columns:repeat(5,1fr)}
+    .trade-button:disabled{background:#26364a;color:#74879e;cursor:not-allowed}
+    .signal{display:block;width:max-content;border-radius:999px;padding:4px 8px;margin-bottom:7px;font-size:10px;font-weight:800}
+    .signal.buy{background:rgba(54,211,153,.15);color:var(--green)}.signal.watch{background:rgba(248,200,92,.14);color:var(--gold)}.signal.avoid,.signal.waiting{background:rgba(143,163,187,.12);color:var(--muted)}
+    .score-details{margin-top:7px;font-size:10px;color:var(--muted)}.score-details summary{cursor:pointer;color:var(--blue)}.score-details div{margin-top:7px;padding:8px;background:rgba(7,16,29,.55);border-radius:8px}.score-details span{display:flex;justify-content:space-between;gap:16px;padding:3px}.score-details b{font-weight:500}.score-details em{font-style:normal;color:var(--text)}
+    .position small{display:block;color:var(--muted);font-size:10px;margin-top:4px}.order-signal{padding:10px;border:1px solid var(--line);border-radius:9px;color:var(--muted);font-size:12px}
+    @media(max-width:1050px){.summary-grid{grid-template-columns:repeat(3,1fr)}}@media(max-width:850px){.summary-grid{grid-template-columns:repeat(2,1fr)}}
+  </style>
 </head>
 <body>
   <header class="topbar">
@@ -47,6 +56,11 @@
         <strong id="realized">$0.00</strong>
         <small>不含未卖出持仓</small>
       </article>
+      <article class="metric">
+        <span>未实现盈亏</span>
+        <strong id="unrealized">$0.00</strong>
+        <small id="benchmark-return">SPY 基准等待行情</small>
+      </article>
     </section>
 
     <section class="layout">
@@ -58,11 +72,11 @@
           </div>
           <div class="table-wrap">
             <table>
-              <thead><tr><th>股票</th><th>最新价格</th><th>AI 分数</th><th>涨跌幅</th><th>风险</th><th></th></tr></thead>
+              <thead><tr><th>股票</th><th>最新价格</th><th>量化分数</th><th>涨跌幅</th><th>风险</th><th>信号</th></tr></thead>
               <tbody id="ideas-body"></tbody>
             </table>
           </div>
-          <p class="disclaimer">动态分数根据20/60日趋势、相对SPY强弱、波动率和回撤计算，每分钟更新。它是研究排序，不构成投资建议，也不保证未来收益。</p>
+          <p class="disclaimer">分数由确定性量化规则计算，AI 仅用于解释。分数 ≥75 才能发起模拟买入；50–74 继续观察；低于 50 暂不参与。不构成投资建议。</p>
         </article>
 
         <article class="panel">
@@ -82,7 +96,7 @@
           <ul>
             <li><span>单股仓位上限</span><strong>20%</strong></li>
             <li><span>最低现金比例</span><strong>20%</strong></li>
-            <li><span>默认止损线</span><strong>-5%</strong></li>
+            <li><span>回撤警示线</span><strong>-5%</strong></li>
             <li><span>杠杆 / 期权</span><strong>禁用</strong></li>
             <li><span>真钱自动交易</span><strong>禁用</strong></li>
           </ul>
@@ -101,6 +115,7 @@
       <p class="eyebrow">PAPER ORDER</p>
       <h2>模拟买入 <span id="order-symbol"></span></h2>
       <p id="order-price" class="order-price"></p>
+      <p id="order-signal" class="order-signal"></p>
       <label>买入股数<input id="order-quantity" type="number" min="1" step="1" value="1" required></label>
       <div class="order-check" id="order-check"></div>
       <button class="buy-button" id="confirm-order" value="default">确认模拟买入</button>

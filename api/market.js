@@ -24,14 +24,17 @@ function analyzeBars(bars, benchmarkBars) {
   const drawdown60 = (latest / peak60) - 1;
   const relative20 = return20 - benchmark20;
 
-  let score = 10; // 通过高流动性白名单的基础分
-  if (return20 > 0) score += 15;
-  if (return60 > 0) score += 15;
-  if (latest > sma20) score += 5;
-  if (latest > sma60) score += 5;
-  score += clamp(10 + relative20 * 200, 0, 20);
-  score += clamp(30 - volatility * 50, 0, 20);
-  score += clamp(10 + drawdown60 * 50, 0, 10);
+  const factors = [
+    { key: 'universe', label: '流动性白名单', score: 10, max: 10 },
+    { key: 'trend20', label: '20 日趋势', score: return20 > 0 ? 15 : 0, max: 15 },
+    { key: 'trend60', label: '60 日趋势', score: return60 > 0 ? 15 : 0, max: 15 },
+    { key: 'sma20', label: '20 日均线', score: latest > sma20 ? 5 : 0, max: 5 },
+    { key: 'sma60', label: '60 日均线', score: latest > sma60 ? 5 : 0, max: 5 },
+    { key: 'relative', label: '相对 SPY 强弱', score: clamp(10 + relative20 * 200, 0, 20), max: 20 },
+    { key: 'volatility', label: '波动率', score: clamp(30 - volatility * 50, 0, 20), max: 20 },
+    { key: 'drawdown', label: '60 日回撤', score: clamp(10 + drawdown60 * 50, 0, 10), max: 10 }
+  ].map((factor) => ({ ...factor, score: Math.round(factor.score) }));
+  let score = factors.reduce((sum, factor) => sum + factor.score, 0);
   score = Math.round(clamp(score, 0, 100));
 
   const reasons = [];
@@ -41,8 +44,10 @@ function analyzeBars(bars, benchmarkBars) {
 
   return {
     score,
+    confidence: closes.length >= 90 && benchmarkCloses.length >= 90 ? '高' : '中',
     risk: volatility < 0.18 ? '较低' : volatility < 0.3 ? '中等' : '较高',
     reasons,
+    factors,
     metrics: {
       return20: return20 * 100,
       return60: return60 * 100,
@@ -82,7 +87,7 @@ export default async function handler(req, res) {
     const start = new Date(Date.now() - 130 * 24 * 60 * 60 * 1000).toISOString();
     const historySymbols = [...new Set([...symbols, 'SPY'])];
     const [snapshotsResponse, clockResponse, barsResponse] = await Promise.all([
-      fetch(`https://data.alpaca.markets/v2/stocks/snapshots?symbols=${encodeURIComponent(symbols.join(','))}&feed=iex`, { headers }),
+      fetch(`https://data.alpaca.markets/v2/stocks/snapshots?symbols=${encodeURIComponent(historySymbols.join(','))}&feed=iex`, { headers }),
       fetch('https://paper-api.alpaca.markets/v2/clock', { headers }),
       fetch(`https://data.alpaca.markets/v2/stocks/bars?symbols=${encodeURIComponent(historySymbols.join(','))}&timeframe=1Day&start=${encodeURIComponent(start)}&limit=1000&adjustment=all&feed=iex`, { headers })
     ]);
@@ -92,7 +97,7 @@ export default async function handler(req, res) {
     const historical = barsResponse.ok ? await barsResponse.json() : { bars: {} };
     const quotes = {};
 
-    for (const symbol of symbols) {
+    for (const symbol of historySymbols) {
       const snapshot = snapshots[symbol];
       if (!snapshot) continue;
       const price = snapshot.latestTrade?.p ?? snapshot.minuteBar?.c ?? snapshot.dailyBar?.c;
