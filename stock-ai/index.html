@@ -15,6 +15,8 @@
     .signal.buy{background:rgba(54,211,153,.15);color:var(--green)}.signal.watch{background:rgba(248,200,92,.14);color:var(--gold)}.signal.avoid,.signal.waiting{background:rgba(143,163,187,.12);color:var(--muted)}
     .score-details{margin-top:7px;font-size:10px;color:var(--muted)}.score-details summary{cursor:pointer;color:var(--blue)}.score-details div{margin-top:7px;padding:8px;background:rgba(7,16,29,.55);border-radius:8px}.score-details span{display:flex;justify-content:space-between;gap:16px;padding:3px}.score-details b{font-weight:500}.score-details em{font-style:normal;color:var(--text)}
     .position small{display:block;color:var(--muted);font-size:10px;margin-top:4px}.order-signal{padding:10px;border:1px solid var(--line);border-radius:9px;color:var(--muted);font-size:12px}
+    .main-column,.layout>*,.main-column>.panel{min-width:0}
+    .shield{border-color:#36506f}.shield-head{display:flex;justify-content:space-between;gap:12px;align-items:start}.shield-state{display:inline-block;border-radius:999px;padding:5px 10px;font-size:12px;font-weight:800}.shield-state.normal{background:rgba(54,211,153,.14);color:var(--green)}.shield-state.watch{background:rgba(248,200,92,.14);color:var(--gold)}.shield-state.defensive{background:rgba(255,107,122,.14);color:var(--red)}.shield-state.unavailable{background:rgba(143,163,187,.12);color:var(--muted)}.shield-meta{display:block;color:var(--muted);font-size:10px;margin-top:8px}.shield-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:16px 0}.shield-grid div{background:rgba(7,16,29,.5);border-radius:9px;padding:10px}.shield-grid span,.shield-grid strong{display:block}.shield-grid span{font-size:10px;color:var(--muted);margin-bottom:6px}.shield-grid strong{font-size:16px}.shield-reasons{padding-left:18px;margin:12px 0;color:var(--muted);font-size:12px;line-height:1.6}.shadow-note{color:var(--muted);font-size:10px;border-top:1px solid var(--line);padding-top:10px;margin:0}.order-shield{font-size:11px;color:var(--gold);line-height:1.5}
     @media(max-width:1050px){.summary-grid{grid-template-columns:repeat(3,1fr)}}@media(max-width:850px){.summary-grid{grid-template-columns:repeat(2,1fr)}}
   </style>
 </head>
@@ -91,6 +93,20 @@
       </div>
 
       <aside>
+        <article class="panel shield unavailable" id="shield-panel">
+          <div class="shield-head">
+            <div><p class="eyebrow">CRISIS SHIELD · CHALLENGER</p><h2>市场危机防护</h2></div>
+            <strong class="shield-state unavailable" id="shield-state">等待数据</strong>
+          </div>
+          <small class="shield-meta" id="shield-version">v1.2-shadow · 旁路观察</small>
+          <div class="shield-grid">
+            <div><span>建议最高仓位</span><strong id="shield-exposure">—</strong></div>
+            <div><span>当前仓位</span><strong id="shield-current-exposure">0.0%</strong></div>
+            <div><span>风险分</span><strong id="shield-score">—</strong></div>
+          </div>
+          <ul class="shield-reasons" id="shield-reasons"><li>等待至少200个完整交易日</li></ul>
+          <p class="shadow-note">仅记录和提示，不自动买卖。通过压力测试和观察期后才考虑启用。</p>
+        </article>
         <article class="panel rules">
           <p class="eyebrow">RISK GUARDRAILS</p><h2>风控护栏</h2>
           <ul>
@@ -116,6 +132,7 @@
       <h2>模拟买入 <span id="order-symbol"></span></h2>
       <p id="order-price" class="order-price"></p>
       <p id="order-signal" class="order-signal"></p>
+      <p id="order-shield" class="order-shield"></p>
       <label>买入股数<input id="order-quantity" type="number" min="1" step="1" value="1" required></label>
       <div class="order-check" id="order-check"></div>
       <button class="buy-button" id="confirm-order" value="default">确认模拟买入</button>

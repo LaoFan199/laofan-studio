@@ -108,6 +108,40 @@ Known limitations:
 
 ## Experiment log template
 
+### Experiment: v1.2 crisis shield challenger
+
+- Date proposed: 2026-08-19
+- Baseline version: v1.1
+- Challenger version: v1.2-shadow
+- Hypothesis: combining the SPY long-term trend, trailing drawdown,
+  short-term realized volatility, and breadth across the tracked universe can
+  identify defensive market regimes earlier than stock-level scores alone and
+  eventually reduce portfolio drawdown.
+- One primary change: add a deterministic, three-state market-regime classifier
+  that runs in shadow mode without changing v1.1 scores, orders, or holdings.
+- Instruments and dates: SPY plus the existing MSFT, GOOGL, NVDA, KO, and SCHD
+  universe; use at least 200 completed daily bars for each regime decision.
+- Execution/cost assumptions: no orders are generated in shadow mode. Future
+  promotion tests must use the same next-session execution and cost assumptions
+  for baseline and challenger.
+- Acceptance criteria chosen before evaluation:
+  - display normal, watch, defensive, or unavailable state with reproducible
+    factor explanations;
+  - report suggested maximum equity exposure and current exposure without
+    automatically buying or selling;
+  - fail closed and disclose insufficient data;
+  - store one dated regime snapshot per day without rewriting earlier days;
+  - pass deterministic unit tests and desktop/narrow viewport checks;
+  - do not promote until stress tests covering the 2007-2009, 2020, and 2022
+    declines plus 20-40 forward paper-trading days show lower maximum drawdown
+    without an unacceptable loss of cost-adjusted excess return versus SPY.
+- Results: pending
+- Decision: pending; shadow observation only
+- Related commit: pending
+
+The v1.2 thresholds are frozen for the initial observation period. Do not tune
+them in response to a few recent sessions.
+
 Copy this section for each future strategy experiment:
 
 ```markdown

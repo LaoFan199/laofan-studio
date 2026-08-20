@@ -1,0 +1,8 @@
+{
+  "name": "laofan-studio",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test"
+  }
+}

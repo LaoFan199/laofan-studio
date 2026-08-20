@@ -4,7 +4,16 @@ const ALLOWED_ORIGIN = 'https://laofan199.github.io';
 const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
 const average = (values) => values.reduce((sum, value) => sum + value, 0) / values.length;
 
-function analyzeBars(bars, benchmarkBars) {
+const marketDate = (value) => new Intl.DateTimeFormat('en-CA', {
+  timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit'
+}).format(new Date(value));
+
+export function completedDailyBars(bars, marketIsOpen, now = new Date()) {
+  if (!Array.isArray(bars) || !marketIsOpen || !bars.length || !bars.at(-1)?.t) return bars || [];
+  return marketDate(bars.at(-1).t) === marketDate(now) ? bars.slice(0, -1) : bars;
+}
+
+export function analyzeBars(bars, benchmarkBars) {
   if (!Array.isArray(bars) || bars.length < 61) return null;
   const closes = bars.map((bar) => Number(bar.c)).filter(Number.isFinite);
   const benchmarkCloses = (benchmarkBars || []).map((bar) => Number(bar.c)).filter(Number.isFinite);
@@ -58,6 +67,101 @@ function analyzeBars(bars, benchmarkBars) {
   };
 }
 
+export function analyzeMarketRegime(benchmarkBars, universeBars = {}) {
+  const closes = (benchmarkBars || []).map((bar) => Number(bar.c)).filter(Number.isFinite);
+  if (closes.length < 200) {
+    return {
+      version: 'v1.2-shadow',
+      state: 'unavailable',
+      label: '数据不足',
+      suggestedMaxExposure: null,
+      riskScore: null,
+      confidence: '低',
+      reasons: [`需要至少200个SPY交易日，当前只有${closes.length}个`],
+      metrics: { availableBars: closes.length }
+    };
+  }
+
+  const latest = closes.at(-1);
+  const sma50 = average(closes.slice(-50));
+  const sma200 = average(closes.slice(-200));
+  const peak = Math.max(...closes.slice(-252));
+  const drawdown = (latest / peak) - 1;
+  const recent = closes.slice(-21);
+  const returns20 = recent.slice(1).map((close, index) => (close / recent[index]) - 1);
+  const mean20 = average(returns20);
+  const variance20 = average(returns20.map((value) => (value - mean20) ** 2));
+  const volatility20 = Math.sqrt(variance20) * Math.sqrt(252);
+
+  const breadthSignals = Object.values(universeBars).map((bars) => {
+    const stockCloses = (bars || []).map((bar) => Number(bar.c)).filter(Number.isFinite);
+    if (stockCloses.length < 60) return null;
+    return stockCloses.at(-1) > average(stockCloses.slice(-60));
+  }).filter((value) => value != null);
+  const breadth = breadthSignals.length
+    ? breadthSignals.filter(Boolean).length / breadthSignals.length
+    : null;
+
+  const factors = [
+    {
+      key: 'longTrend',
+      label: 'SPY长期趋势',
+      risk: latest < sma200 ? 2 : 0,
+      detail: latest < sma200 ? '价格低于200日均线' : '价格高于200日均线'
+    },
+    {
+      key: 'trendStructure',
+      label: '趋势结构',
+      risk: sma50 < sma200 ? 1 : 0,
+      detail: sma50 < sma200 ? '50日均线低于200日均线' : '50日均线不低于200日均线'
+    },
+    {
+      key: 'drawdown',
+      label: '大盘回撤',
+      risk: drawdown <= -0.2 ? 2 : drawdown <= -0.1 ? 1 : 0,
+      detail: `距近一年高点 ${(drawdown * 100).toFixed(1)}%`
+    },
+    {
+      key: 'volatility',
+      label: '短期波动',
+      risk: volatility20 >= 0.4 ? 2 : volatility20 >= 0.25 ? 1 : 0,
+      detail: `20日年化波动 ${(volatility20 * 100).toFixed(1)}%`
+    },
+    {
+      key: 'breadth',
+      label: '市场宽度',
+      risk: breadth == null ? 0 : breadth < 0.2 ? 2 : breadth < 0.4 ? 1 : 0,
+      detail: breadth == null ? '候选池数据不足' : `${Math.round(breadth * 100)}%候选股位于60日均线上方`
+    }
+  ];
+  const riskScore = factors.reduce((sum, factor) => sum + factor.risk, 0);
+  const state = riskScore >= 4 ? 'defensive' : riskScore >= 2 ? 'watch' : 'normal';
+  const settings = {
+    normal: { label: '正常', suggestedMaxExposure: 80 },
+    watch: { label: '警戒', suggestedMaxExposure: 50 },
+    defensive: { label: '防御', suggestedMaxExposure: 25 }
+  }[state];
+  const activeReasons = factors.filter((factor) => factor.risk > 0).map((factor) => factor.detail);
+
+  return {
+    version: 'v1.2-shadow',
+    state,
+    label: settings.label,
+    suggestedMaxExposure: settings.suggestedMaxExposure,
+    riskScore,
+    confidence: closes.length >= 252 && breadthSignals.length >= 4 ? '高' : '中',
+    reasons: activeReasons.length ? activeReasons : ['趋势、回撤、波动和市场宽度未触发警戒'],
+    factors,
+    metrics: {
+      availableBars: closes.length,
+      spyVsSma200: ((latest / sma200) - 1) * 100,
+      drawdown: drawdown * 100,
+      volatility20: volatility20 * 100,
+      breadth: breadth == null ? null : breadth * 100
+    }
+  };
+}
+
 function applyCors(req, res) {
   const origin = req.headers.origin;
   if (origin === ALLOWED_ORIGIN || /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin || '')) {
@@ -84,12 +188,12 @@ export default async function handler(req, res) {
 
   const headers = { 'APCA-API-KEY-ID': key, 'APCA-API-SECRET-KEY': secret };
   try {
-    const start = new Date(Date.now() - 130 * 24 * 60 * 60 * 1000).toISOString();
+    const start = new Date(Date.now() - 430 * 24 * 60 * 60 * 1000).toISOString();
     const historySymbols = [...new Set([...symbols, 'SPY'])];
     const [snapshotsResponse, clockResponse, barsResponse] = await Promise.all([
       fetch(`https://data.alpaca.markets/v2/stocks/snapshots?symbols=${encodeURIComponent(historySymbols.join(','))}&feed=iex`, { headers }),
       fetch('https://paper-api.alpaca.markets/v2/clock', { headers }),
-      fetch(`https://data.alpaca.markets/v2/stocks/bars?symbols=${encodeURIComponent(historySymbols.join(','))}&timeframe=1Day&start=${encodeURIComponent(start)}&limit=1000&adjustment=all&feed=iex`, { headers })
+      fetch(`https://data.alpaca.markets/v2/stocks/bars?symbols=${encodeURIComponent(historySymbols.join(','))}&timeframe=1Day&start=${encodeURIComponent(start)}&limit=10000&adjustment=all&feed=iex`, { headers })
     ]);
     if (!snapshotsResponse.ok || !clockResponse.ok) throw new Error('Upstream request failed');
     const snapshots = await snapshotsResponse.json();
@@ -113,10 +217,19 @@ export default async function handler(req, res) {
       };
     }
 
+    const completedHistory = Object.fromEntries(
+      historySymbols.map((symbol) => [symbol, completedDailyBars(historical.bars?.[symbol], Boolean(clock.is_open))])
+    );
+    const universeBars = Object.fromEntries(
+      symbols.filter((symbol) => symbol !== 'SPY').map((symbol) => [symbol, completedHistory[symbol] || []])
+    );
+    const marketRegime = analyzeMarketRegime(completedHistory.SPY, universeBars);
+
     res.setHeader('Cache-Control', 's-maxage=10, stale-while-revalidate=30');
     return res.status(200).json({
       source: 'Alpaca IEX',
       market: { isOpen: Boolean(clock.is_open), nextOpen: clock.next_open, nextClose: clock.next_close },
+      marketRegime,
       quotes,
       fetchedAt: new Date().toISOString()
     });

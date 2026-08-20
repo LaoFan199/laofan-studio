@@ -17,7 +17,9 @@
   let state = saved || { cash: STARTING_CASH, realized: 0, positions: {}, history: [], snapshots: [], benchmark: null };
   state.snapshots ||= [];
   state.benchmark ||= null;
+  state.regimeSnapshots ||= [];
   let selected = null;
+  let marketRegime = null;
   const $ = (id) => document.getElementById(id);
   const money = (n) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(n);
   const percent = (n) => n == null ? '—' : `${n >= 0 ? '+' : ''}${n.toFixed(2)}%`;
@@ -38,6 +40,22 @@
     return `<details class="score-details"><summary>查看评分 · 置信度${item.confidence}</summary><div>${item.factors.map((factor) =>
       `<span><b>${factor.label}</b><em>${factor.score}/${factor.max}</em></span>`
     ).join('')}</div></details>`;
+  }
+
+  function renderMarketShield() {
+    if (!marketRegime) return;
+    const value = marketValue();
+    const equity = state.cash + value;
+    const actualExposure = equity ? (value / equity) * 100 : 0;
+    const stateClass = ['normal', 'watch', 'defensive'].includes(marketRegime.state) ? marketRegime.state : 'unavailable';
+    $('shield-panel').className = `panel shield ${stateClass}`;
+    $('shield-state').textContent = marketRegime.label;
+    $('shield-state').className = `shield-state ${stateClass}`;
+    $('shield-version').textContent = `${marketRegime.version} · 旁路观察 · 置信度${marketRegime.confidence}`;
+    $('shield-exposure').textContent = marketRegime.suggestedMaxExposure == null ? '—' : `${marketRegime.suggestedMaxExposure}%`;
+    $('shield-current-exposure').textContent = `${actualExposure.toFixed(1)}%`;
+    $('shield-score').textContent = marketRegime.riskScore == null ? '—' : `${marketRegime.riskScore}/9`;
+    $('shield-reasons').innerHTML = marketRegime.reasons.map((reason) => `<li>${reason}</li>`).join('');
   }
 
   function renderIdeas() {
@@ -68,6 +86,7 @@
       const excess = rate - benchmarkRate;
       $('benchmark-return').textContent = `SPY ${percent(benchmarkRate)} · 超额 ${percent(excess)}`;
     }
+    renderMarketShield();
 
     const entries = Object.entries(state.positions);
     $('positions').className = entries.length ? '' : 'empty';
@@ -88,6 +107,9 @@
     $('order-symbol').textContent = selected.symbol;
     $('order-price').textContent = `模拟成交参考价 ${money(selected.price)}`;
     $('order-signal').textContent = `量化分数 ${selected.score}/100 · 置信度${selected.confidence} · 风险${selected.risk}`;
+    $('order-shield').textContent = marketRegime
+      ? `危机防护挑战者：${marketRegime.label}，建议总仓位不超过 ${marketRegime.suggestedMaxExposure ?? '—'}%（当前不自动拦截）`
+      : '危机防护挑战者：等待市场状态数据';
     $('order-quantity').value = 1;
     validateOrder(); $('trade-dialog').showModal();
   }
@@ -129,6 +151,7 @@
       const response = await fetch(`${API_BASE}/api/market?symbols=${encodeURIComponent(symbols)}`);
       if (!response.ok) throw new Error('market request failed');
       const data = await response.json();
+      marketRegime = data.marketRegime || null;
       ideas.forEach((item) => {
         const quote = data.quotes[item.symbol];
         if (quote?.price) item.price = quote.price;
@@ -156,6 +179,21 @@
       if (existingSnapshot >= 0) state.snapshots[existingSnapshot] = snapshot;
       else state.snapshots.push(snapshot);
       state.snapshots = state.snapshots.slice(-120);
+      if (marketRegime) {
+        const regimeSnapshot = {
+          date: snapshotDate,
+          version: marketRegime.version,
+          state: marketRegime.state,
+          riskScore: marketRegime.riskScore,
+          suggestedMaxExposure: marketRegime.suggestedMaxExposure,
+          actualExposure: ((marketValue() / (state.cash + marketValue())) * 100) || 0,
+          metrics: marketRegime.metrics
+        };
+        const existingRegime = state.regimeSnapshots.findIndex((item) => item.date === snapshotDate);
+        if (existingRegime >= 0) state.regimeSnapshots[existingRegime] = regimeSnapshot;
+        else state.regimeSnapshots.push(regimeSnapshot);
+        state.regimeSnapshots = state.regimeSnapshots.slice(-120);
+      }
       renderIdeas(); render();
     } catch {
       $('market-status').textContent = '真实行情暂不可用 · 显示演示价格';
@@ -168,7 +206,7 @@
   });
   $('order-quantity').addEventListener('input', validateOrder);
   $('trade-form').addEventListener('submit', (e) => { e.preventDefault(); buy(); });
-  $('reset-button').addEventListener('click', () => { if (confirm('确定清除全部模拟交易记录并恢复到 $1,000 吗？')) { state = { cash: STARTING_CASH, realized: 0, positions: {}, history: [], snapshots: [], benchmark: null }; render(); } });
+  $('reset-button').addEventListener('click', () => { if (confirm('确定清除全部模拟交易记录并恢复到 $1,000 吗？')) { state = { cash: STARTING_CASH, realized: 0, positions: {}, history: [], snapshots: [], benchmark: null, regimeSnapshots: [] }; render(); } });
   renderIdeas(); render(); loadMarketData();
   setInterval(loadMarketData, 60 * 1000);
 })();
