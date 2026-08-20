@@ -135,9 +135,13 @@ Known limitations:
   - do not promote until stress tests covering the 2007-2009, 2020, and 2022
     declines plus 20-40 forward paper-trading days show lower maximum drawdown
     without an unacceptable loss of cost-adjusted excess return versus SPY.
-- Results: pending
+- Results: implementation validation passed on 2026-08-19. Deterministic tests
+  cover insufficient data, normal markets, defensive markets, and exclusion of
+  an incomplete open-session daily bar. Desktop and 390px-class narrow layouts
+  passed with no console errors. Historical stress tests and the forward
+  observation window remain pending.
 - Decision: pending; shadow observation only
-- Related commit: pending
+- Related commit: `a6eb347`
 
 The v1.2 thresholds are frozen for the initial observation period. Do not tune
 them in response to a few recent sessions.
