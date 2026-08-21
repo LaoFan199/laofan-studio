@@ -7,6 +7,7 @@
   <meta name="api-base" content="https://laofan-studio.vercel.app">
   <title>LaoFan AI 模拟交易</title>
   <link rel="stylesheet" href="app.css">
+  <link rel="stylesheet" href="momentum.css">
   <style>
     .updated{font-weight:700}.market-open{color:#36d399}.market-closed{color:#8fa3bb}.reason{display:block;color:#6f86a2;font-size:10px;line-height:1.45;margin-top:5px;max-width:250px}
     .summary-grid{grid-template-columns:repeat(5,1fr)}
@@ -81,6 +82,17 @@
           <p class="disclaimer">分数由确定性量化规则计算，AI 仅用于解释。分数 ≥75 才能发起模拟买入；50–74 继续观察；低于 50 暂不参与。不构成投资建议。</p>
         </article>
 
+        <article class="panel momentum-panel">
+          <div class="panel-head momentum-head">
+            <div><p class="eyebrow">MOMENTUM CHALLENGER · SHADOW</p><h2>暴涨异动雷达</h2></div>
+            <button class="ghost" id="enable-momentum-alerts" type="button">开启网页通知</button>
+          </div>
+          <p class="momentum-status" id="momentum-status">等待异动榜数据</p>
+          <div class="momentum-summary" id="momentum-summary"></div>
+          <div class="momentum-list" id="momentum-list"></div>
+          <p class="disclaimer">独立模拟实验：涨幅、成交量、成交额和价差必须全部通过才建立影子仓位；持仓后价格降至最高价的85%即记录退出。不是实际成交，跳空和滑点可能使真实卖价更低。</p>
+        </article>
+
         <article class="panel">
           <div class="panel-head"><div><p class="eyebrow">PORTFOLIO</p><h2>当前持仓</h2></div></div>
           <div id="positions" class="empty">还没有持仓。可从候选股中发起模拟买入。</div>
@@ -139,6 +151,6 @@
     </form>
   </dialog>
 
-  <script src="app.js"></script>
+  <script type="module" src="app.js"></script>
 </body>
 </html>

@@ -146,6 +146,46 @@ Known limitations:
 The v1.2 thresholds are frozen for the initial observation period. Do not tune
 them in response to a few recent sessions.
 
+### Experiment: Momentum Challenger v1
+
+- Date proposed: 2026-08-20
+- Baseline version: v1.1 (unchanged)
+- Challenger version: momentum-v1-shadow
+- Hypothesis: a fail-closed scan of liquid top gainers, followed by a fixed
+  15% trailing exit from the post-entry high, can capture persistent momentum
+  while making the loss of open profit deterministic and auditable.
+- One primary change: add an independent momentum-event strategy; do not alter
+  the v1.1 score, universe, holdings, or crisis-shield rules.
+- Instruments and dates: Alpaca's US stock top-gainers feed during regular
+  sessions; begin forward collection after deployment and retain the version
+  and decision-time inputs for every signal.
+- Frozen entry filters: price at least $5; daily gain at least 10%; current
+  volume at least 3 times the prior 20-session average; current dollar volume
+  at least $20 million; quoted spread no greater than 1%; no new entry while
+  the v1.2 crisis shield is defensive.
+- Frozen exit: update the high-water mark from observations after entry and
+  flag an exit when price is at or below 85% of that high. A signal is not a
+  guaranteed execution price; evaluation must separately model gaps and
+  slippage.
+- Execution/cost assumptions: shadow positions only, entered at the first
+  observed qualifying price after the signal; no brokerage order, leverage, or
+  options. Browser polling is not continuous and missed observations must not
+  be reconstructed with hindsight.
+- Acceptance criteria chosen before evaluation:
+  - fail closed if mover, volume-history, quote, or spread data is incomplete;
+  - preserve signal time, entry price, high-water mark, exit trigger, observed
+    exit price, and strategy version without rewriting historical decisions;
+  - pass deterministic entry-filter and 15% trailing-exit tests;
+  - pass desktop and narrow viewport checks with simulation/data-source status
+    visible;
+  - observe at least 20-40 trading days, preferably 8-12 weeks, and report the
+    standard scorecard after estimated slippage;
+  - do not promote if results depend on one ticker or one exceptional trade, or
+    if maximum drawdown and cost-adjusted excess return are unacceptable.
+- Results: implementation and forward observation pending.
+- Decision: pending; shadow observation only
+- Related commit: pending
+
 Copy this section for each future strategy experiment:
 
 ```markdown

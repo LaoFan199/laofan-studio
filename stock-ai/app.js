@@ -1,3 +1,5 @@
+import { updateTrailingPosition } from '../api/momentum.js';
+
 (() => {
   'use strict';
   const STARTING_CASH = 1000;
@@ -18,8 +20,13 @@
   state.snapshots ||= [];
   state.benchmark ||= null;
   state.regimeSnapshots ||= [];
+  state.momentum ||= { positions: {}, completed: [], signals: [] };
+  state.momentum.positions ||= {};
+  state.momentum.completed ||= [];
+  state.momentum.signals ||= [];
   let selected = null;
   let marketRegime = null;
+  let momentumScanner = null;
   const $ = (id) => document.getElementById(id);
   const money = (n) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(n);
   const percent = (n) => n == null ? '—' : `${n >= 0 ? '+' : ''}${n.toFixed(2)}%`;
@@ -58,6 +65,97 @@
     $('shield-reasons').innerHTML = marketRegime.reasons.map((reason) => `<li>${reason}</li>`).join('');
   }
 
+  function notifyMomentum(title, body) {
+    if (!('Notification' in window) || localStorage.getItem('laofan-momentum-alerts') !== 'enabled' || Notification.permission !== 'granted') return;
+    new Notification(title, { body, tag: `laofan-${title}` });
+  }
+
+  function updateMomentum(data, fetchedAt, marketIsOpen) {
+    momentumScanner = data;
+    if (!data || data.status !== 'available') return;
+    const bySymbol = Object.fromEntries(data.candidates.map((candidate) => [candidate.symbol, candidate]));
+
+    Object.entries(state.momentum.positions).forEach(([symbol, position]) => {
+      const candidate = bySymbol[symbol];
+      if (!candidate?.price) return;
+      const updated = { ...updateTrailingPosition(position, candidate.price), lastObservedAt: fetchedAt };
+      state.momentum.positions[symbol] = updated;
+      if (updated.shouldExit) {
+        state.momentum.completed.push({
+          ...updated,
+          exitPrice: candidate.price,
+          exitedAt: fetchedAt,
+          returnPercent: ((candidate.price / position.entryPrice) - 1) * 100,
+          reason: '较最高价回撤15%'
+        });
+        delete state.momentum.positions[symbol];
+        notifyMomentum(`${symbol} 模拟退出`, `现价 ${money(candidate.price)} 已低于移动线 ${money(updated.exitTrigger)}`);
+      }
+    });
+
+    if (marketIsOpen && marketRegime?.state !== 'defensive') {
+      const date = new Date(fetchedAt).toISOString().slice(0, 10);
+      data.candidates.filter((candidate) => candidate.qualified).forEach((candidate) => {
+        const signalId = `${date}:${candidate.symbol}`;
+        if (state.momentum.signals.some((signal) => signal.id === signalId)) return;
+        const position = {
+          symbol: candidate.symbol,
+          version: data.version,
+          entryPrice: candidate.price,
+          currentPrice: candidate.price,
+          highWatermark: candidate.price,
+          exitTrigger: candidate.price * 0.85,
+          enteredAt: fetchedAt,
+          lastObservedAt: fetchedAt,
+          signalMetrics: candidate.metrics
+        };
+        state.momentum.signals.push({ id: signalId, symbol: candidate.symbol, price: candidate.price, time: fetchedAt, version: data.version, metrics: candidate.metrics });
+        if (!state.momentum.positions[candidate.symbol]) state.momentum.positions[candidate.symbol] = position;
+        notifyMomentum(`${candidate.symbol} 异动买入信号`, `影子入场 ${money(candidate.price)}；初始15%回撤线 ${money(position.exitTrigger)}`);
+      });
+    }
+    state.momentum.signals = state.momentum.signals.slice(-300);
+    state.momentum.completed = state.momentum.completed.slice(-200);
+  }
+
+  function renderMomentumPositions(positions) {
+    return positions.map((position) => `<div class="momentum-row qualified">
+      <span><strong class="ticker">${position.symbol}</strong><small>影子持仓 · ${position.version}</small></span>
+      <span><small>模拟入场</small>${money(position.entryPrice)}</span>
+      <span><small>持仓后最高</small>${money(position.highWatermark)}</span>
+      <span><small>15%退出线</small>${money(position.exitTrigger)}</span>
+      <span class="${position.currentPrice >= position.entryPrice ? 'positive' : 'negative'}"><small>当前模拟收益</small>${percent(((position.currentPrice / position.entryPrice) - 1) * 100)}</span>
+    </div>`).join('');
+  }
+
+  function renderMomentum() {
+    const active = Object.values(state.momentum.positions);
+    const rules = momentumScanner?.rules;
+    $('momentum-summary').innerHTML = rules ? [
+      `涨幅 <strong>≥${rules.minimumChangePercent}%</strong>`,
+      `相对量 <strong>≥${rules.minimumRelativeVolume}×</strong>`,
+      `成交额 <strong>≥${money(rules.minimumDollarVolume)}</strong>`,
+      `回撤退出 <strong>${rules.trailingDrawdownPercent}%</strong>`
+    ].map((item) => `<span class="momentum-pill">${item}</span>`).join('') : '';
+
+    if (!momentumScanner || momentumScanner.status !== 'available') {
+      $('momentum-status').textContent = momentumScanner?.reason || '等待异动榜数据';
+      $('momentum-list').innerHTML = active.length ? renderMomentumPositions(active) : '<div class="momentum-empty">数据不足时停止产生新信号</div>';
+      return;
+    }
+    const qualifiedCount = momentumScanner.candidates.filter((candidate) => candidate.qualified).length;
+    const defensiveNote = marketRegime?.state === 'defensive' ? ' · 防御状态暂停新入场' : '';
+    $('momentum-status').textContent = `扫描涨幅榜及跟踪股共 ${momentumScanner.candidates.length} 只 · ${qualifiedCount} 只通过全部条件 · ${active.length} 个影子持仓 · ${state.momentum.completed.length} 次已退出${defensiveNote}`;
+    const candidates = momentumScanner.candidates.slice(0, 5).map((candidate) => `<div class="momentum-row ${candidate.qualified ? 'qualified' : ''}">
+      <span><strong class="ticker">${candidate.symbol}</strong><small>${candidate.qualified ? '模拟买入信号' : '未通过全部过滤'}</small></span>
+      <span><small>现价</small>${money(candidate.price)}</span>
+      <span class="positive"><small>当日涨幅</small>${percent(candidate.changePercent)}</span>
+      <span><small>相对成交量</small>${candidate.metrics.relativeVolume == null ? '—' : `${candidate.metrics.relativeVolume.toFixed(1)}×`}</span>
+      <span><small>买卖价差</small>${candidate.metrics.spreadPercent == null ? '—' : `${candidate.metrics.spreadPercent.toFixed(2)}%`}</span>
+    </div>`).join('');
+    $('momentum-list').innerHTML = renderMomentumPositions(active) + candidates || '<div class="momentum-empty">当前没有可显示的异动股票</div>';
+  }
+
   function renderIdeas() {
     $('ideas-body').innerHTML = ideas.map((item) => { const signal = signalFor(item); return `<tr>
       <td><span class="ticker">${item.symbol}</span><span class="company">${item.name}</span><span class="reason">${item.reasons.join(' · ') || '等待历史数据计算'}</span>${factorDetails(item)}</td>
@@ -87,6 +185,7 @@
       $('benchmark-return').textContent = `SPY ${percent(benchmarkRate)} · 超额 ${percent(excess)}`;
     }
     renderMarketShield();
+    renderMomentum();
 
     const entries = Object.entries(state.positions);
     $('positions').className = entries.length ? '' : 'empty';
@@ -148,10 +247,12 @@
     }
     try {
       const symbols = ideas.map((item) => item.symbol).join(',');
-      const response = await fetch(`${API_BASE}/api/market?symbols=${encodeURIComponent(symbols)}`);
+      const momentumSymbols = Object.keys(state.momentum.positions).join(',');
+      const response = await fetch(`${API_BASE}/api/market?symbols=${encodeURIComponent(symbols)}&momentumSymbols=${encodeURIComponent(momentumSymbols)}`);
       if (!response.ok) throw new Error('market request failed');
       const data = await response.json();
       marketRegime = data.marketRegime || null;
+      updateMomentum(data.momentum || null, data.fetchedAt, Boolean(data.market.isOpen));
       ideas.forEach((item) => {
         const quote = data.quotes[item.symbol];
         if (quote?.price) item.price = quote.price;
@@ -206,7 +307,16 @@
   });
   $('order-quantity').addEventListener('input', validateOrder);
   $('trade-form').addEventListener('submit', (e) => { e.preventDefault(); buy(); });
-  $('reset-button').addEventListener('click', () => { if (confirm('确定清除全部模拟交易记录并恢复到 $1,000 吗？')) { state = { cash: STARTING_CASH, realized: 0, positions: {}, history: [], snapshots: [], benchmark: null, regimeSnapshots: [] }; render(); } });
+  $('enable-momentum-alerts').addEventListener('click', async () => {
+    if (!('Notification' in window)) { $('enable-momentum-alerts').textContent = '浏览器不支持通知'; return; }
+    const permission = await Notification.requestPermission();
+    if (permission === 'granted') {
+      localStorage.setItem('laofan-momentum-alerts', 'enabled');
+      $('enable-momentum-alerts').textContent = '网页通知已开启';
+    } else $('enable-momentum-alerts').textContent = '通知未授权';
+  });
+  if ('Notification' in window && Notification.permission === 'granted' && localStorage.getItem('laofan-momentum-alerts') === 'enabled') $('enable-momentum-alerts').textContent = '网页通知已开启';
+  $('reset-button').addEventListener('click', () => { if (confirm('确定清除全部模拟交易记录并恢复到 $1,000 吗？')) { state = { cash: STARTING_CASH, realized: 0, positions: {}, history: [], snapshots: [], benchmark: null, regimeSnapshots: [], momentum: { positions: {}, completed: [], signals: [] } }; render(); } });
   renderIdeas(); render(); loadMarketData();
   setInterval(loadMarketData, 60 * 1000);
 })();

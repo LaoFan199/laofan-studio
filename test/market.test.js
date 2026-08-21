@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { analyzeMarketRegime, completedDailyBars } from '../api/market.js';
+import { evaluateMomentumCandidate, updateTrailingPosition } from '../api/momentum.js';
 
 const barsFrom = (values, start = '2025-01-02T21:00:00Z') => values.map((c, index) => ({
   c,
@@ -50,4 +51,37 @@ test('open-market helper excludes an in-progress daily bar', () => {
   ];
   assert.equal(completedDailyBars(bars, true, now).length, 1);
   assert.equal(completedDailyBars(bars, false, now).length, 2);
+});
+
+test('momentum candidate must pass every liquidity and price check', () => {
+  const result = evaluateMomentumCandidate({
+    price: 20,
+    changePercent: 12,
+    currentVolume: 4_000_000,
+    previousVolumes: Array(20).fill(1_000_000),
+    bid: 19.95,
+    ask: 20.05
+  });
+  assert.equal(result.qualified, true);
+  assert.equal(result.metrics.relativeVolume, 4);
+  assert.ok(result.metrics.spreadPercent < 1);
+});
+
+test('momentum candidate fails closed when volume history or quote is missing', () => {
+  const result = evaluateMomentumCandidate({ price: 20, changePercent: 40, currentVolume: 9_000_000 });
+  assert.equal(result.qualified, false);
+  assert.equal(result.checks.find((check) => check.key === 'relativeVolume').passed, false);
+  assert.equal(result.checks.find((check) => check.key === 'spread').passed, false);
+});
+
+test('trailing exit rises with the high and triggers at a 15 percent drawdown', () => {
+  const entry = { symbol: 'XYZ', entryPrice: 100, highWatermark: 100 };
+  const rising = updateTrailingPosition(entry, 200);
+  assert.equal(rising.highWatermark, 200);
+  assert.equal(rising.exitTrigger, 170);
+  assert.equal(rising.shouldExit, false);
+  assert.equal(updateTrailingPosition(rising, 170).shouldExit, true);
+  const falling = updateTrailingPosition(rising, 169.99);
+  assert.equal(falling.highWatermark, 200);
+  assert.equal(falling.shouldExit, true);
 });

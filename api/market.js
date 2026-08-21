@@ -1,3 +1,5 @@
+import { evaluateMomentumCandidate, MOMENTUM_RULES, MOMENTUM_VERSION } from './momentum.js';
+
 const ALLOWED_SYMBOLS = new Set(['MSFT', 'GOOGL', 'NVDA', 'KO', 'SCHD', 'SPY']);
 const ALLOWED_ORIGIN = 'https://laofan199.github.io';
 
@@ -172,6 +174,69 @@ function applyCors(req, res) {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 }
 
+async function loadMomentumScanner(headers, marketIsOpen, trackedSymbols = []) {
+  try {
+    const moversResponse = await fetch('https://data.alpaca.markets/v1beta1/screener/stocks/movers?top=20', { headers });
+    if (!moversResponse.ok) throw new Error('movers unavailable');
+    const movers = await moversResponse.json();
+    const gainers = (movers.gainers || []).slice(0, 20);
+    const symbols = [...new Set([...gainers.map((item) => item.symbol), ...trackedSymbols])].filter(Boolean).slice(0, 40);
+    if (!symbols.length) return { version: MOMENTUM_VERSION, status: 'available', rules: MOMENTUM_RULES, candidates: [] };
+
+    const start = new Date(Date.now() - 45 * 24 * 60 * 60 * 1000).toISOString();
+    const encodedSymbols = encodeURIComponent(symbols.join(','));
+    const [snapshotsResponse, barsResponse] = await Promise.all([
+      fetch(`https://data.alpaca.markets/v2/stocks/snapshots?symbols=${encodedSymbols}&feed=iex`, { headers }),
+      fetch(`https://data.alpaca.markets/v2/stocks/bars?symbols=${encodedSymbols}&timeframe=1Day&start=${encodeURIComponent(start)}&limit=10000&adjustment=all&feed=iex`, { headers })
+    ]);
+    if (!snapshotsResponse.ok || !barsResponse.ok) throw new Error('candidate details unavailable');
+    const snapshots = await snapshotsResponse.json();
+    const historical = await barsResponse.json();
+
+    const moverBySymbol = Object.fromEntries(gainers.map((mover) => [mover.symbol, mover]));
+    const candidates = symbols.map((symbol) => {
+      const mover = moverBySymbol[symbol] || {};
+      const snapshot = snapshots[symbol] || {};
+      const price = snapshot.latestTrade?.p ?? snapshot.minuteBar?.c ?? mover.price;
+      const previousClose = snapshot.prevDailyBar?.c;
+      const changePercent = Number.isFinite(Number(mover.percent_change))
+        ? Number(mover.percent_change)
+        : price && previousClose ? ((price / previousClose) - 1) * 100 : null;
+      const completedBars = completedDailyBars(historical.bars?.[symbol], marketIsOpen);
+      const currentBarDate = snapshot.dailyBar?.t ? marketDate(snapshot.dailyBar.t) : null;
+      const previousBars = currentBarDate ? completedBars.filter((bar) => marketDate(bar.t) !== currentBarDate) : completedBars;
+      const analysis = evaluateMomentumCandidate({
+        price,
+        changePercent,
+        currentVolume: snapshot.dailyBar?.v,
+        previousVolumes: previousBars.map((bar) => bar.v),
+        bid: snapshot.latestQuote?.bp,
+        ask: snapshot.latestQuote?.ap
+      });
+      return {
+        symbol,
+        price,
+        changePercent,
+        tracked: trackedSymbols.includes(symbol),
+        qualified: analysis.qualified,
+        metrics: analysis.metrics,
+        failedChecks: analysis.checks.filter((check) => !check.passed).map((check) => check.detail),
+        timestamp: snapshot.latestTrade?.t ?? snapshot.minuteBar?.t ?? null
+      };
+    }).filter((item) => Number.isFinite(item.price)).sort((a, b) => Number(b.qualified) - Number(a.qualified) || b.changePercent - a.changePercent);
+
+    return { version: MOMENTUM_VERSION, status: 'available', rules: MOMENTUM_RULES, candidates };
+  } catch {
+    return {
+      version: MOMENTUM_VERSION,
+      status: 'unavailable',
+      rules: MOMENTUM_RULES,
+      reason: '异动榜或候选股明细暂不可用，策略已停止产生新信号',
+      candidates: []
+    };
+  }
+}
+
 export default async function handler(req, res) {
   applyCors(req, res);
   if (req.method === 'OPTIONS') return res.status(204).end();
@@ -224,12 +289,16 @@ export default async function handler(req, res) {
       symbols.filter((symbol) => symbol !== 'SPY').map((symbol) => [symbol, completedHistory[symbol] || []])
     );
     const marketRegime = analyzeMarketRegime(completedHistory.SPY, universeBars);
+    const trackedMomentumSymbols = String(req.query.momentumSymbols || '').toUpperCase().split(',')
+      .map((value) => value.trim()).filter((value) => /^[A-Z.]{1,6}$/.test(value)).slice(0, 20);
+    const momentum = await loadMomentumScanner(headers, Boolean(clock.is_open), trackedMomentumSymbols);
 
     res.setHeader('Cache-Control', 's-maxage=10, stale-while-revalidate=30');
     return res.status(200).json({
       source: 'Alpaca IEX',
       market: { isOpen: Boolean(clock.is_open), nextOpen: clock.next_open, nextClose: clock.next_close },
       marketRegime,
+      momentum,
       quotes,
       fetchedAt: new Date().toISOString()
     });
