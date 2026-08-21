@@ -220,9 +220,14 @@ them in response to a few recent sessions.
   - pass deterministic tests plus desktop/narrow visual checks;
   - compare coverage, trade count, cost-adjusted return, profit factor, and
     maximum drawdown over at least 20-40 trading days before any promotion.
-- Results: implementation and forward observation pending.
+- Results: implementation validation passed on 2026-08-21. Nine deterministic
+  tests pass, including exclusion of the observed low-price/warrant examples,
+  retention of ordinary and class-share symbols, unchanged entry/exit checks,
+  and the exact 15% trailing exit. Desktop and 390px layouts have no horizontal
+  overflow or console errors; account equity reconciles to cash plus holdings.
+  Forward observation and comparative scorecard remain pending.
 - Decision: pending; shadow observation only
-- Related commit: pending
+- Related commit: `720a89a`
 
 Copy this section for each future strategy experiment:
 
