@@ -182,9 +182,13 @@ them in response to a few recent sessions.
     standard scorecard after estimated slippage;
   - do not promote if results depend on one ticker or one exceptional trade, or
     if maximum drawdown and cost-adjusted excess return are unacceptable.
-- Results: implementation and forward observation pending.
+- Results: implementation validation passed on 2026-08-20. Seven deterministic
+  tests pass, including complete-filter, fail-closed missing-data, rising
+  high-water mark, and exact 15% exit-trigger cases. Desktop and 390px narrow
+  layouts have no horizontal overflow or console errors. Forward observation
+  and cost-adjusted scorecard remain pending.
 - Decision: pending; shadow observation only
-- Related commit: pending
+- Related commit: `d0fff83`
 
 Copy this section for each future strategy experiment:
 
