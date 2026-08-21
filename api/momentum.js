@@ -1,6 +1,6 @@
 const average = (values) => values.reduce((sum, value) => sum + value, 0) / values.length;
 
-export const MOMENTUM_VERSION = 'momentum-v1-shadow';
+export const MOMENTUM_VERSION = 'momentum-v1.1-shadow';
 export const MOMENTUM_RULES = Object.freeze({
   minimumPrice: 5,
   minimumChangePercent: 10,
@@ -9,6 +9,22 @@ export const MOMENTUM_RULES = Object.freeze({
   maximumSpreadPercent: 1,
   trailingDrawdownPercent: 15
 });
+
+export function evaluateMomentumUniverse(symbol, price, minimumPrice = MOMENTUM_RULES.minimumPrice) {
+  const normalized = String(symbol || '').trim().toUpperCase();
+  const numericPrice = Number(price);
+  const warrantLike = normalized.endsWith('.WS') || (normalized.length >= 5 && normalized.endsWith('W'));
+  const unitLike = normalized.length >= 5 && normalized.endsWith('U');
+  const rightLike = normalized.length >= 5 && normalized.endsWith('R');
+  const supportedSymbol = /^[A-Z]{1,5}(?:\.[AB])?$/.test(normalized);
+  const reasons = [];
+  if (!supportedSymbol) reasons.push('代码格式不属于普通股票候选');
+  if (warrantLike) reasons.push('疑似权证');
+  if (unitLike) reasons.push('疑似组合单位');
+  if (rightLike) reasons.push('疑似认购权');
+  if (!Number.isFinite(numericPrice) || numericPrice < minimumPrice) reasons.push(`股价低于 $${minimumPrice}`);
+  return { eligible: reasons.length === 0, symbol: normalized, reasons };
+}
 
 export function evaluateMomentumCandidate(input, rules = MOMENTUM_RULES) {
   const price = Number(input?.price);

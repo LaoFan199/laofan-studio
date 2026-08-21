@@ -1,4 +1,4 @@
-import { evaluateMomentumCandidate, MOMENTUM_RULES, MOMENTUM_VERSION } from './momentum.js';
+import { evaluateMomentumCandidate, evaluateMomentumUniverse, MOMENTUM_RULES, MOMENTUM_VERSION } from './momentum.js';
 
 const ALLOWED_SYMBOLS = new Set(['MSFT', 'GOOGL', 'NVDA', 'KO', 'SCHD', 'SPY']);
 const ALLOWED_ORIGIN = 'https://laofan199.github.io';
@@ -176,12 +176,14 @@ function applyCors(req, res) {
 
 async function loadMomentumScanner(headers, marketIsOpen, trackedSymbols = []) {
   try {
-    const moversResponse = await fetch('https://data.alpaca.markets/v1beta1/screener/stocks/movers?top=20', { headers });
+    const moversResponse = await fetch('https://data.alpaca.markets/v1beta1/screener/stocks/movers?top=50', { headers });
     if (!moversResponse.ok) throw new Error('movers unavailable');
     const movers = await moversResponse.json();
-    const gainers = (movers.gainers || []).slice(0, 20);
-    const symbols = [...new Set([...gainers.map((item) => item.symbol), ...trackedSymbols])].filter(Boolean).slice(0, 40);
-    if (!symbols.length) return { version: MOMENTUM_VERSION, status: 'available', rules: MOMENTUM_RULES, candidates: [] };
+    const rawGainers = (movers.gainers || []).slice(0, 50);
+    const eligibleGainers = rawGainers.filter((item) => evaluateMomentumUniverse(item.symbol, item.price).eligible);
+    const symbols = [...new Set([...eligibleGainers.map((item) => item.symbol), ...trackedSymbols])].filter(Boolean).slice(0, 60);
+    const scanStats = { scanned: rawGainers.length, eligibleUniverse: eligibleGainers.length, excluded: rawGainers.length - eligibleGainers.length };
+    if (!symbols.length) return { version: MOMENTUM_VERSION, status: 'available', rules: MOMENTUM_RULES, scanStats, candidates: [] };
 
     const start = new Date(Date.now() - 45 * 24 * 60 * 60 * 1000).toISOString();
     const encodedSymbols = encodeURIComponent(symbols.join(','));
@@ -193,7 +195,7 @@ async function loadMomentumScanner(headers, marketIsOpen, trackedSymbols = []) {
     const snapshots = await snapshotsResponse.json();
     const historical = await barsResponse.json();
 
-    const moverBySymbol = Object.fromEntries(gainers.map((mover) => [mover.symbol, mover]));
+    const moverBySymbol = Object.fromEntries(rawGainers.map((mover) => [mover.symbol, mover]));
     const candidates = symbols.map((symbol) => {
       const mover = moverBySymbol[symbol] || {};
       const snapshot = snapshots[symbol] || {};
@@ -225,7 +227,7 @@ async function loadMomentumScanner(headers, marketIsOpen, trackedSymbols = []) {
       };
     }).filter((item) => Number.isFinite(item.price)).sort((a, b) => Number(b.qualified) - Number(a.qualified) || b.changePercent - a.changePercent);
 
-    return { version: MOMENTUM_VERSION, status: 'available', rules: MOMENTUM_RULES, candidates };
+    return { version: MOMENTUM_VERSION, status: 'available', rules: MOMENTUM_RULES, scanStats, candidates };
   } catch {
     return {
       version: MOMENTUM_VERSION,

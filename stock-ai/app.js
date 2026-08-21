@@ -135,7 +135,8 @@ import { updateTrailingPosition } from '../api/momentum.js';
       `涨幅 <strong>≥${rules.minimumChangePercent}%</strong>`,
       `相对量 <strong>≥${rules.minimumRelativeVolume}×</strong>`,
       `成交额 <strong>≥${money(rules.minimumDollarVolume)}</strong>`,
-      `回撤退出 <strong>${rules.trailingDrawdownPercent}%</strong>`
+      `回撤退出 <strong>${rules.trailingDrawdownPercent}%</strong>`,
+      '候选池 <strong>排除权证/低价股</strong>'
     ].map((item) => `<span class="momentum-pill">${item}</span>`).join('') : '';
 
     if (!momentumScanner || momentumScanner.status !== 'available') {
@@ -145,7 +146,9 @@ import { updateTrailingPosition } from '../api/momentum.js';
     }
     const qualifiedCount = momentumScanner.candidates.filter((candidate) => candidate.qualified).length;
     const defensiveNote = marketRegime?.state === 'defensive' ? ' · 防御状态暂停新入场' : '';
-    $('momentum-status').textContent = `扫描涨幅榜及跟踪股共 ${momentumScanner.candidates.length} 只 · ${qualifiedCount} 只通过全部条件 · ${active.length} 个影子持仓 · ${state.momentum.completed.length} 次已退出${defensiveNote}`;
+    const scanStats = momentumScanner.scanStats;
+    const scanLabel = scanStats ? `扫描 ${scanStats.scanned} 只 · 排除 ${scanStats.excluded} 只权证/低价证券 · ${scanStats.eligibleUniverse} 只进入候选池` : `候选及跟踪股 ${momentumScanner.candidates.length} 只`;
+    $('momentum-status').textContent = `${scanLabel} · ${qualifiedCount} 只通过全部条件 · ${active.length} 个影子持仓 · ${state.momentum.completed.length} 次已退出${defensiveNote}`;
     const candidates = momentumScanner.candidates.slice(0, 5).map((candidate) => `<div class="momentum-row ${candidate.qualified ? 'qualified' : ''}">
       <span><strong class="ticker">${candidate.symbol}</strong><small>${candidate.qualified ? '模拟买入信号' : '未通过全部过滤'}</small></span>
       <span><small>现价</small>${money(candidate.price)}</span>

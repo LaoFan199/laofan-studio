@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { analyzeMarketRegime, completedDailyBars } from '../api/market.js';
-import { evaluateMomentumCandidate, updateTrailingPosition } from '../api/momentum.js';
+import { evaluateMomentumCandidate, evaluateMomentumUniverse, updateTrailingPosition } from '../api/momentum.js';
 
 const barsFrom = (values, start = '2025-01-02T21:00:00Z') => values.map((c, index) => ({
   c,
@@ -72,6 +72,20 @@ test('momentum candidate fails closed when volume history or quote is missing', 
   assert.equal(result.qualified, false);
   assert.equal(result.checks.find((check) => check.key === 'relativeVolume').passed, false);
   assert.equal(result.checks.find((check) => check.key === 'spread').passed, false);
+});
+
+test('momentum universe excludes low-priced and warrant-like movers before ranking', () => {
+  assert.equal(evaluateMomentumUniverse('RNWWW', 0.02).eligible, false);
+  assert.equal(evaluateMomentumUniverse('RFAIW', 10.22).eligible, false);
+  assert.equal(evaluateMomentumUniverse('HOWL', 0.85).eligible, false);
+  assert.equal(evaluateMomentumUniverse('RFAI', 68.55).eligible, true);
+  assert.equal(evaluateMomentumUniverse('GOOGL', 344.75).eligible, true);
+});
+
+test('momentum universe keeps tracked common shares representable', () => {
+  const result = evaluateMomentumUniverse('BRK.B', 500);
+  assert.equal(result.eligible, true);
+  assert.deepEqual(result.reasons, []);
 });
 
 test('trailing exit rises with the high and triggers at a 15 percent drawdown', () => {

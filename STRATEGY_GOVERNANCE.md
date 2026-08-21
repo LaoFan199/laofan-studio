@@ -190,6 +190,40 @@ them in response to a few recent sessions.
 - Decision: pending; shadow observation only
 - Related commit: `d0fff83`
 
+### Experiment: Momentum Challenger v1.1 candidate quality filter
+
+- Date proposed: 2026-08-21
+- Baseline version: momentum-v1-shadow (retained in Git history and existing
+  recorded signals)
+- Challenger version: momentum-v1.1-shadow
+- Hypothesis: applying a deterministic security-quality filter before detailed
+  momentum analysis will prevent warrants, acquisition units, rights, and
+  sub-$5 securities from consuming the limited mover list, allowing more
+  liquid common-stock candidates to be evaluated without weakening risk rules.
+- One primary change: candidate-universe eligibility. Request the maximum 50
+  top gainers, then exclude symbol patterns associated with warrants/units/
+  rights and prices below $5 before fetching detailed inputs.
+- Frozen rules: the 10% gain, 3x relative volume, $20 million dollar volume,
+  1% maximum spread, defensive-regime pause, and 15% trailing exit are unchanged.
+- Instruments and dates: Alpaca US stock top-gainers feed beginning after this
+  version is deployed. Existing shadow positions remain tracked even if their
+  symbol would not qualify for a new v1.1 entry.
+- Execution/cost assumptions: unchanged from momentum-v1-shadow; shadow only,
+  first observed qualifying price, and observed exit price with future gap and
+  slippage modeling.
+- Acceptance criteria chosen before evaluation:
+  - exclude the observed warrant-like and sub-$5 examples before display and
+    detailed qualification while retaining ordinary symbols and class shares;
+  - report scanned, excluded, and eligible-universe counts visibly;
+  - never drop price monitoring for an existing shadow position;
+  - preserve all original entry and exit thresholds and fail-closed behavior;
+  - pass deterministic tests plus desktop/narrow visual checks;
+  - compare coverage, trade count, cost-adjusted return, profit factor, and
+    maximum drawdown over at least 20-40 trading days before any promotion.
+- Results: implementation and forward observation pending.
+- Decision: pending; shadow observation only
+- Related commit: pending
+
 Copy this section for each future strategy experiment:
 
 ```markdown
