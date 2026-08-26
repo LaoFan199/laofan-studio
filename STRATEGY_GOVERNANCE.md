@@ -229,6 +229,31 @@ them in response to a few recent sessions.
 - Decision: pending; shadow observation only
 - Related commit: `720a89a`
 
+### Paper execution change: fractional-v1
+
+- Date proposed: 2026-08-25
+- Previous execution: whole-share paper orders
+- New execution version: fractional-v1
+- Hypothesis: dollar-denominated paper orders remove an unintended bias against
+  high-priced stocks without altering selection signals or dollar risk limits.
+- One primary change: replace whole-share quantity entry with a dollar amount
+  and calculate fractional simulated shares at the displayed decision price.
+- Frozen strategy rules: score threshold 75, single-symbol maximum $200,
+  minimum account cash $200, crisis shield, momentum rules, and all candidate
+  scores remain unchanged.
+- Compatibility: existing positions and history retain their original quantity
+  and records; new buys record `fractional-v1` without rewriting old trades.
+- Acceptance criteria chosen before implementation:
+  - allow a $50 order in a stock priced above $200 when its signal is eligible;
+  - reject orders below $10, above remaining cash capacity, or above the
+    cumulative $200 symbol limit;
+  - display fractional quantities consistently in holdings and history;
+  - reconcile equity to cash plus current position value after buy and sell;
+  - pass deterministic tests and desktop/narrow interactive checks.
+- Results: implementation validation pending.
+- Decision: product execution improvement; strategy thresholds unchanged
+- Related commit: pending
+
 Copy this section for each future strategy experiment:
 
 ```markdown

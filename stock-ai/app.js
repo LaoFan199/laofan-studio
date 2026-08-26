@@ -1,4 +1,5 @@
 import { updateTrailingPosition } from '../api/momentum.js';
+import { calculateFractionalOrder, FRACTIONAL_EXECUTION_VERSION, MIN_ORDER_AMOUNT } from './trading.js';
 
 (() => {
   'use strict';
@@ -30,6 +31,7 @@ import { updateTrailingPosition } from '../api/momentum.js';
   const $ = (id) => document.getElementById(id);
   const money = (n) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(n);
   const percent = (n) => n == null ? '—' : `${n >= 0 ? '+' : ''}${n.toFixed(2)}%`;
+  const shares = (n) => `${Number(n).toLocaleString('en-US', { maximumFractionDigits: 6 })} 股`;
 
   function save() { localStorage.setItem('laofan-paper-account', JSON.stringify(state)); }
   function currentPrice(symbol) { return ideas.find((item) => item.symbol === symbol)?.price || 0; }
@@ -195,11 +197,11 @@ import { updateTrailingPosition } from '../api/momentum.js';
     $('positions').innerHTML = entries.length ? entries.map(([symbol, p]) => {
       const price = currentPrice(symbol); const pnl = (price - p.avgPrice) * p.quantity;
       const pnlRate = p.avgPrice ? ((price / p.avgPrice) - 1) * 100 : 0;
-      return `<div class="position"><strong>${symbol}<span class="company">${p.quantity} 股</span></strong><span>成本 ${money(p.avgPrice * p.quantity)}<small>均价 ${money(p.avgPrice)}</small></span><span>现值 ${money(price * p.quantity)}<small>现价 ${money(price)}</small></span><span class="${pnl >= 0 ? 'positive' : 'negative'}">${pnl >= 0 ? '+' : ''}${money(pnl)}<small>${percent(pnlRate)}</small></span><button class="sell-button" data-sell="${symbol}">全部卖出</button></div>`;
+      return `<div class="position"><strong>${symbol}<span class="company">${shares(p.quantity)}</span></strong><span>成本 ${money(p.avgPrice * p.quantity)}<small>均价 ${money(p.avgPrice)}</small></span><span>现值 ${money(price * p.quantity)}<small>现价 ${money(price)}</small></span><span class="${pnl >= 0 ? 'positive' : 'negative'}">${pnl >= 0 ? '+' : ''}${money(pnl)}<small>${percent(pnlRate)}</small></span><button class="sell-button" data-sell="${symbol}">全部卖出</button></div>`;
     }).join('') : '还没有持仓。可从候选股中发起模拟买入。';
 
     $('history').className = state.history.length ? '' : 'empty';
-    $('history').innerHTML = state.history.length ? state.history.slice().reverse().map((h) => `<div class="history-row"><strong>${h.type} ${h.symbol}</strong><span>${h.quantity} 股</span><span>${money(h.price)}</span><span>${h.time}</span><span>${money(h.total)}</span></div>`).join('') : '交易记录为空。';
+    $('history').innerHTML = state.history.length ? state.history.slice().reverse().map((h) => `<div class="history-row"><strong>${h.type} ${h.symbol}</strong><span>${shares(h.quantity)}</span><span>${money(h.price)}</span><span>${h.time}</span><span>${money(h.total)}</span></div>`).join('') : '交易记录为空。';
     save();
   }
 
@@ -212,34 +214,42 @@ import { updateTrailingPosition } from '../api/momentum.js';
     $('order-shield').textContent = marketRegime
       ? `危机防护挑战者：${marketRegime.label}，建议总仓位不超过 ${marketRegime.suggestedMaxExposure ?? '—'}%（当前不自动拦截）`
       : '危机防护挑战者：等待市场状态数据';
-    $('order-quantity').value = 1;
+    const current = state.positions[selected.symbol] ? state.positions[selected.symbol].quantity * selected.price : 0;
+    const initial = calculateFractionalOrder({ amount: 50, price: selected.price, cash: state.cash, currentPositionValue: current, minimumCash: MIN_CASH, maximumPosition: MAX_POSITION });
+    $('order-amount').value = Math.min(50, initial.maximumAllowed).toFixed(2);
     validateOrder(); $('trade-dialog').showModal();
   }
 
   function validateOrder() {
-    const qty = Math.max(0, parseInt($('order-quantity').value, 10) || 0);
-    const total = selected ? selected.price * qty : 0;
     const current = selected && state.positions[selected.symbol] ? state.positions[selected.symbol].quantity * selected.price : 0;
-    const valid = qty > 0 && total <= state.cash - MIN_CASH && total + current <= MAX_POSITION;
-    $('order-check').innerHTML = `订单金额：<strong>${money(total)}</strong><br>单股最多 ${money(MAX_POSITION)}，账户至少保留 ${money(MIN_CASH)} 现金。`;
-    $('confirm-order').disabled = !valid;
-    return { qty, total, valid };
+    const order = calculateFractionalOrder({
+      amount: $('order-amount').value,
+      price: selected?.price,
+      cash: state.cash,
+      currentPositionValue: current,
+      minimumCash: MIN_CASH,
+      maximumPosition: MAX_POSITION,
+      minimumOrder: MIN_ORDER_AMOUNT
+    });
+    $('order-check').innerHTML = `预计获得：<strong>${shares(order.quantity)}</strong><br>本次金额：<strong>${money(order.amount)}</strong> · 当前最多还可投入 ${money(order.maximumAllowed)}<br>单股累计最多 ${money(MAX_POSITION)}，账户至少保留 ${money(MIN_CASH)} 现金。`;
+    $('confirm-order').disabled = !order.valid;
+    return order;
   }
 
   function buy() {
     const order = validateOrder(); if (!order.valid) return;
     const old = state.positions[selected.symbol] || { quantity: 0, avgPrice: 0 };
-    const quantity = old.quantity + order.qty;
-    state.positions[selected.symbol] = { quantity, avgPrice: ((old.quantity * old.avgPrice) + order.total) / quantity };
-    state.cash -= order.total;
-    state.history.push({ type: '买入', symbol: selected.symbol, quantity: order.qty, price: selected.price, total: order.total, time: new Date().toLocaleDateString('zh-CN') });
+    const quantity = old.quantity + order.quantity;
+    state.positions[selected.symbol] = { quantity, avgPrice: ((old.quantity * old.avgPrice) + order.amount) / quantity, executionVersion: FRACTIONAL_EXECUTION_VERSION };
+    state.cash = Math.round((state.cash - order.amount + Number.EPSILON) * 100) / 100;
+    state.history.push({ type: '买入', symbol: selected.symbol, quantity: order.quantity, price: selected.price, total: order.amount, score: selected.score, confidence: selected.confidence, executionVersion: FRACTIONAL_EXECUTION_VERSION, time: new Date().toLocaleDateString('zh-CN') });
     render(); $('trade-dialog').close();
   }
 
   function sell(symbol) {
     const p = state.positions[symbol]; const price = currentPrice(symbol); const total = price * p.quantity;
     state.cash += total; state.realized += (price - p.avgPrice) * p.quantity;
-    state.history.push({ type: '卖出', symbol, quantity: p.quantity, price, total, time: new Date().toLocaleDateString('zh-CN') });
+    state.history.push({ type: '卖出', symbol, quantity: p.quantity, price, total, executionVersion: p.executionVersion || 'legacy-whole-share', time: new Date().toLocaleDateString('zh-CN') });
     delete state.positions[symbol]; render();
   }
 
@@ -308,7 +318,13 @@ import { updateTrailingPosition } from '../api/momentum.js';
     if (e.target.matches('[data-symbol]')) openOrder(e.target.dataset.symbol);
     if (e.target.matches('[data-sell]')) sell(e.target.dataset.sell);
   });
-  $('order-quantity').addEventListener('input', validateOrder);
+  $('order-amount').addEventListener('input', validateOrder);
+  document.querySelectorAll('[data-order-amount]').forEach((button) => button.addEventListener('click', () => {
+    const current = selected && state.positions[selected.symbol] ? state.positions[selected.symbol].quantity * selected.price : 0;
+    const limit = calculateFractionalOrder({ amount: 0, price: selected?.price, cash: state.cash, currentPositionValue: current, minimumCash: MIN_CASH, maximumPosition: MAX_POSITION }).maximumAllowed;
+    $('order-amount').value = button.dataset.orderAmount === 'max' ? limit.toFixed(2) : button.dataset.orderAmount;
+    validateOrder();
+  }));
   $('trade-form').addEventListener('submit', (e) => { e.preventDefault(); buy(); });
   $('enable-momentum-alerts').addEventListener('click', async () => {
     if (!('Notification' in window)) { $('enable-momentum-alerts').textContent = '浏览器不支持通知'; return; }

@@ -124,6 +124,7 @@
           <ul>
             <li><span>单股仓位上限</span><strong>20%</strong></li>
             <li><span>最低现金比例</span><strong>20%</strong></li>
+            <li><span>按金额 / 小数股</span><strong>支持模拟</strong></li>
             <li><span>回撤警示线</span><strong>-5%</strong></li>
             <li><span>杠杆 / 期权</span><strong>禁用</strong></li>
             <li><span>真钱自动交易</span><strong>禁用</strong></li>
@@ -145,9 +146,14 @@
       <p id="order-price" class="order-price"></p>
       <p id="order-signal" class="order-signal"></p>
       <p id="order-shield" class="order-shield"></p>
-      <label>买入股数<input id="order-quantity" type="number" min="1" step="1" value="1" required></label>
+      <label>投入金额（美元）<input id="order-amount" type="number" min="10" step="1" value="50" inputmode="decimal" required></label>
+      <div class="order-presets" aria-label="快捷投入金额">
+        <button type="button" data-order-amount="50">$50</button>
+        <button type="button" data-order-amount="100">$100</button>
+        <button type="button" data-order-amount="max">最多可投</button>
+      </div>
       <div class="order-check" id="order-check"></div>
-      <button class="buy-button" id="confirm-order" value="default">确认模拟买入</button>
+      <button class="buy-button" id="confirm-order" value="default">确认按金额模拟买入</button>
     </form>
   </dialog>
 
