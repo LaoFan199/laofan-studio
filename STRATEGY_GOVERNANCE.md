@@ -250,9 +250,14 @@ them in response to a few recent sessions.
   - display fractional quantities consistently in holdings and history;
   - reconcile equity to cash plus current position value after buy and sell;
   - pass deterministic tests and desktop/narrow interactive checks.
-- Results: implementation validation pending.
+- Results: implementation validation passed on 2026-08-25. Thirteen tests pass,
+  including $50 fractional execution above a $200 share price and code-level
+  rejection for minimum-cash, maximum-position, and minimum-order violations.
+  Interactive MSFT validation produced 0.101719 shares for $50 at $491.55,
+  rejected $250, reconciled $1,000 equity before/after a round trip, and passed
+  desktop and 390px checks without console errors or horizontal overflow.
 - Decision: product execution improvement; strategy thresholds unchanged
-- Related commit: pending
+- Related commit: `535550b`
 
 Copy this section for each future strategy experiment:
 
