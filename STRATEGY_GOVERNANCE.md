@@ -296,9 +296,18 @@ them in response to a few recent sessions.
   - observe at least 20-40 trading days, preferably 8-12 weeks, and compare
     total return, SPY excess return, maximum drawdown, profit factor, average
     win/loss, holding period, and cost-adjusted results before promotion.
-- Results: implementation and forward observation pending
+- Results: implementation validation passed on 2026-08-27. Seventeen
+  deterministic tests pass, including incomplete-data failure, drawdown without
+  confirmation remaining watch-only, all-three-check confirmation, extreme
+  drawdown exclusion, exact setup-low stop, and 10-day time exit. The deployed
+  API reports `dip-v1-shadow`; the desktop page reconciles $1,000 equity to
+  $1,000 cash plus $0 holdings in an isolated browser test, shows the
+  shadow-only limitation, and has no horizontal overflow. The narrow layout
+  reuses the previously validated two-column momentum-row breakpoint and wraps
+  the new panel heading. Forward observation and cost-adjusted evaluation
+  remain pending.
 - Decision: pending; shadow observation only
-- Related commit: pending
+- Related commits: `05a68de`, `816b897`
 
 Copy this section for each future strategy experiment:
 
