@@ -259,6 +259,47 @@ them in response to a few recent sessions.
 - Decision: product execution improvement; strategy thresholds unchanged
 - Related commit: `535550b`
 
+### Experiment: Dip Opportunity Challenger v1
+
+- Date proposed: 2026-08-27
+- Baseline version: v1.1 (unchanged)
+- Challenger version: dip-v1-shadow
+- Hypothesis: requiring a material drawdown followed by deterministic price
+  confirmation can find better entry timing in the existing liquid quality
+  whitelist without turning a falling price alone into a buy signal.
+- One primary change: add an independent post-drawdown entry-timing strategy;
+  do not alter v1.1 scores, main paper holdings, momentum, or crisis-shield
+  behavior.
+- Instruments and dates: SPY plus MSFT, GOOGL, NVDA, KO, and SCHD, beginning
+  after deployment. The fixed whitelist is a liquidity/quality proxy, not a
+  live fundamental-safety determination.
+- Frozen entry rules: require at least 61 completed daily bars; price must be
+  8%-30% below its trailing 60-session high; the latest completed session must
+  close above the previous close, remain above the previous session low, and
+  close above its 5-session average. Enter one $50 shadow position at the first
+  subsequently observed price; never average down.
+- Frozen exit rules: record an exit at the first observation at or below 98% of
+  the setup low, or after 10 distinct observed market dates without reaching a
+  5% gain. These are shadow observations, not guaranteed execution prices;
+  future evaluation must model gaps and slippage.
+- Execution/cost assumptions: one shadow position per symbol, no main-account
+  cash usage, brokerage order, leverage, or option. Browser polling is not
+  continuous and missed prices must not be reconstructed with hindsight.
+- Acceptance criteria chosen before evaluation:
+  - distinguish watch, confirmed, shadow-held, expired, and invalidated states;
+  - fail closed with incomplete daily bars or invalid prices;
+  - never create an entry from drawdown magnitude alone;
+  - preserve setup time, setup low, entry price, exit rule, observed exit price,
+    and strategy version without rewriting historical decisions;
+  - pass deterministic tests and desktop/narrow viewport checks with the
+    shadow-only limitation visible;
+  - observe at least 20-40 trading days, preferably 8-12 weeks, and compare
+    total return, SPY excess return, maximum drawdown, profit factor, average
+    win/loss, holding period, and cost-adjusted results before promotion.
+- Results: implementation and forward observation pending
+- Decision: pending; shadow observation only
+- Related commit: pending
+
 Copy this section for each future strategy experiment:
 
 ```markdown

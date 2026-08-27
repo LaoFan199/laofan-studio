@@ -1,4 +1,5 @@
 import { evaluateMomentumCandidate, evaluateMomentumUniverse, MOMENTUM_RULES, MOMENTUM_VERSION } from './momentum.js';
+import { evaluateDipOpportunity, DIP_RULES, DIP_VERSION } from './dip.js';
 
 const ALLOWED_SYMBOLS = new Set(['MSFT', 'GOOGL', 'NVDA', 'KO', 'SCHD', 'SPY']);
 const ALLOWED_ORIGIN = 'https://laofan199.github.io';
@@ -291,6 +292,17 @@ export default async function handler(req, res) {
       symbols.filter((symbol) => symbol !== 'SPY').map((symbol) => [symbol, completedHistory[symbol] || []])
     );
     const marketRegime = analyzeMarketRegime(completedHistory.SPY, universeBars);
+    const dipOpportunities = historySymbols.map((symbol) => ({
+      symbol,
+      ...evaluateDipOpportunity(completedHistory[symbol])
+    }));
+    const dip = {
+      version: DIP_VERSION,
+      status: dipOpportunities.some((item) => item.status !== 'unavailable') ? 'available' : 'unavailable',
+      rules: DIP_RULES,
+      universe: historySymbols,
+      opportunities: dipOpportunities
+    };
     const trackedMomentumSymbols = String(req.query.momentumSymbols || '').toUpperCase().split(',')
       .map((value) => value.trim()).filter((value) => /^[A-Z.]{1,6}$/.test(value)).slice(0, 20);
     const momentum = await loadMomentumScanner(headers, Boolean(clock.is_open), trackedMomentumSymbols);
@@ -301,6 +313,7 @@ export default async function handler(req, res) {
       market: { isOpen: Boolean(clock.is_open), nextOpen: clock.next_open, nextClose: clock.next_close },
       marketRegime,
       momentum,
+      dip,
       quotes,
       fetchedAt: new Date().toISOString()
     });

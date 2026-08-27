@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { analyzeMarketRegime, completedDailyBars } from '../api/market.js';
 import { evaluateMomentumCandidate, evaluateMomentumUniverse, updateTrailingPosition } from '../api/momentum.js';
+import { evaluateDipOpportunity, updateDipPosition } from '../api/dip.js';
 
 const barsFrom = (values, start = '2025-01-02T21:00:00Z') => values.map((c, index) => ({
   c,
@@ -98,4 +99,41 @@ test('trailing exit rises with the high and triggers at a 15 percent drawdown', 
   const falling = updateTrailingPosition(rising, 169.99);
   assert.equal(falling.highWatermark, 200);
   assert.equal(falling.shouldExit, true);
+});
+
+test('dip opportunity needs a material drawdown and all three confirmation checks', () => {
+  const closes = [...Array(56).fill(100), 94, 90, 88, 89, 91];
+  const bars = barsFrom(closes).map((bar, index) => ({ ...bar, l: index === 59 ? 87.5 : index === 60 ? 88.5 : bar.c - 1 }));
+  const result = evaluateDipOpportunity(bars);
+  assert.equal(result.status, 'confirmed');
+  assert.equal(result.confirmed, true);
+  assert.ok(result.drawdownPercent >= 8);
+  assert.deepEqual(result.checks, { reboundClose: true, higherLow: true, aboveShortAverage: true });
+});
+
+test('drawdown alone stays on watch when price has not confirmed', () => {
+  const closes = [...Array(57).fill(100), 95, 92, 90, 89];
+  const bars = barsFrom(closes).map((bar) => ({ ...bar, l: bar.c - 1 }));
+  const result = evaluateDipOpportunity(bars);
+  assert.equal(result.status, 'watch');
+  assert.equal(result.confirmed, false);
+});
+
+test('dip opportunity fails closed with incomplete bars and excludes extreme drawdowns', () => {
+  assert.equal(evaluateDipOpportunity(barsFrom(Array(60).fill(100))).status, 'unavailable');
+  const extreme = barsFrom([...Array(60).fill(100), 60]).map((bar) => ({ ...bar, l: bar.c - 1 }));
+  assert.equal(evaluateDipOpportunity(extreme).status, 'excluded');
+});
+
+test('dip shadow position exits below setup low or after ten unproductive observations', () => {
+  const entry = { symbol: 'XYZ', entryPrice: 100, setupLow: 90, observedDates: ['2026-08-01'] };
+  const stopped = updateDipPosition(entry, 88.2, '2026-08-02');
+  assert.equal(stopped.stopPrice, 88.2);
+  assert.equal(stopped.shouldExit, true);
+  assert.equal(stopped.exitReason, '跌破形态低点2%');
+  let held = entry;
+  for (let day = 2; day <= 10; day += 1) held = updateDipPosition(held, 102, `2026-08-${String(day).padStart(2, '0')}`);
+  assert.equal(held.holdingDays, 10);
+  assert.equal(held.shouldExit, true);
+  assert.equal(held.exitReason, '10个交易日未达到5%反弹');
 });
