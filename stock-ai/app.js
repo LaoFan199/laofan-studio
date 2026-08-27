@@ -1,4 +1,5 @@
 import { updateTrailingPosition } from '../api/momentum.js';
+import { updateDipPosition } from '../api/dip.js';
 import { calculateFractionalOrder, FRACTIONAL_EXECUTION_VERSION, MIN_ORDER_AMOUNT } from './trading.js';
 
 (() => {
@@ -25,9 +26,14 @@ import { calculateFractionalOrder, FRACTIONAL_EXECUTION_VERSION, MIN_ORDER_AMOUN
   state.momentum.positions ||= {};
   state.momentum.completed ||= [];
   state.momentum.signals ||= [];
+  state.dip ||= { positions: {}, completed: [], signals: [] };
+  state.dip.positions ||= {};
+  state.dip.completed ||= [];
+  state.dip.signals ||= [];
   let selected = null;
   let marketRegime = null;
   let momentumScanner = null;
+  let dipScanner = null;
   const $ = (id) => document.getElementById(id);
   const money = (n) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(n);
   const percent = (n) => n == null ? '—' : `${n >= 0 ? '+' : ''}${n.toFixed(2)}%`;
@@ -161,6 +167,92 @@ import { calculateFractionalOrder, FRACTIONAL_EXECUTION_VERSION, MIN_ORDER_AMOUN
     $('momentum-list').innerHTML = renderMomentumPositions(active) + candidates || '<div class="momentum-empty">当前没有可显示的异动股票</div>';
   }
 
+  function updateDip(data, fetchedAt, marketIsOpen, quotes) {
+    dipScanner = data;
+    if (!data || data.status !== 'available') return;
+    Object.entries(state.dip.positions).forEach(([symbol, position]) => {
+      const price = Number(quotes?.[symbol]?.price);
+      const observedDate = quotes?.[symbol]?.timestamp ? new Date(quotes[symbol].timestamp).toISOString().slice(0, 10) : null;
+      const updated = updateDipPosition(position, price, observedDate, data.rules);
+      if (!updated) return;
+      state.dip.positions[symbol] = { ...updated, lastObservedAt: fetchedAt };
+      if (updated.shouldExit) {
+        state.dip.completed.push({ ...updated, exitPrice: price, exitedAt: fetchedAt, reason: updated.exitReason });
+        delete state.dip.positions[symbol];
+      }
+    });
+    if (marketIsOpen) {
+      data.opportunities.filter((item) => item.confirmed).forEach((item) => {
+        const signalId = `${item.signalTime}:${item.symbol}`;
+        if (state.dip.signals.some((signal) => signal.id === signalId)) return;
+        const price = Number(quotes?.[item.symbol]?.price);
+        const observedDate = quotes?.[item.symbol]?.timestamp ? new Date(quotes[item.symbol].timestamp).toISOString().slice(0, 10) : null;
+        if (!Number.isFinite(price) || price <= 0 || !observedDate) return;
+        const position = {
+          symbol: item.symbol,
+          version: data.version,
+          entryPrice: price,
+          currentPrice: price,
+          setupLow: item.setupLow,
+          stopPrice: item.setupLow * 0.98,
+          drawdownAtSignalPercent: item.drawdownPercent,
+          enteredAt: fetchedAt,
+          lastObservedAt: fetchedAt,
+          observedDates: [observedDate],
+          holdingDays: 1,
+          returnPercent: 0,
+          shadowAmount: data.rules.shadowAmount
+        };
+        state.dip.signals.push({ id: signalId, symbol: item.symbol, time: fetchedAt, price, setupLow: item.setupLow, version: data.version });
+        if (!state.dip.positions[item.symbol]) state.dip.positions[item.symbol] = position;
+      });
+    }
+    state.dip.signals = state.dip.signals.slice(-300);
+    state.dip.completed = state.dip.completed.slice(-200);
+  }
+
+  function renderDipPositions(positions) {
+    return positions.map((position) => `<div class="momentum-row dip-confirmed">
+      <span><strong class="ticker">${position.symbol}</strong><small>影子试仓 · ${position.version}</small></span>
+      <span><small>模拟入场</small>${money(position.entryPrice)}</span>
+      <span><small>认错退出线</small>${money(position.stopPrice)}</span>
+      <span><small>已观察交易日</small>${position.holdingDays}/10</span>
+      <span class="${position.returnPercent >= 0 ? 'positive' : 'negative'}"><small>当前模拟收益</small>${percent(position.returnPercent)}</span>
+    </div>`).join('');
+  }
+
+  function renderDip() {
+    const active = Object.values(state.dip.positions);
+    const rules = dipScanner?.rules;
+    $('dip-summary').innerHTML = rules ? [
+      `回撤区间 <strong>${rules.minimumDrawdownPercent}%–${rules.maximumDrawdownPercent}%</strong>`,
+      `止跌确认 <strong>上涨/高低点/5日线</strong>`,
+      `影子试仓 <strong>${money(rules.shadowAmount)}</strong>`,
+      `跌破形态低点 <strong>${rules.stopBelowSetupLowPercent}%退出</strong>`,
+      `时间退出 <strong>${rules.maximumHoldingDays}日</strong>`
+    ].map((item) => `<span class="momentum-pill">${item}</span>`).join('') : '';
+    if (!dipScanner || dipScanner.status !== 'available') {
+      $('dip-status').textContent = '完整日线不足，停止产生新信号';
+      $('dip-list').innerHTML = active.length ? renderDipPositions(active) : '<div class="momentum-empty">等待数据</div>';
+      return;
+    }
+    const watched = dipScanner.opportunities.filter((item) => item.status === 'watch').length;
+    const confirmed = dipScanner.opportunities.filter((item) => item.status === 'confirmed').length;
+    $('dip-status').textContent = `扫描 ${dipScanner.universe.length} 只白名单标的 · ${watched} 只等待确认 · ${confirmed} 只确认 · ${active.length} 个影子试仓 · ${state.dip.completed.length} 次已退出`;
+    const opportunities = dipScanner.opportunities.filter((item) => ['watch', 'confirmed', 'excluded'].includes(item.status)).map((item) => {
+      const statusLabel = item.status === 'confirmed' ? '止跌已确认' : item.status === 'watch' ? '等待止跌确认' : '回撤过深，排除';
+      const checks = item.checks ? Object.values(item.checks).filter(Boolean).length : 0;
+      return `<div class="momentum-row dip-${item.status}">
+        <span><strong class="ticker">${item.symbol}</strong><small>${statusLabel}</small></span>
+        <span><small>距60日高点</small>${percent(-item.drawdownPercent)}</span>
+        <span><small>最新完整收盘</small>${money(item.latestClose)}</span>
+        <span><small>确认条件</small>${item.checks ? `${checks}/3` : '—'}</span>
+        <span><small>形态低点</small>${item.setupLow ? money(item.setupLow) : '—'}</span>
+      </div>`;
+    }).join('');
+    $('dip-list').innerHTML = renderDipPositions(active) + opportunities || '<div class="momentum-empty">当前没有进入8%回撤观察区的标的</div>';
+  }
+
   function renderIdeas() {
     $('ideas-body').innerHTML = ideas.map((item) => { const signal = signalFor(item); return `<tr>
       <td><span class="ticker">${item.symbol}</span><span class="company">${item.name}</span><span class="reason">${item.reasons.join(' · ') || '等待历史数据计算'}</span>${factorDetails(item)}</td>
@@ -191,6 +283,7 @@ import { calculateFractionalOrder, FRACTIONAL_EXECUTION_VERSION, MIN_ORDER_AMOUN
     }
     renderMarketShield();
     renderMomentum();
+    renderDip();
 
     const entries = Object.entries(state.positions);
     $('positions').className = entries.length ? '' : 'empty';
@@ -265,7 +358,6 @@ import { calculateFractionalOrder, FRACTIONAL_EXECUTION_VERSION, MIN_ORDER_AMOUN
       if (!response.ok) throw new Error('market request failed');
       const data = await response.json();
       marketRegime = data.marketRegime || null;
-      updateMomentum(data.momentum || null, data.fetchedAt, Boolean(data.market.isOpen));
       ideas.forEach((item) => {
         const quote = data.quotes[item.symbol];
         if (quote?.price) item.price = quote.price;
@@ -278,6 +370,8 @@ import { calculateFractionalOrder, FRACTIONAL_EXECUTION_VERSION, MIN_ORDER_AMOUN
           item.confidence = quote.analysis.confidence || '中';
         }
       });
+      updateMomentum(data.momentum || null, data.fetchedAt, Boolean(data.market.isOpen));
+      updateDip(data.dip || null, data.fetchedAt, Boolean(data.market.isOpen), data.quotes);
       const spy = data.quotes.SPY;
       if (spy?.price) {
         state.benchmark ||= { startPrice: spy.price, startedAt: data.fetchedAt };
@@ -335,7 +429,7 @@ import { calculateFractionalOrder, FRACTIONAL_EXECUTION_VERSION, MIN_ORDER_AMOUN
     } else $('enable-momentum-alerts').textContent = '通知未授权';
   });
   if ('Notification' in window && Notification.permission === 'granted' && localStorage.getItem('laofan-momentum-alerts') === 'enabled') $('enable-momentum-alerts').textContent = '网页通知已开启';
-  $('reset-button').addEventListener('click', () => { if (confirm('确定清除全部模拟交易记录并恢复到 $1,000 吗？')) { state = { cash: STARTING_CASH, realized: 0, positions: {}, history: [], snapshots: [], benchmark: null, regimeSnapshots: [], momentum: { positions: {}, completed: [], signals: [] } }; render(); } });
+  $('reset-button').addEventListener('click', () => { if (confirm('确定清除全部模拟交易记录并恢复到 $1,000 吗？')) { state = { cash: STARTING_CASH, realized: 0, positions: {}, history: [], snapshots: [], benchmark: null, regimeSnapshots: [], momentum: { positions: {}, completed: [], signals: [] }, dip: { positions: {}, completed: [], signals: [] } }; render(); } });
   renderIdeas(); render(); loadMarketData();
   setInterval(loadMarketData, 60 * 1000);
 })();
