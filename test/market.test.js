@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { analyzeMarketRegime, completedDailyBars } from '../api/market.js';
 import { evaluateMomentumCandidate, evaluateMomentumUniverse, updateTrailingPosition } from '../api/momentum.js';
 import { evaluateDipOpportunity, updateDipPosition } from '../api/dip.js';
+import { compareDynamicRankings, rankDynamicCandidates } from '../api/dynamic-strategy.js';
 
 const barsFrom = (values, start = '2025-01-02T21:00:00Z') => values.map((c, index) => ({
   c,
@@ -136,4 +137,37 @@ test('dip shadow position exits below setup low or after ten unproductive observ
   assert.equal(held.holdingDays, 10);
   assert.equal(held.shouldExit, true);
   assert.equal(held.exitReason, '10个交易日未达到5%反弹');
+});
+
+test('dynamic universe fails closed on price, history, liquidity, or missing score', () => {
+  const liquidBars = Array.from({ length: 61 }, () => ({ c: 100, v: 1_000_000 }));
+  const candidates = rankDynamicCandidates([
+    { symbol: 'GOOD', price: 100, bars: liquidBars, analysis: { score: 80, metrics: { relative20: 2 } } },
+    { symbol: 'CHEAP', price: 4, bars: liquidBars, analysis: { score: 99, metrics: { relative20: 20 } } },
+    { symbol: 'SHORT', price: 100, bars: liquidBars.slice(0, 60), analysis: { score: 99, metrics: { relative20: 20 } } },
+    { symbol: 'ILLIQ', price: 100, bars: Array.from({ length: 61 }, () => ({ c: 10, v: 10_000 })), analysis: { score: 99, metrics: { relative20: 20 } } },
+    { symbol: 'NOSCORE', price: 100, bars: liquidBars, analysis: null }
+  ]);
+  assert.deepEqual(candidates.map((item) => item.symbol), ['GOOD']);
+});
+
+test('dynamic universe ranks by unchanged score then relative strength', () => {
+  const bars = Array.from({ length: 61 }, () => ({ c: 100, v: 1_000_000 }));
+  const candidates = rankDynamicCandidates([
+    { symbol: 'B', price: 100, bars, analysis: { score: 85, metrics: { relative20: 2 } } },
+    { symbol: 'A', price: 100, bars, analysis: { score: 85, metrics: { relative20: 5 } } },
+    { symbol: 'C', price: 100, bars, analysis: { score: 90, metrics: { relative20: 0 } } }
+  ]);
+  assert.deepEqual(candidates.map((item) => item.symbol), ['C', 'A', 'B']);
+  assert.deepEqual(candidates.map((item) => item.rank), [1, 2, 3]);
+});
+
+test('dynamic ranking labels new, rising, falling, same, and exited symbols', () => {
+  const result = compareDynamicRankings(
+    [{ symbol: 'B' }, { symbol: 'A' }, { symbol: 'D' }],
+    [{ symbol: 'A' }, { symbol: 'B' }, { symbol: 'C' }]
+  );
+  assert.deepEqual(result.candidates.map((item) => item.movement), ['up', 'down', 'new']);
+  assert.deepEqual(result.exited, [{ symbol: 'C', previousRank: 3 }]);
+  assert.equal(compareDynamicRankings([{ symbol: 'A' }], [{ symbol: 'A' }]).candidates[0].movement, 'same');
 });

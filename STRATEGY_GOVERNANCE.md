@@ -309,6 +309,46 @@ them in response to a few recent sessions.
 - Decision: pending; shadow observation only
 - Related commits: `05a68de`, `816b897`
 
+### Experiment: Dynamic Universe Challenger v1
+
+- Date proposed: 2026-08-29
+- Baseline version: v1.1 fixed five-symbol universe (unchanged)
+- Challenger version: dynamic-universe-v1-shadow
+- Hypothesis: applying the unchanged v1.1 deterministic score to a broader,
+  predeclared liquid large-company universe can surface stronger candidates
+  and reveal ranking turnover that the fixed five-symbol baseline cannot see.
+- One primary change: candidate-universe breadth. The score weights, 75-point
+  candidate threshold, SPY benchmark, main holdings, and all account risk limits
+  remain unchanged.
+- Instruments and dates: a frozen list of approximately 60 established,
+  actively traded US-listed companies across multiple sectors, plus SPY as the
+  benchmark, beginning after deployment. The list is a research/liquidity
+  proxy and is not a live fundamental-quality guarantee.
+- Frozen eligibility: price at least $5, at least 61 completed adjusted daily
+  bars, and average 20-session dollar volume of at least $50 million. Rank by
+  the unchanged v1.1 score, then 20-day relative strength versus SPY, then
+  symbol for deterministic ties; display the top 10.
+- Execution/cost assumptions: ranking and history only. No shadow order, main
+  paper order, brokerage connection, leverage, or option is created from this
+  challenger. Any later portfolio simulation must use next-session execution
+  and explicit costs/slippage.
+- Acceptance criteria chosen before evaluation:
+  - retain the fixed five-symbol table unchanged as the comparison baseline;
+  - visibly report universe size, eligible count, data timestamp, strategy
+    version, and data failures;
+  - label top-10 members as new, rising, falling, or unchanged relative to the
+    prior stored market-day snapshot and show names that left the top 10;
+  - store at most one immutable ranking snapshot per market date, replacing
+    only the same date's in-progress observation;
+  - fail closed when benchmark/history/liquidity inputs are incomplete;
+  - pass deterministic ranking/change tests and desktop/narrow viewport checks;
+  - observe at least 20-40 trading days, preferably 8-12 weeks, before deciding
+    whether to simulate entries; compare turnover, coverage, forward top-10
+    return, SPY excess return, drawdown, and estimated costs.
+- Results: implementation and forward observation pending
+- Decision: pending; shadow ranking only
+- Related commit: pending
+
 Copy this section for each future strategy experiment:
 
 ```markdown
