@@ -1,5 +1,6 @@
 import { updateTrailingPosition } from '../api/momentum.js';
 import { updateDipPosition } from '../api/dip.js';
+import { compareDynamicRankings } from '../api/dynamic-strategy.js';
 import { calculateFractionalOrder, FRACTIONAL_EXECUTION_VERSION, MIN_ORDER_AMOUNT } from './trading.js';
 
 (() => {
@@ -30,10 +31,12 @@ import { calculateFractionalOrder, FRACTIONAL_EXECUTION_VERSION, MIN_ORDER_AMOUN
   state.dip.positions ||= {};
   state.dip.completed ||= [];
   state.dip.signals ||= [];
+  state.dynamicSnapshots ||= [];
   let selected = null;
   let marketRegime = null;
   let momentumScanner = null;
   let dipScanner = null;
+  let dynamicScanner = null;
   const $ = (id) => document.getElementById(id);
   const money = (n) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(n);
   const percent = (n) => n == null ? '—' : `${n >= 0 ? '+' : ''}${n.toFixed(2)}%`;
@@ -253,6 +256,51 @@ import { calculateFractionalOrder, FRACTIONAL_EXECUTION_VERSION, MIN_ORDER_AMOUN
     $('dip-list').innerHTML = renderDipPositions(active) + opportunities || '<div class="momentum-empty">当前没有进入8%回撤观察区的标的</div>';
   }
 
+  function updateDynamic(data) {
+    dynamicScanner = data;
+    if (!data || data.status !== 'available' || !data.candidates?.length) return;
+    const marketDate = data.candidates.find((item) => item.timestamp)?.timestamp
+      ? new Date(data.candidates.find((item) => item.timestamp).timestamp).toISOString().slice(0, 10)
+      : new Date(data.fetchedAt).toISOString().slice(0, 10);
+    const previous = state.dynamicSnapshots.filter((item) => item.date !== marketDate).at(-1)?.candidates || [];
+    const comparison = compareDynamicRankings(data.candidates, previous);
+    dynamicScanner = { ...data, marketDate, ...comparison };
+    const snapshot = {
+      date: marketDate,
+      version: data.version,
+      fetchedAt: data.fetchedAt,
+      candidates: data.candidates.map((item) => ({ symbol: item.symbol, rank: item.rank, score: item.analysis.score, price: item.price }))
+    };
+    const sameDate = state.dynamicSnapshots.findIndex((item) => item.date === marketDate);
+    if (sameDate >= 0) state.dynamicSnapshots[sameDate] = snapshot;
+    else state.dynamicSnapshots.push(snapshot);
+    state.dynamicSnapshots = state.dynamicSnapshots.slice(-120);
+  }
+
+  function renderDynamic() {
+    if (!dynamicScanner || dynamicScanner.status !== 'available') {
+      $('dynamic-status').textContent = dynamicScanner?.reason || '等待动态候选池数据';
+      $('dynamic-list').innerHTML = '<div class="momentum-empty">数据不完整时不更新排名</div>';
+      $('dynamic-exits').textContent = '';
+      return;
+    }
+    const stats = dynamicScanner.scanStats;
+    const time = new Date(dynamicScanner.fetchedAt).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+    $('dynamic-status').textContent = `扫描 ${stats.universe} 只 · ${stats.eligible} 只数据与流动性合格 · 显示前 ${stats.displayed} 名 · ${dynamicScanner.marketDate} ${time} 更新`;
+    const movementText = { new: '新进入', up: '排名上升', down: '排名下降', same: '排名不变' };
+    const movementMark = (item) => item.movement === 'new' ? 'NEW' : item.movement === 'same' ? '—' : `${item.movement === 'up' ? '↑' : '↓'} ${Math.abs(item.previousRank - item.rank)}`;
+    $('dynamic-list').innerHTML = dynamicScanner.candidates.map((item) => `<div class="momentum-row dynamic-row">
+      <span><strong class="dynamic-rank">#${item.rank}</strong><strong class="ticker">${item.symbol}</strong><small>${item.analysis.risk}风险 · 置信度${item.analysis.confidence}</small></span>
+      <span class="score"><small>量化分数</small>${item.analysis.score}/100</span>
+      <span><small>最新价格</small>${money(item.price)}</span>
+      <span class="${item.analysis.metrics.relative20 >= 0 ? 'positive' : 'negative'}"><small>20日相对SPY</small>${percent(item.analysis.metrics.relative20)}</span>
+      <span class="movement movement-${item.movement}"><small>${movementText[item.movement]}</small>${movementMark(item)}</span>
+    </div>`).join('');
+    $('dynamic-exits').textContent = dynamicScanner.exited.length
+      ? `本次退出前10：${dynamicScanner.exited.map((item) => `${item.symbol}（原#${item.previousRank}）`).join('、')}`
+      : '本次没有股票退出前10；首次记录时全部显示为“新进入”。';
+  }
+
   function renderIdeas() {
     $('ideas-body').innerHTML = ideas.map((item) => { const signal = signalFor(item); return `<tr>
       <td><span class="ticker">${item.symbol}</span><span class="company">${item.name}</span><span class="reason">${item.reasons.join(' · ') || '等待历史数据计算'}</span>${factorDetails(item)}</td>
@@ -284,6 +332,7 @@ import { calculateFractionalOrder, FRACTIONAL_EXECUTION_VERSION, MIN_ORDER_AMOUN
     renderMarketShield();
     renderMomentum();
     renderDip();
+    renderDynamic();
 
     const entries = Object.entries(state.positions);
     $('positions').className = entries.length ? '' : 'empty';
@@ -408,6 +457,18 @@ import { calculateFractionalOrder, FRACTIONAL_EXECUTION_VERSION, MIN_ORDER_AMOUN
     }
   }
 
+  async function loadDynamicData() {
+    if (!API_BASE) return;
+    try {
+      const response = await fetch(`${API_BASE}/api/dynamic`);
+      if (!response.ok) throw new Error('dynamic request failed');
+      updateDynamic(await response.json());
+    } catch {
+      dynamicScanner = { status: 'unavailable', reason: '动态候选池暂不可用，固定5只基准组不受影响' };
+    }
+    renderDynamic(); save();
+  }
+
   document.addEventListener('click', (e) => {
     if (e.target.matches('[data-symbol]')) openOrder(e.target.dataset.symbol);
     if (e.target.matches('[data-sell]')) sell(e.target.dataset.sell);
@@ -429,7 +490,8 @@ import { calculateFractionalOrder, FRACTIONAL_EXECUTION_VERSION, MIN_ORDER_AMOUN
     } else $('enable-momentum-alerts').textContent = '通知未授权';
   });
   if ('Notification' in window && Notification.permission === 'granted' && localStorage.getItem('laofan-momentum-alerts') === 'enabled') $('enable-momentum-alerts').textContent = '网页通知已开启';
-  $('reset-button').addEventListener('click', () => { if (confirm('确定清除全部模拟交易记录并恢复到 $1,000 吗？')) { state = { cash: STARTING_CASH, realized: 0, positions: {}, history: [], snapshots: [], benchmark: null, regimeSnapshots: [], momentum: { positions: {}, completed: [], signals: [] }, dip: { positions: {}, completed: [], signals: [] } }; render(); } });
-  renderIdeas(); render(); loadMarketData();
+  $('reset-button').addEventListener('click', () => { if (confirm('确定清除全部模拟交易记录并恢复到 $1,000 吗？')) { state = { cash: STARTING_CASH, realized: 0, positions: {}, history: [], snapshots: [], benchmark: null, regimeSnapshots: [], momentum: { positions: {}, completed: [], signals: [] }, dip: { positions: {}, completed: [], signals: [] }, dynamicSnapshots: [] }; render(); } });
+  renderIdeas(); render(); loadMarketData(); loadDynamicData();
   setInterval(loadMarketData, 60 * 1000);
+  setInterval(loadDynamicData, 5 * 60 * 1000);
 })();
