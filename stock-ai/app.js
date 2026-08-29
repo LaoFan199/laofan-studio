@@ -37,13 +37,19 @@ import { calculateFractionalOrder, FRACTIONAL_EXECUTION_VERSION, MIN_ORDER_AMOUN
   let momentumScanner = null;
   let dipScanner = null;
   let dynamicScanner = null;
+  let dynamicQuotes = {};
   const $ = (id) => document.getElementById(id);
   const money = (n) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(n);
   const percent = (n) => n == null ? '—' : `${n >= 0 ? '+' : ''}${n.toFixed(2)}%`;
   const shares = (n) => `${Number(n).toLocaleString('en-US', { maximumFractionDigits: 6 })} 股`;
 
   function save() { localStorage.setItem('laofan-paper-account', JSON.stringify(state)); }
-  function currentPrice(symbol) { return ideas.find((item) => item.symbol === symbol)?.price || 0; }
+  function currentPrice(symbol) {
+    return ideas.find((item) => item.symbol === symbol)?.price
+      || dynamicQuotes[symbol]?.price
+      || state.positions[symbol]?.lastPrice
+      || 0;
+  }
   function marketValue() { return Object.entries(state.positions).reduce((sum, [s, p]) => sum + currentPrice(s) * p.quantity, 0); }
 
   function signalFor(item) {
@@ -258,7 +264,15 @@ import { calculateFractionalOrder, FRACTIONAL_EXECUTION_VERSION, MIN_ORDER_AMOUN
 
   function updateDynamic(data) {
     dynamicScanner = data;
-    if (!data || data.status !== 'available' || !data.candidates?.length) return;
+    if (!data || data.status !== 'available') return;
+    dynamicQuotes = data.quotes || {};
+    Object.entries(state.positions).forEach(([symbol, position]) => {
+      const quote = dynamicQuotes[symbol];
+      if (!quote?.price || !position.source?.startsWith('dynamic')) return;
+      position.lastPrice = quote.price;
+      position.lastPriceAt = quote.timestamp || data.fetchedAt;
+    });
+    if (!data.candidates?.length) return;
     const marketDate = data.candidates.find((item) => item.timestamp)?.timestamp
       ? new Date(data.candidates.find((item) => item.timestamp).timestamp).toISOString().slice(0, 10)
       : new Date(data.fetchedAt).toISOString().slice(0, 10);
@@ -294,7 +308,7 @@ import { calculateFractionalOrder, FRACTIONAL_EXECUTION_VERSION, MIN_ORDER_AMOUN
       <span class="score"><small>量化分数</small>${item.analysis.score}/100</span>
       <span><small>最新价格</small>${money(item.price)}</span>
       <span class="${item.analysis.metrics.relative20 >= 0 ? 'positive' : 'negative'}"><small>20日相对SPY</small>${percent(item.analysis.metrics.relative20)}</span>
-      <span class="movement movement-${item.movement}"><small>${movementText[item.movement]}</small>${movementMark(item)}</span>
+      <span><span class="movement movement-${item.movement}"><small>${movementText[item.movement]}</small>${movementMark(item)}</span><button class="trade-button dynamic-buy" data-dynamic-symbol="${item.symbol}" ${item.analysis.score >= BUY_SCORE ? '' : 'disabled'}>模拟买入</button></span>
     </div>`).join('');
     $('dynamic-exits').textContent = dynamicScanner.exited.length
       ? `本次退出前10：${dynamicScanner.exited.map((item) => `${item.symbol}（原#${item.previousRank}）`).join('、')}`
@@ -339,7 +353,8 @@ import { calculateFractionalOrder, FRACTIONAL_EXECUTION_VERSION, MIN_ORDER_AMOUN
     $('positions').innerHTML = entries.length ? entries.map(([symbol, p]) => {
       const price = currentPrice(symbol); const pnl = (price - p.avgPrice) * p.quantity;
       const pnlRate = p.avgPrice ? ((price / p.avgPrice) - 1) * 100 : 0;
-      return `<div class="position"><strong>${symbol}<span class="company">${shares(p.quantity)}</span></strong><span>成本 ${money(p.avgPrice * p.quantity)}<small>均价 ${money(p.avgPrice)}</small></span><span>现值 ${money(price * p.quantity)}<small>现价 ${money(price)}</small></span><span class="${pnl >= 0 ? 'positive' : 'negative'}">${pnl >= 0 ? '+' : ''}${money(pnl)}<small>${percent(pnlRate)}</small></span><button class="sell-button" data-sell="${symbol}">全部卖出</button></div>`;
+      const priceLabel = p.source?.startsWith('dynamic') && p.lastPriceAt ? `最近有效价 · ${new Date(p.lastPriceAt).toLocaleDateString('zh-CN')}` : '现价';
+      return `<div class="position"><strong>${symbol}<span class="company">${shares(p.quantity)}</span></strong><span>成本 ${money(p.avgPrice * p.quantity)}<small>均价 ${money(p.avgPrice)}</small></span><span>现值 ${money(price * p.quantity)}<small>${priceLabel} ${money(price)}</small></span><span class="${pnl >= 0 ? 'positive' : 'negative'}">${pnl >= 0 ? '+' : ''}${money(pnl)}<small>${percent(pnlRate)}</small></span><button class="sell-button" data-sell="${symbol}">全部卖出</button></div>`;
     }).join('') : '还没有持仓。可从候选股中发起模拟买入。';
 
     $('history').className = state.history.length ? '' : 'empty';
@@ -347,12 +362,26 @@ import { calculateFractionalOrder, FRACTIONAL_EXECUTION_VERSION, MIN_ORDER_AMOUN
     save();
   }
 
-  function openOrder(symbol) {
-    selected = ideas.find((item) => item.symbol === symbol);
+  function openOrder(symbol, source = 'fixed') {
+    selected = source === 'fixed' ? ideas.find((item) => item.symbol === symbol) : null;
+    if (source === 'dynamic') {
+      const candidate = dynamicScanner?.candidates?.find((item) => item.symbol === symbol);
+      if (candidate) selected = {
+        symbol: candidate.symbol,
+        name: '动态候选',
+        price: candidate.price,
+        score: candidate.analysis.score,
+        risk: candidate.analysis.risk,
+        confidence: candidate.analysis.confidence,
+        source: 'dynamic-manual-v1',
+        strategyVersion: dynamicScanner.version,
+        timestamp: candidate.timestamp
+      };
+    }
     if (!selected || !signalFor(selected).canBuy) return;
     $('order-symbol').textContent = selected.symbol;
     $('order-price').textContent = `模拟成交参考价 ${money(selected.price)}`;
-    $('order-signal').textContent = `量化分数 ${selected.score}/100 · 置信度${selected.confidence} · 风险${selected.risk}`;
+    $('order-signal').textContent = `量化分数 ${selected.score}/100 · 置信度${selected.confidence} · 风险${selected.risk}${selected.source ? ' · 动态候选，由你确认' : ''}`;
     $('order-shield').textContent = marketRegime
       ? `危机防护挑战者：${marketRegime.label}，建议总仓位不超过 ${marketRegime.suggestedMaxExposure ?? '—'}%（当前不自动拦截）`
       : '危机防护挑战者：等待市场状态数据';
@@ -382,9 +411,18 @@ import { calculateFractionalOrder, FRACTIONAL_EXECUTION_VERSION, MIN_ORDER_AMOUN
     const order = validateOrder(); if (!order.valid) return;
     const old = state.positions[selected.symbol] || { quantity: 0, avgPrice: 0 };
     const quantity = old.quantity + order.quantity;
-    state.positions[selected.symbol] = { quantity, avgPrice: ((old.quantity * old.avgPrice) + order.amount) / quantity, executionVersion: FRACTIONAL_EXECUTION_VERSION };
+    state.positions[selected.symbol] = {
+      ...old,
+      quantity,
+      avgPrice: ((old.quantity * old.avgPrice) + order.amount) / quantity,
+      executionVersion: FRACTIONAL_EXECUTION_VERSION,
+      source: old.source || selected.source || 'fixed-v1.1',
+      strategyVersion: old.strategyVersion || selected.strategyVersion || 'v1.1',
+      lastPrice: selected.price,
+      lastPriceAt: selected.timestamp || new Date().toISOString()
+    };
     state.cash = Math.round((state.cash - order.amount + Number.EPSILON) * 100) / 100;
-    state.history.push({ type: '买入', symbol: selected.symbol, quantity: order.quantity, price: selected.price, total: order.amount, score: selected.score, confidence: selected.confidence, executionVersion: FRACTIONAL_EXECUTION_VERSION, time: new Date().toLocaleDateString('zh-CN') });
+    state.history.push({ type: '买入', symbol: selected.symbol, quantity: order.quantity, price: selected.price, total: order.amount, score: selected.score, confidence: selected.confidence, source: selected.source || 'fixed-v1.1', strategyVersion: selected.strategyVersion || 'v1.1', executionVersion: FRACTIONAL_EXECUTION_VERSION, time: new Date().toLocaleDateString('zh-CN') });
     render(); $('trade-dialog').close();
   }
 
@@ -471,6 +509,7 @@ import { calculateFractionalOrder, FRACTIONAL_EXECUTION_VERSION, MIN_ORDER_AMOUN
 
   document.addEventListener('click', (e) => {
     if (e.target.matches('[data-symbol]')) openOrder(e.target.dataset.symbol);
+    if (e.target.matches('[data-dynamic-symbol]')) openOrder(e.target.dataset.dynamicSymbol, 'dynamic');
     if (e.target.matches('[data-sell]')) sell(e.target.dataset.sell);
   });
   $('order-amount').addEventListener('input', validateOrder);

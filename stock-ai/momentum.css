@@ -4,3 +4,4 @@
 .dip-shadow-badge{font-size:11px;color:var(--blue);border:1px solid var(--line);border-radius:999px;padding:7px 10px;white-space:nowrap}.momentum-row.dip-watch{border-color:rgba(248,200,92,.35)}.momentum-row.dip-confirmed{border-color:rgba(54,211,153,.7);background:rgba(54,211,153,.04)}.momentum-row.dip-excluded{opacity:.72}
 .momentum-head{flex-wrap:wrap}
 .dynamic-rank{display:inline-block;min-width:27px;color:var(--blue);margin-right:7px}.movement{font-weight:800}.movement-new,.movement-up{color:var(--green)}.movement-down{color:var(--red)}.movement-same{color:var(--muted)}.dynamic-exits{color:var(--muted);font-size:11px;line-height:1.6;margin:12px 0 0}
+.dynamic-buy{display:block;margin-top:7px;padding:6px 9px;font-size:10px}
