@@ -384,9 +384,17 @@ them in response to a few recent sessions.
   - keep valuing and selling a dynamic position after it leaves the top 10;
   - reconcile equity to cash plus all fixed and dynamic position values;
   - pass deterministic tests and desktop/narrow interactive checks.
-- Results: implementation validation pending
+- Results: implementation validation passed on 2026-08-29. All 20 tests pass,
+  including the existing code-level minimum-order, minimum-cash, and cumulative
+  symbol-limit checks. The deployed dynamic endpoint returned current
+  observations for the frozen universe. Interactive TMO validation opened a
+  user-confirmed $50 order at score 93, produced 0.080368 fractional shares at
+  $622.14, reconciled $1,000 equity to $950 cash plus $50 market value, visibly
+  identified the last valid price date, and returned to $1,000 after a manual
+  round trip. Ten qualified dynamic rows showed manual buttons; no automatic
+  order occurred and the page had no desktop horizontal overflow.
 - Decision: user-controlled paper interface; no strategy promotion or automatic trade
-- Related commit: pending
+- Related commits: `4ee05e3`, `03c4297`
 
 Copy this section for each future strategy experiment:
 
