@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { analyzeMarketRegime, completedDailyBars } from '../api/market.js';
 import { evaluateMomentumCandidate, evaluateMomentumUniverse, updateTrailingPosition } from '../api/momentum.js';
 import { evaluateDipOpportunity, updateDipPosition } from '../api/dip.js';
-import { compareDynamicRankings, rankDynamicCandidates } from '../api/dynamic-strategy.js';
+import { compareDynamicRankings, heldOutsideDynamicPool, rankDynamicCandidates } from '../api/dynamic-strategy.js';
 
 const barsFrom = (values, start = '2025-01-02T21:00:00Z') => values.map((c, index) => ({
   c,
@@ -171,4 +171,15 @@ test('dynamic ranking labels new, rising, falling, same, and exited symbols', ()
   assert.deepEqual(result.candidates.map((item) => item.movement), ['up', 'down', 'new']);
   assert.deepEqual(result.exited, [{ symbol: 'C', previousRank: 3 }]);
   assert.equal(compareDynamicRankings([{ symbol: 'A' }], [{ symbol: 'A' }]).candidates[0].movement, 'same');
+});
+
+test('dynamic positions remain tracked after leaving the qualified pool', () => {
+  const positions = {
+    TMO: { source: 'dynamic-manual-v1', quantity: 0.1 },
+    MSFT: { source: 'fixed-v1.1', quantity: 0.1 },
+    V: { source: 'dynamic-manual-v1', quantity: 0.1 }
+  };
+  const held = heldOutsideDynamicPool(positions, [{ symbol: 'V' }]);
+  assert.deepEqual(held.map(([symbol]) => symbol), ['TMO']);
+  assert.equal(positions.TMO.quantity, 0.1);
 });

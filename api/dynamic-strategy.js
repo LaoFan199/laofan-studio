@@ -55,3 +55,9 @@ export function compareDynamicRankings(current, previous = []) {
   })).filter((item) => !currentSymbols.has(item.symbol));
   return { candidates, exited };
 }
+
+export function heldOutsideDynamicPool(positions = {}, candidates = []) {
+  const candidateSymbols = new Set(candidates.map((item) => item.symbol));
+  return Object.entries(positions).filter(([symbol, position]) =>
+    position?.source?.startsWith('dynamic') && !candidateSymbols.has(symbol));
+}
