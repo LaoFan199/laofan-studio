@@ -1,8 +1,9 @@
-export const DYNAMIC_VERSION = 'dynamic-universe-v1-shadow';
+export const DYNAMIC_VERSION = 'dynamic-universe-v1.1-manual';
 export const DYNAMIC_RULES = Object.freeze({
   minimumPrice: 5,
   minimumBars: 61,
   minimumAverageDollarVolume: 50_000_000,
+  minimumScore: 75,
   displayedCandidates: 10
 });
 
@@ -28,7 +29,8 @@ export function rankDynamicCandidates(inputs, rules = DYNAMIC_RULES) {
       && bars.length >= rules.minimumBars
       && Number.isFinite(averageDollarVolume)
       && averageDollarVolume >= rules.minimumAverageDollarVolume
-      && Number.isFinite(Number(item.analysis?.score));
+      && Number.isFinite(Number(item.analysis?.score))
+      && Number(item.analysis.score) >= rules.minimumScore;
     return { ...item, eligible, averageDollarVolume };
   }).filter((item) => item.eligible)
     .sort((a, b) => Number(b.analysis.score) - Number(a.analysis.score)

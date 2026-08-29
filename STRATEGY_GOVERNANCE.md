@@ -396,6 +396,36 @@ them in response to a few recent sessions.
 - Decision: user-controlled paper interface; no strategy promotion or automatic trade
 - Related commits: `4ee05e3`, `03c4297`
 
+### Experiment: Dynamic Universe v1.1 candidate exit discipline
+
+- Date proposed: 2026-08-29
+- Baseline version: `dynamic-universe-v1-shadow` (preserved in Git history)
+- Challenger version: `dynamic-universe-v1.1-manual`
+- Hypothesis: requiring the existing 75-point candidate threshold for pool
+  membership and automatically removing names that cease to qualify will keep
+  the actionable list current without forcing a sale of an owned position.
+- One primary change: dynamic candidate-pool membership. Price, history,
+  liquidity, scoring weights, top-10 ranking, and account limits are unchanged.
+- Frozen entry/pool rule: a name is actionable only while all data/liquidity
+  checks pass, its unchanged v1.1 score is at least 75, and it remains in the
+  resulting top 10. Failure of any condition removes it at the next successful
+  refresh.
+- Held-position exception: removal from the candidate pool never creates an
+  automatic sale. A dynamic position already bought remains visibly pinned as
+  “held / no longer qualified,” continues using the latest valid universe quote,
+  and can only be sold by the user.
+- Acceptance criteria chosen before implementation:
+  - deterministically exclude a score-74 name from pool membership;
+  - retain all existing fail-closed price/history/liquidity checks;
+  - show automatic exits relative to the prior market-day snapshot;
+  - show a held-but-exited symbol without a new-buy button;
+  - never mutate cash, quantity, or realized P&L merely because membership
+    changes;
+  - pass tests and desktop/narrow checks with the rule stated visibly.
+- Results: implementation validation pending
+- Decision: pending; automatic pool maintenance, manual holdings only
+- Related commit: pending
+
 Copy this section for each future strategy experiment:
 
 ```markdown

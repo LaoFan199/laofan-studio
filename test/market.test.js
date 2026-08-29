@@ -146,7 +146,8 @@ test('dynamic universe fails closed on price, history, liquidity, or missing sco
     { symbol: 'CHEAP', price: 4, bars: liquidBars, analysis: { score: 99, metrics: { relative20: 20 } } },
     { symbol: 'SHORT', price: 100, bars: liquidBars.slice(0, 60), analysis: { score: 99, metrics: { relative20: 20 } } },
     { symbol: 'ILLIQ', price: 100, bars: Array.from({ length: 61 }, () => ({ c: 10, v: 10_000 })), analysis: { score: 99, metrics: { relative20: 20 } } },
-    { symbol: 'NOSCORE', price: 100, bars: liquidBars, analysis: null }
+    { symbol: 'NOSCORE', price: 100, bars: liquidBars, analysis: null },
+    { symbol: 'LOWSCORE', price: 100, bars: liquidBars, analysis: { score: 74, metrics: { relative20: 20 } } }
   ]);
   assert.deepEqual(candidates.map((item) => item.symbol), ['GOOD']);
 });
