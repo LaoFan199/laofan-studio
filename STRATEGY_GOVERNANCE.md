@@ -422,9 +422,17 @@ them in response to a few recent sessions.
   - never mutate cash, quantity, or realized P&L merely because membership
     changes;
   - pass tests and desktop/narrow checks with the rule stated visibly.
-- Results: implementation validation pending
+- Results: implementation validation passed on 2026-08-29. Twenty-one tests
+  pass, including deterministic score-74 exclusion and retention of a purchased
+  dynamic position after it leaves the qualified pool without changing its
+  quantity. The deployed endpoint reports `dynamic-universe-v1.1-manual`, a
+  75-point minimum, 18 currently qualified names, and a 10-name pool. Desktop
+  validation shows 10 manual buttons, the automatic-exit/held-position rule,
+  reconciled $1,000 isolated equity, and no horizontal overflow. Versioned
+  assets ensure an ordinary refresh loads the new client logic. Forward
+  candidate turnover remains pending.
 - Decision: pending; automatic pool maintenance, manual holdings only
-- Related commit: pending
+- Related commits: `2a50e9c`, `911b4ee`, `238c4aa`, `e70da20`
 
 Copy this section for each future strategy experiment:
 
