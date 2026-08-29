@@ -54,6 +54,11 @@ export default async function handler(req, res) {
     });
     const ranked = rankDynamicCandidates(inputs, { ...DYNAMIC_RULES, displayedCandidates: DYNAMIC_UNIVERSE.length });
     const candidates = ranked.slice(0, DYNAMIC_RULES.displayedCandidates).map(({ bars, ...candidate }) => candidate);
+    const quotes = Object.fromEntries(inputs.filter((item) => Number.isFinite(Number(item.price))).map((item) => [item.symbol, {
+      price: Number(item.price),
+      changePercent: item.changePercent,
+      timestamp: item.timestamp
+    }]));
     res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=120');
     return res.status(200).json({
       version: DYNAMIC_VERSION,
@@ -63,6 +68,7 @@ export default async function handler(req, res) {
       market: { isOpen: Boolean(clock.is_open) },
       rules: DYNAMIC_RULES,
       scanStats: { universe: DYNAMIC_UNIVERSE.length, eligible: ranked.length, displayed: candidates.length },
+      quotes,
       candidates
     });
   } catch {

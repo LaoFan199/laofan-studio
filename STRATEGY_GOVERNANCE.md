@@ -358,6 +358,36 @@ them in response to a few recent sessions.
 - Decision: pending; shadow ranking only
 - Related commits: `ddcb560`, `1609c64`
 
+### Paper interface change: dynamic-manual-v1
+
+- Date proposed: 2026-08-29
+- Ranking source: `dynamic-universe-v1-shadow` (unchanged)
+- New execution interface: `dynamic-manual-v1`
+- Hypothesis: automatically presenting score-qualified dynamic top-10 names as
+  manual paper-order candidates lets the user consider a broader opportunity
+  set without creating automatic trades or weakening dollar risk limits.
+- One primary change: allow a user-confirmed fractional paper order from a
+  dynamic top-10 candidate only when its unchanged v1.1 score is at least 75.
+- Frozen safeguards: no automatic order; $10 minimum order, $200 cumulative
+  symbol maximum, $200 minimum account cash, no leverage/options/live broker,
+  and crisis-shield disclosure are unchanged. Dynamic names remain separate
+  from the fixed-five baseline and retain their ranking/source/version at buy.
+- Pricing continuity: the dynamic endpoint must return current observations for
+  the whole frozen universe, and a purchased position must retain its last
+  valid observed price if the symbol later leaves the top 10 or data is briefly
+  unavailable. A stale price must remain identifiable and must not silently
+  become zero.
+- Acceptance criteria chosen before implementation:
+  - show a manual paper-buy button only for score-75+ dynamic top-10 names;
+  - open the existing amount dialog and enforce the existing limits in code;
+  - record dynamic source, strategy version, score, confidence, and price;
+  - keep valuing and selling a dynamic position after it leaves the top 10;
+  - reconcile equity to cash plus all fixed and dynamic position values;
+  - pass deterministic tests and desktop/narrow interactive checks.
+- Results: implementation validation pending
+- Decision: user-controlled paper interface; no strategy promotion or automatic trade
+- Related commit: pending
+
 Copy this section for each future strategy experiment:
 
 ```markdown
