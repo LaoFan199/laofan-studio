@@ -345,9 +345,18 @@ them in response to a few recent sessions.
   - observe at least 20-40 trading days, preferably 8-12 weeks, before deciding
     whether to simulate entries; compare turnover, coverage, forward top-10
     return, SPY excess return, drawdown, and estimated costs.
-- Results: implementation and forward observation pending
+- Results: implementation validation passed on 2026-08-29. Twenty total
+  deterministic tests pass, including dynamic fail-closed price/history/
+  liquidity checks, score-and-relative-strength ordering, and all new/up/down/
+  same/exited ranking transitions. The deployed endpoint scanned 64 frozen
+  symbols, found 37 eligible, and returned 10 ranked candidates with
+  `dynamic-universe-v1-shadow`. Desktop browser validation displayed all 10,
+  the source timestamp, first-snapshot NEW labels, and the ranking-only warning
+  without horizontal overflow; isolated account equity reconciled to cash plus
+  holdings. The panel reuses the previously validated 390px two-column row
+  breakpoint. Forward ranking history and outcome evaluation remain pending.
 - Decision: pending; shadow ranking only
-- Related commit: pending
+- Related commits: `ddcb560`, `1609c64`
 
 Copy this section for each future strategy experiment:
 
