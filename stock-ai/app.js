@@ -300,18 +300,33 @@ import { calculateFractionalOrder, FRACTIONAL_EXECUTION_VERSION, MIN_ORDER_AMOUN
     }
     const stats = dynamicScanner.scanStats;
     const time = new Date(dynamicScanner.fetchedAt).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
-    $('dynamic-status').textContent = `扫描 ${stats.universe} 只 · ${stats.eligible} 只数据与流动性合格 · 显示前 ${stats.displayed} 名 · ${dynamicScanner.marketDate} ${time} 更新`;
+    $('dynamic-status').textContent = `扫描 ${stats.universe} 只 · ${stats.eligible} 只达到75分且全部合格 · 候选池 ${stats.displayed} 只 · ${dynamicScanner.marketDate} ${time} 更新`;
     const movementText = { new: '新进入', up: '排名上升', down: '排名下降', same: '排名不变' };
     const movementMark = (item) => item.movement === 'new' ? 'NEW' : item.movement === 'same' ? '—' : `${item.movement === 'up' ? '↑' : '↓'} ${Math.abs(item.previousRank - item.rank)}`;
-    $('dynamic-list').innerHTML = dynamicScanner.candidates.map((item) => `<div class="momentum-row dynamic-row">
+    const candidateSymbols = new Set(dynamicScanner.candidates.map((item) => item.symbol));
+    const activeCandidates = dynamicScanner.candidates.map((item) => `<div class="momentum-row dynamic-row">
       <span><strong class="dynamic-rank">#${item.rank}</strong><strong class="ticker">${item.symbol}</strong><small>${item.analysis.risk}风险 · 置信度${item.analysis.confidence}</small></span>
       <span class="score"><small>量化分数</small>${item.analysis.score}/100</span>
       <span><small>最新价格</small>${money(item.price)}</span>
       <span class="${item.analysis.metrics.relative20 >= 0 ? 'positive' : 'negative'}"><small>20日相对SPY</small>${percent(item.analysis.metrics.relative20)}</span>
       <span><span class="movement movement-${item.movement}"><small>${movementText[item.movement]}</small>${movementMark(item)}</span><button class="trade-button dynamic-buy" data-dynamic-symbol="${item.symbol}" ${item.analysis.score >= BUY_SCORE ? '' : 'disabled'}>模拟买入</button></span>
     </div>`).join('');
+    const heldOutsidePool = Object.entries(state.positions).filter(([symbol, position]) => position.source?.startsWith('dynamic') && !candidateSymbols.has(symbol));
+    const heldRows = heldOutsidePool.map(([symbol, position]) => {
+      const price = currentPrice(symbol);
+      const pnlRate = position.avgPrice ? ((price / position.avgPrice) - 1) * 100 : 0;
+      return `<div class="momentum-row dynamic-row dynamic-held">
+        <span><strong class="ticker">${symbol}</strong><small>已持有 · 已退出候选池</small></span>
+        <span><small>候选资格</small>已失效</span>
+        <span><small>最近有效价格</small>${money(price)}</span>
+        <span class="${pnlRate >= 0 ? 'positive' : 'negative'}"><small>持仓收益</small>${percent(pnlRate)}</span>
+        <span><small>处理方式</small>继续跟踪，不自动卖出</span>
+      </div>`;
+    }).join('');
+    $('dynamic-list').innerHTML = activeCandidates + heldRows;
+    const heldExited = dynamicScanner.exited.filter((item) => state.positions[item.symbol]?.source?.startsWith('dynamic'));
     $('dynamic-exits').textContent = dynamicScanner.exited.length
-      ? `本次退出前10：${dynamicScanner.exited.map((item) => `${item.symbol}（原#${item.previousRank}）`).join('、')}`
+      ? `本次自动退出候选池：${dynamicScanner.exited.map((item) => `${item.symbol}（原#${item.previousRank}${heldExited.some((held) => held.symbol === item.symbol) ? '，已持有继续跟踪' : ''}）`).join('、')}`
       : '本次没有股票退出前10；首次记录时全部显示为“新进入”。';
   }
 
