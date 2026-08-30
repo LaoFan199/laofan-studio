@@ -434,6 +434,28 @@ them in response to a few recent sessions.
 - Decision: pending; automatic pool maintenance, manual holdings only
 - Related commits: `2a50e9c`, `911b4ee`, `238c4aa`, `e70da20`
 
+### Product change: dynamic candidate transparency
+
+- Date proposed: 2026-08-30
+- Strategy version: `dynamic-universe-v1.1-manual` (unchanged)
+- Problem: a stock can appear in news research yet be absent from the dynamic
+  top 10, while the interface does not reveal whether it narrowly missed the
+  ranking or failed a price, history, liquidity, or score rule.
+- Change: expose qualified ranks 11-20 and per-symbol deterministic eligibility
+  diagnostics; add an on-page ticker lookup for the frozen 64-symbol universe.
+- Strategy impact: none. The universe, v1.1 score, 75-point threshold, top-10
+  pool, ranking tie-breakers, paper-order limits, and automatic pool exit rules
+  remain unchanged.
+- Acceptance criteria chosen before implementation:
+  - show up to ten qualified stocks immediately below the top-10 cutoff;
+  - explain every failed eligibility rule rather than guessing one reason;
+  - distinguish “qualified but outside top 10” from “not qualified” and “not in
+    the frozen universe”;
+  - keep diagnostics informational with no buy button or automatic order;
+  - pass deterministic tests plus desktop/narrow visual checks.
+- Results: implementation and deployment validation pending.
+- Decision: product transparency improvement; no strategy promotion
+
 Copy this section for each future strategy experiment:
 
 ```markdown

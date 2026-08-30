@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { analyzeMarketRegime, completedDailyBars } from '../api/market.js';
 import { evaluateMomentumCandidate, evaluateMomentumUniverse, updateTrailingPosition } from '../api/momentum.js';
 import { evaluateDipOpportunity, updateDipPosition } from '../api/dip.js';
-import { compareDynamicRankings, heldOutsideDynamicPool, rankDynamicCandidates } from '../api/dynamic-strategy.js';
+import { compareDynamicRankings, DYNAMIC_RULES, evaluateDynamicUniverse, heldOutsideDynamicPool, rankDynamicCandidates } from '../api/dynamic-strategy.js';
 
 const barsFrom = (values, start = '2025-01-02T21:00:00Z') => values.map((c, index) => ({
   c,
@@ -161,6 +161,17 @@ test('dynamic universe ranks by unchanged score then relative strength', () => {
   ]);
   assert.deepEqual(candidates.map((item) => item.symbol), ['C', 'A', 'B']);
   assert.deepEqual(candidates.map((item) => item.rank), [1, 2, 3]);
+});
+
+test('dynamic diagnostics explain near misses and every failed rule', () => {
+  const liquidBars = Array.from({ length: 61 }, () => ({ c: 100, v: 1_000_000 }));
+  const evaluation = evaluateDynamicUniverse([
+    { symbol: 'TOP', price: 100, bars: liquidBars, analysis: { score: 90, metrics: { relative20: 2 } } },
+    { symbol: 'NEAR', price: 100, bars: liquidBars, analysis: { score: 80, metrics: { relative20: 1 } } },
+    { symbol: 'FAIL', price: 4, bars: liquidBars.slice(0, 10), analysis: { score: 70, metrics: { relative20: 0 } } }
+  ], { ...DYNAMIC_RULES, displayedCandidates: 1 });
+  assert.deepEqual(evaluation.eligible.map((item) => [item.symbol, item.qualifiedRank]), [['TOP', 1], ['NEAR', 2]]);
+  assert.deepEqual(evaluation.rejected[0].reasons, ['price', 'history', 'liquidity', 'score_below_minimum']);
 });
 
 test('dynamic ranking labels new, rising, falling, same, and exited symbols', () => {

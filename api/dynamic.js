@@ -1,5 +1,5 @@
 import { analyzeBars, completedDailyBars } from './market.js';
-import { DYNAMIC_RULES, DYNAMIC_UNIVERSE, DYNAMIC_VERSION, rankDynamicCandidates } from './dynamic-strategy.js';
+import { DYNAMIC_RULES, DYNAMIC_UNIVERSE, DYNAMIC_VERSION, evaluateDynamicUniverse } from './dynamic-strategy.js';
 
 const ALLOWED_ORIGIN = 'https://laofan199.github.io';
 
@@ -52,8 +52,22 @@ export default async function handler(req, res) {
         analysis: analyzeBars(bars, benchmarkBars)
       };
     });
-    const ranked = rankDynamicCandidates(inputs, { ...DYNAMIC_RULES, displayedCandidates: DYNAMIC_UNIVERSE.length });
+    const evaluation = evaluateDynamicUniverse(inputs, DYNAMIC_RULES);
+    const ranked = evaluation.eligible;
     const candidates = ranked.slice(0, DYNAMIC_RULES.displayedCandidates).map(({ bars, ...candidate }) => candidate);
+    const nearMisses = ranked.slice(DYNAMIC_RULES.displayedCandidates, DYNAMIC_RULES.displayedCandidates + 10)
+      .map(({ bars, ...candidate }) => candidate);
+    const diagnostics = evaluation.evaluated.map(({ bars, eligible, reasons, averageDollarVolume, ...item }) => ({
+      symbol: item.symbol,
+      eligible,
+      inCandidatePool: eligible && ranked.findIndex((candidate) => candidate.symbol === item.symbol) < DYNAMIC_RULES.displayedCandidates,
+      qualifiedRank: ranked.find((candidate) => candidate.symbol === item.symbol)?.qualifiedRank ?? null,
+      reasons,
+      price: Number.isFinite(Number(item.price)) ? Number(item.price) : null,
+      score: Number.isFinite(Number(item.analysis?.score)) ? Number(item.analysis.score) : null,
+      relative20: Number.isFinite(Number(item.analysis?.metrics?.relative20)) ? Number(item.analysis.metrics.relative20) : null,
+      averageDollarVolume
+    }));
     const quotes = Object.fromEntries(inputs.filter((item) => Number.isFinite(Number(item.price))).map((item) => [item.symbol, {
       price: Number(item.price),
       changePercent: item.changePercent,
@@ -69,7 +83,9 @@ export default async function handler(req, res) {
       rules: DYNAMIC_RULES,
       scanStats: { universe: DYNAMIC_UNIVERSE.length, eligible: ranked.length, displayed: candidates.length },
       quotes,
-      candidates
+      candidates,
+      nearMisses,
+      diagnostics
     });
   } catch {
     return res.status(502).json({

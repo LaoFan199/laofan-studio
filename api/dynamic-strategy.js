@@ -18,24 +18,33 @@ export const DYNAMIC_UNIVERSE = Object.freeze([
 
 const average = (values) => values.reduce((sum, value) => sum + value, 0) / values.length;
 
-export function rankDynamicCandidates(inputs, rules = DYNAMIC_RULES) {
-  return (inputs || []).map((item) => {
+const dynamicSort = (a, b) => Number(b.analysis?.score || -1) - Number(a.analysis?.score || -1)
+  || Number(b.analysis?.metrics?.relative20 || 0) - Number(a.analysis?.metrics?.relative20 || 0)
+  || a.symbol.localeCompare(b.symbol);
+
+export function evaluateDynamicUniverse(inputs, rules = DYNAMIC_RULES) {
+  const evaluated = (inputs || []).map((item) => {
     const bars = Array.isArray(item.bars) ? item.bars : [];
     const recent = bars.slice(-20);
     const averageDollarVolume = recent.length === 20
       ? average(recent.map((bar) => Number(bar.c) * Number(bar.v)))
       : null;
-    const eligible = Number(item.price) >= rules.minimumPrice
-      && bars.length >= rules.minimumBars
-      && Number.isFinite(averageDollarVolume)
-      && averageDollarVolume >= rules.minimumAverageDollarVolume
-      && Number.isFinite(Number(item.analysis?.score))
-      && Number(item.analysis.score) >= rules.minimumScore;
-    return { ...item, eligible, averageDollarVolume };
-  }).filter((item) => item.eligible)
-    .sort((a, b) => Number(b.analysis.score) - Number(a.analysis.score)
-      || Number(b.analysis.metrics?.relative20 || 0) - Number(a.analysis.metrics?.relative20 || 0)
-      || a.symbol.localeCompare(b.symbol))
+    const reasons = [];
+    if (!Number.isFinite(Number(item.price)) || Number(item.price) < rules.minimumPrice) reasons.push('price');
+    if (bars.length < rules.minimumBars) reasons.push('history');
+    if (!Number.isFinite(averageDollarVolume) || averageDollarVolume < rules.minimumAverageDollarVolume) reasons.push('liquidity');
+    if (!Number.isFinite(Number(item.analysis?.score))) reasons.push('score_unavailable');
+    else if (Number(item.analysis.score) < rules.minimumScore) reasons.push('score_below_minimum');
+    return { ...item, eligible: reasons.length === 0, averageDollarVolume, reasons };
+  });
+  const eligible = evaluated.filter((item) => item.eligible).sort(dynamicSort)
+    .map((item, index) => ({ ...item, qualifiedRank: index + 1 }));
+  const rejected = evaluated.filter((item) => !item.eligible).sort(dynamicSort);
+  return { evaluated, eligible, rejected };
+}
+
+export function rankDynamicCandidates(inputs, rules = DYNAMIC_RULES) {
+  return evaluateDynamicUniverse(inputs, rules).eligible
     .slice(0, rules.displayedCandidates)
     .map((item, index) => ({ ...item, rank: index + 1 }));
 }
