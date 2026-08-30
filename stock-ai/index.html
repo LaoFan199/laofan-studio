@@ -6,8 +6,8 @@
   <meta name="description" content="LaoFan AI 美股模拟交易助手">
   <meta name="api-base" content="https://laofan-studio.vercel.app">
   <title>LaoFan AI 模拟交易</title>
-  <link rel="stylesheet" href="app.css?v=20260829-2">
-  <link rel="stylesheet" href="momentum.css?v=20260829-2">
+  <link rel="stylesheet" href="app.css?v=20260830-1">
+  <link rel="stylesheet" href="momentum.css?v=20260830-1">
   <style>
     .updated{font-weight:700}.market-open{color:#36d399}.market-closed{color:#8fa3bb}.reason{display:block;color:#6f86a2;font-size:10px;line-height:1.45;margin-top:5px;max-width:250px}
     .summary-grid{grid-template-columns:repeat(5,1fr)}
@@ -90,6 +90,15 @@
           <p class="momentum-status" id="dynamic-status">等待动态候选池数据</p>
           <div class="momentum-list" id="dynamic-list"></div>
           <p class="dynamic-exits" id="dynamic-exits"></p>
+          <details class="dynamic-transparency">
+            <summary>查看临界候选 / 查询未入选原因</summary>
+            <div class="dynamic-near-misses" id="dynamic-near-misses"></div>
+            <form class="dynamic-lookup" id="dynamic-lookup">
+              <label for="dynamic-symbol-query">查询股票代码</label>
+              <span><input id="dynamic-symbol-query" maxlength="6" placeholder="例如 AVGO" autocomplete="off"><button class="ghost" type="submit">查询</button></span>
+            </form>
+            <p class="dynamic-lookup-result" id="dynamic-lookup-result">可查询冻结股票池中的任一代码，了解它为什么没有进入前10。</p>
+          </details>
           <p class="disclaimer">只有数据、流动性和评分（≥75）持续合格且仍在前10的股票才留在候选池；失效后自动退出。已经模拟买入的股票不会自动卖出，而会继续显示和更新价格，由你决定何时卖出。</p>
         </article>
 
@@ -179,6 +188,6 @@
     </form>
   </dialog>
 
-  <script type="module" src="app.js?v=20260829-2"></script>
+  <script type="module" src="app.js?v=20260830-1"></script>
 </body>
 </html>

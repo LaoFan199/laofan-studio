@@ -296,6 +296,7 @@ import { calculateFractionalOrder, FRACTIONAL_EXECUTION_VERSION, MIN_ORDER_AMOUN
       $('dynamic-status').textContent = dynamicScanner?.reason || '等待动态候选池数据';
       $('dynamic-list').innerHTML = '<div class="momentum-empty">数据不完整时不更新排名</div>';
       $('dynamic-exits').textContent = '';
+      $('dynamic-near-misses').innerHTML = '';
       return;
     }
     const stats = dynamicScanner.scanStats;
@@ -327,6 +328,37 @@ import { calculateFractionalOrder, FRACTIONAL_EXECUTION_VERSION, MIN_ORDER_AMOUN
     $('dynamic-exits').textContent = dynamicScanner.exited.length
       ? `本次自动退出候选池：${dynamicScanner.exited.map((item) => `${item.symbol}（原#${item.previousRank}${heldExited.some((held) => held.symbol === item.symbol) ? '，已持有继续跟踪' : ''}）`).join('、')}`
       : '本次没有股票退出前10；首次记录时全部显示为“新进入”。';
+    const nearMisses = dynamicScanner.nearMisses || [];
+    $('dynamic-near-misses').innerHTML = nearMisses.length
+      ? `<h3>差一点进入前10</h3>${nearMisses.map((item) => `<div class="dynamic-near-row"><strong>#${item.qualifiedRank} ${item.symbol}</strong><span>${item.analysis.score}/100</span><span>相对SPY ${percent(item.analysis.metrics.relative20)}</span></div>`).join('')}`
+      : '<p>目前没有前10名之外的合格股票。</p>';
+  }
+
+  function explainDynamicSymbol(symbol) {
+    const query = String(symbol || '').trim().toUpperCase();
+    const result = $('dynamic-lookup-result');
+    if (!query) return;
+    const item = dynamicScanner?.diagnostics?.find((candidate) => candidate.symbol === query);
+    if (!item) {
+      result.textContent = `${query} 不在当前冻结的64只股票池中，因此没有参加本轮排名。`;
+      return;
+    }
+    if (item.inCandidatePool) {
+      result.textContent = `${query} 已进入候选池：合格排名 #${item.qualifiedRank}，评分 ${item.score}/100。`;
+      return;
+    }
+    if (item.eligible) {
+      result.textContent = `${query} 已通过价格、历史、流动性和75分门槛，但合格排名 #${item.qualifiedRank}，未进入前10。`;
+      return;
+    }
+    const reasonLabels = {
+      price: '价格低于$5或价格缺失',
+      history: '完整日线不足61根',
+      liquidity: '20日平均成交额低于$5,000万或数据不足',
+      score_unavailable: '评分数据不完整',
+      score_below_minimum: `评分 ${item.score ?? '—'}/100，低于75分门槛`
+    };
+    result.textContent = `${query} 未合格：${item.reasons.map((reason) => reasonLabels[reason] || reason).join('；')}。`;
   }
 
   function renderIdeas() {
@@ -544,6 +576,10 @@ import { calculateFractionalOrder, FRACTIONAL_EXECUTION_VERSION, MIN_ORDER_AMOUN
   });
   if ('Notification' in window && Notification.permission === 'granted' && localStorage.getItem('laofan-momentum-alerts') === 'enabled') $('enable-momentum-alerts').textContent = '网页通知已开启';
   $('reset-button').addEventListener('click', () => { if (confirm('确定清除全部模拟交易记录并恢复到 $1,000 吗？')) { state = { cash: STARTING_CASH, realized: 0, positions: {}, history: [], snapshots: [], benchmark: null, regimeSnapshots: [], momentum: { positions: {}, completed: [], signals: [] }, dip: { positions: {}, completed: [], signals: [] }, dynamicSnapshots: [] }; render(); } });
+  $('dynamic-lookup').addEventListener('submit', (event) => {
+    event.preventDefault();
+    explainDynamicSymbol($('dynamic-symbol-query').value);
+  });
   renderIdeas(); render(); loadMarketData(); loadDynamicData();
   setInterval(loadMarketData, 60 * 1000);
   setInterval(loadDynamicData, 5 * 60 * 1000);
