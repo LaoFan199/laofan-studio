@@ -453,8 +453,16 @@ them in response to a few recent sessions.
     the frozen universe”;
   - keep diagnostics informational with no buy button or automatic order;
   - pass deterministic tests plus desktop/narrow visual checks.
-- Results: implementation and deployment validation pending.
+- Results: implementation and deployment validation passed on 2026-08-30.
+  Twenty-two deterministic tests pass, including qualified rank ordering and
+  simultaneous disclosure of every failed eligibility rule. The deployed API
+  returns ranks 11-20 and diagnostics for all 64 frozen symbols. An interactive
+  AVGO lookup reported its exact current reason (score 16, below the 75-point
+  threshold), rather than inferring from news or price movement. Desktop and
+  390px layouts have no horizontal overflow or console errors; the isolated
+  account reconciled to $1,000 cash plus $0 holdings and no order was created.
 - Decision: product transparency improvement; no strategy promotion
+- Related commits: `b48ef74`, `59c9421`
 
 Copy this section for each future strategy experiment:
 
