@@ -6,8 +6,8 @@
   <meta name="description" content="LaoFan AI 美股模拟交易助手">
   <meta name="api-base" content="https://laofan-studio.vercel.app">
   <title>LaoFan AI 模拟交易</title>
-  <link rel="stylesheet" href="app.css?v=20260830-1">
-  <link rel="stylesheet" href="momentum.css?v=20260830-1">
+  <link rel="stylesheet" href="app.css?v=20260831-1">
+  <link rel="stylesheet" href="momentum.css?v=20260831-1">
   <style>
     .updated{font-weight:700}.market-open{color:#36d399}.market-closed{color:#8fa3bb}.reason{display:block;color:#6f86a2;font-size:10px;line-height:1.45;margin-top:5px;max-width:250px}
     .summary-grid{grid-template-columns:repeat(5,1fr)}
@@ -99,7 +99,7 @@
             </form>
             <p class="dynamic-lookup-result" id="dynamic-lookup-result">可查询冻结股票池中的任一代码，了解它为什么没有进入前10。</p>
           </details>
-          <p class="disclaimer">只有数据、流动性和评分（≥75）持续合格且仍在前10的股票才留在候选池；失效后自动退出。已经模拟买入的股票不会自动卖出，而会继续显示和更新价格，由你决定何时卖出。</p>
+          <p class="disclaimer">只有数据、流动性和评分（≥75）持续合格且仍在前10的股票才留在候选池；失效后自动退出。下跌诊断仅解释市场、行业、成交量和价格结构，财报/监管尚未核验，不改变评分或自动交易。已经模拟买入的股票不会自动卖出。</p>
         </article>
 
         <article class="panel momentum-panel">
@@ -188,6 +188,6 @@
     </form>
   </dialog>
 
-  <script type="module" src="app.js?v=20260830-1"></script>
+  <script type="module" src="app.js?v=20260831-1"></script>
 </body>
 </html>

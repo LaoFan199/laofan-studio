@@ -304,12 +304,26 @@ import { calculateFractionalOrder, FRACTIONAL_EXECUTION_VERSION, MIN_ORDER_AMOUN
     $('dynamic-status').textContent = `扫描 ${stats.universe} 只 · ${stats.eligible} 只达到75分且全部合格 · 候选池 ${stats.displayed} 只 · ${dynamicScanner.marketDate} ${time} 更新`;
     const movementText = { new: '新进入', up: '排名上升', down: '排名下降', same: '排名不变' };
     const movementMark = (item) => item.movement === 'new' ? 'NEW' : item.movement === 'same' ? '—' : `${item.movement === 'up' ? '↑' : '↓'} ${Math.abs(item.previousRank - item.rank)}`;
+    const downsideDetails = (item) => {
+      const d = item.downside;
+      if (!d || d.status !== 'available') return '<details class="downside-details"><summary>下跌诊断 · 数据不足</summary><p>数据不完整时不作解释。</p></details>';
+      return `<details class="downside-details"><summary>下跌诊断 · ${d.source} · 置信度${d.confidence}</summary><div>
+        <span><b>当日归因</b><em>${d.source}</em></span>
+        <span><b>成交量</b><em>${d.labels.volumeState}${d.metrics.volumeRatio == null ? '' : `（${d.metrics.volumeRatio.toFixed(1)}×）`}</em></span>
+        <span><b>行业基准</b><em>${item.sectorEtf} ${percent(d.metrics.sectorChange)}</em></span>
+        <span><b>20日趋势</b><em>${d.metrics.belowTrend ? '已跌破' : '仍在上方'}</em></span>
+        <span><b>参考风险线</b><em>${money(d.metrics.riskLine)}${d.metrics.belowRiskLine ? ' · 已跌破' : ''}</em></span>
+        <span><b>财报/监管</b><em>${d.fundamentals}</em></span>
+        <strong>${d.action}（仅提示，不自动交易）</strong>
+      </div></details>`;
+    };
     const activeCandidates = dynamicScanner.candidates.map((item) => `<div class="momentum-row dynamic-row">
       <span><strong class="dynamic-rank">#${item.rank}</strong><strong class="ticker">${item.symbol}</strong><small>${item.analysis.risk}风险 · 置信度${item.analysis.confidence}</small></span>
       <span class="score"><small>量化分数</small>${item.analysis.score}/100</span>
       <span><small>最新价格</small>${money(item.price)}</span>
       <span class="${item.analysis.metrics.relative20 >= 0 ? 'positive' : 'negative'}"><small>20日相对SPY</small>${percent(item.analysis.metrics.relative20)}</span>
       <span><span class="movement movement-${item.movement}"><small>${movementText[item.movement]}</small>${movementMark(item)}</span><button class="trade-button dynamic-buy" data-dynamic-symbol="${item.symbol}" ${item.analysis.score >= BUY_SCORE ? '' : 'disabled'}>模拟买入</button></span>
+      ${downsideDetails(item)}
     </div>`).join('');
     const heldOutsidePool = heldOutsideDynamicPool(state.positions, dynamicScanner.candidates);
     const heldRows = heldOutsidePool.map(([symbol, position]) => {
