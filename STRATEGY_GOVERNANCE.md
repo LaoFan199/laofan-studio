@@ -485,8 +485,17 @@ them in response to a few recent sessions.
   - sector or volume gaps lower confidence rather than inventing a conclusion;
   - diagnostics remain shadow-only and create no order or automatic exit;
   - pass tests and desktop/narrow checks without breaking account reconciliation.
-- Results: implementation and deployment validation pending.
+- Results: implementation and deployment validation passed on 2026-08-31.
+  Twenty-four deterministic tests pass, including market/sector/stock source
+  separation, abnormal-volume labeling, insufficient-data failure, and the
+  prior-session risk line. The deployed endpoint reports
+  `downside-diagnostic-v1-shadow`; all 10 dynamic candidates expose the panel.
+  An interactive V check showed stock-relative weakness, 0.7x volume, price
+  above its 20-day average, and a $358.20 reference risk line with no order.
+  Desktop and 390px layouts have no overflow or console errors; isolated equity
+  reconciled to $1,000 cash plus $0 holdings and all 10 manual buttons remained.
 - Decision: pending; shadow explanation only
+- Related commits: `f8fa324`, `a5b5390`
 
 Copy this section for each future strategy experiment:
 
