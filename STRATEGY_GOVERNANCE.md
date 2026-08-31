@@ -464,6 +464,30 @@ them in response to a few recent sessions.
 - Decision: product transparency improvement; no strategy promotion
 - Related commits: `b48ef74`, `59c9421`
 
+### Experiment: Downside Diagnostic v1
+
+- Date proposed: 2026-08-31
+- Baseline version: `dynamic-universe-v1.1-manual` (unchanged)
+- Challenger version: `downside-diagnostic-v1-shadow`
+- Hypothesis: separating market, sector, and stock-specific weakness while
+  exposing volume, trend, and a prior-20-session risk line will reduce vague
+  “washout” narratives and make downside decisions more auditable.
+- One primary change: add a deterministic downside explanation layer; it does
+  not change the v1.1 score, 75-point threshold, ranking, orders, or holdings.
+- Frozen diagnostics: compare latest completed-session return with SPY and the
+  mapped Select Sector SPDR; flag volume at 1.3x and 2x its prior-20-session
+  average; show the 20-day average and the lowest low of the preceding 20
+  sessions as an informational risk line.
+- Missing information: until a reliable filing/regulatory-event source is
+  connected, display “not yet verified” and never infer that no event exists.
+- Acceptance criteria chosen before evaluation:
+  - deterministic source, volume, trend, and risk-line outputs;
+  - sector or volume gaps lower confidence rather than inventing a conclusion;
+  - diagnostics remain shadow-only and create no order or automatic exit;
+  - pass tests and desktop/narrow checks without breaking account reconciliation.
+- Results: implementation and deployment validation pending.
+- Decision: pending; shadow explanation only
+
 Copy this section for each future strategy experiment:
 
 ```markdown

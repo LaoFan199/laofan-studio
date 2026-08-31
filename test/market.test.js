@@ -4,6 +4,7 @@ import { analyzeMarketRegime, completedDailyBars } from '../api/market.js';
 import { evaluateMomentumCandidate, evaluateMomentumUniverse, updateTrailingPosition } from '../api/momentum.js';
 import { evaluateDipOpportunity, updateDipPosition } from '../api/dip.js';
 import { compareDynamicRankings, DYNAMIC_RULES, evaluateDynamicUniverse, heldOutsideDynamicPool, rankDynamicCandidates } from '../api/dynamic-strategy.js';
+import { diagnoseDownside } from '../api/downside.js';
 
 const barsFrom = (values, start = '2025-01-02T21:00:00Z') => values.map((c, index) => ({
   c,
@@ -193,4 +194,27 @@ test('dynamic positions remain tracked after leaving the qualified pool', () => 
   const held = heldOutsideDynamicPool(positions, [{ symbol: 'V' }]);
   assert.deepEqual(held.map(([symbol]) => symbol), ['TMO']);
   assert.equal(positions.TMO.quantity, 0.1);
+});
+
+test('downside diagnostic separates market, sector, and stock weakness', () => {
+  const make = (last, previous = 100, volume = 1_000_000) => Array.from({ length: 21 }, (_, index) => ({
+    c: index === 20 ? last : previous,
+    l: index === 20 ? last - 1 : previous - 2,
+    v: index === 20 ? volume : 1_000_000
+  }));
+  assert.equal(diagnoseDownside(make(96), make(98), make(99)).source, '市场同步下跌');
+  assert.equal(diagnoseDownside(make(96), make(100), make(98)).source, '行业同步下跌');
+  const individual = diagnoseDownside(make(96, 100, 2_000_000), make(100), make(100));
+  assert.equal(individual.source, '个股相对走弱');
+  assert.equal(individual.labels.volumeState, '显著放量');
+});
+
+test('downside diagnostic fails closed and exposes a prior-session risk line', () => {
+  assert.equal(diagnoseDownside(Array(20).fill({ c: 100 }), [], []).status, 'unavailable');
+  const stock = Array.from({ length: 21 }, (_, index) => ({ c: index === 20 ? 90 : 100, l: index === 5 ? 92 : 98, v: 1_000_000 }));
+  const flat = Array.from({ length: 21 }, () => ({ c: 100, l: 99, v: 1_000_000 }));
+  const result = diagnoseDownside(stock, flat, flat);
+  assert.equal(result.metrics.riskLine, 92);
+  assert.equal(result.metrics.belowRiskLine, true);
+  assert.match(result.action, /暂停参与/);
 });
