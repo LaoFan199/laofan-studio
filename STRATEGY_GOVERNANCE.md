@@ -507,7 +507,13 @@ them in response to a few recent sessions.
 - Acceptance criteria: visibly disclose SPY, interval and update time; fail
   clearly with fewer than 20 bars; render desktop and 390px without overflow;
   preserve account reconciliation and all enforced risk limits.
-- Results: implementation and deployment validation pending.
+- Results: deployed and validated on 2026-09-01. The live API returned 70
+  completed SPY bars; desktop rendered a 1,146 x 300 chart and 390px mobile
+  rendered a 313 x 220 chart with no horizontal overflow. Both showed 70
+  candles, the 20-session moving average, SPY price/change and update time with
+  no console errors. The reset test account reconciled at $1,000 total assets =
+  $1,000 cash + $0 holdings, while the 20% single-stock and minimum-cash limits
+  remained visible.
 - Decision: product observability improvement; no strategy promotion
 
 Copy this section for each future strategy experiment:
