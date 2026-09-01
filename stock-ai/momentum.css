@@ -2,6 +2,7 @@
 @media(max-width:650px){.momentum-row{grid-template-columns:1fr 1fr}.momentum-row>span:first-child{grid-column:1/-1}}
 .order-presets{display:flex;gap:8px;margin-top:9px}.order-presets button{border:1px solid var(--line);border-radius:8px;background:rgba(101,167,255,.08);color:var(--blue);padding:7px 10px;cursor:pointer;font-size:11px}.order-presets button:hover{border-color:var(--blue)}
 .dip-shadow-badge{font-size:11px;color:var(--blue);border:1px solid var(--line);border-radius:999px;padding:7px 10px;white-space:nowrap}.momentum-row.dip-watch{border-color:rgba(248,200,92,.35)}.momentum-row.dip-confirmed{border-color:rgba(54,211,153,.7);background:rgba(54,211,153,.04)}.momentum-row.dip-excluded{opacity:.72}
+.dip-checks{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}.dip-check{font-size:8px;border-radius:999px;padding:3px 5px}.dip-check.pass{color:var(--green);background:rgba(54,211,153,.1)}.dip-check.fail{color:var(--red);background:rgba(255,107,122,.09)}
 .momentum-head{flex-wrap:wrap}
 .dynamic-rank{display:inline-block;min-width:27px;color:var(--blue);margin-right:7px}.movement{font-weight:800}.movement-new,.movement-up{color:var(--green)}.movement-down{color:var(--red)}.movement-same{color:var(--muted)}.dynamic-exits{color:var(--muted);font-size:11px;line-height:1.6;margin:12px 0 0}
 .dynamic-buy{display:block;margin-top:7px;padding:6px 9px;font-size:10px}
