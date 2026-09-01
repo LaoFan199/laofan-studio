@@ -611,7 +611,13 @@ them in response to a few recent sessions.
 - Acceptance criteria: deterministic no-look-ahead test; all three lines and
   labels render when sufficient history exists; desktop and 390px have no
   overflow; preserve account reconciliation and enforced risk rules.
-- Results: implementation and deployment validation pending.
+- Results: implementation and deployment validation passed on 2026-09-01.
+  Twenty-eight deterministic tests pass, including exact 20/60/200-session
+  calculations without look-ahead. The live endpoint returned 70 visible SPY
+  candles with latest averages of 769.64, 751.84, and 707.83 respectively.
+  Desktop and 390px rendered all three distinct lines and five legend items
+  without console errors or horizontal overflow. Isolated equity reconciled to
+  $1,000 cash plus $0 holdings and enforced risk rules were unchanged.
 - Decision: product observability improvement; no strategy promotion
 
 Copy this section for each future strategy experiment:
