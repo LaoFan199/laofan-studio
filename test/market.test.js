@@ -93,7 +93,7 @@ test('momentum universe keeps tracked common shares representable', () => {
 });
 
 test('broad universe keeps tradable common shares and rejects non-common securities', () => {
-  const base = { status: 'active', asset_class: 'us_equity', exchange: 'NASDAQ', tradable: true };
+  const base = { status: 'active', class: 'us_equity', exchange: 'NASDAQ', tradable: true };
   assert.equal(isBroadMarketAsset({ ...base, symbol: 'AAPL', name: 'Apple Inc. Common Stock' }), true);
   assert.equal(isBroadMarketAsset({ ...base, symbol: 'TESTW', name: 'Test Corp Warrant' }), false);
   assert.equal(isBroadMarketAsset({ ...base, symbol: 'ETF', name: 'Example Index ETF' }), false);

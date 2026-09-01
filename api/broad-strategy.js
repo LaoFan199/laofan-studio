@@ -5,7 +5,7 @@ const EXCLUDED_NAME = /warrant|right|unit|preferred|depositary note|bond|debentu
 const INCLUDED_NAME = /common stock|ordinary shares|class [a-z]|american depositary|ads each|shares/i;
 
 export function isBroadMarketAsset(asset) {
-  if (!asset?.tradable || asset.status !== 'active' || asset.asset_class !== 'us_equity') return false;
+  if (!asset?.tradable || asset.status !== 'active' || (asset.class || asset.asset_class) !== 'us_equity') return false;
   if (!['NASDAQ', 'NYSE', 'AMEX', 'ARCA'].includes(asset.exchange)) return false;
   if (!/^[A-Z]{1,5}(?:\.[A-Z])?$/.test(asset.symbol || '')) return false;
   const name = String(asset.name || '');
