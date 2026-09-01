@@ -599,6 +599,21 @@ them in response to a few recent sessions.
   visible and enforced. Forward comparison remains pending.
 - Decision: pending; broad ranking-only challenger
 
+### Product change: SPY 60/200-day moving-average overlays
+
+- Date proposed: 2026-09-01
+- Change: add visibly distinct 60-session and 200-session moving averages to
+  the existing 70-candle SPY overview alongside the 20-session average.
+- Calculation: compute each point only from completed bars available at that
+  date, using longer server history before slicing the 70 visible sessions.
+- Strategy impact: none. These overlays are observational and do not change
+  scores, candidates, market regime, orders, holdings, or risk limits.
+- Acceptance criteria: deterministic no-look-ahead test; all three lines and
+  labels render when sufficient history exists; desktop and 390px have no
+  overflow; preserve account reconciliation and enforced risk rules.
+- Results: implementation and deployment validation pending.
+- Decision: product observability improvement; no strategy promotion
+
 Copy this section for each future strategy experiment:
 
 ```markdown

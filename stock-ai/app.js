@@ -76,8 +76,9 @@ import { calculateFractionalOrder, FRACTIONAL_EXECUTION_VERSION, MIN_ORDER_AMOUN
       return;
     }
     const width = 1000, height = 280, left = 22, right = 66, top = 12, bottom = 28;
-    const minimum = Math.min(...bars.map((bar) => bar.l));
-    const maximum = Math.max(...bars.map((bar) => bar.h));
+    const plottedValues = bars.flatMap((bar) => [bar.l, bar.h, bar.ma20, bar.ma60, bar.ma200]).filter(Number.isFinite);
+    const minimum = Math.min(...plottedValues);
+    const maximum = Math.max(...plottedValues);
     const range = maximum - minimum || 1;
     const step = (width - left - right) / bars.length;
     const x = (index) => left + index * step + step / 2;
@@ -93,10 +94,13 @@ import { calculateFractionalOrder, FRACTIONAL_EXECUTION_VERSION, MIN_ORDER_AMOUN
       const bodyHeight = Math.max(1, Math.abs(y(bar.o) - y(bar.c)));
       return `<line x1="${x(index)}" y1="${y(bar.h)}" x2="${x(index)}" y2="${y(bar.l)}" stroke="${color}"/><rect x="${x(index) - candleWidth / 2}" y="${bodyTop}" width="${candleWidth}" height="${bodyHeight}" fill="${color}" rx="1"/>`;
     }).join('');
-    const maPoints = bars.map((_, index) => index < 19 ? null : `${x(index)},${y(bars.slice(index - 19, index + 1).reduce((sum, bar) => sum + bar.c, 0) / 20)}`).filter(Boolean).join(' ');
+    const averageLine = (key, className) => {
+      const points = bars.map((bar, index) => Number.isFinite(bar[key]) ? `${x(index)},${y(bar[key])}` : null).filter(Boolean).join(' ');
+      return points ? `<polyline class="market-chart-ma ${className}" points="${points}"/>` : '';
+    };
     const dateIndexes = [0, Math.floor((bars.length - 1) / 2), bars.length - 1];
     const dates = dateIndexes.map((index) => `<text class="market-chart-label" x="${x(index)}" y="${height - 6}" text-anchor="middle">${new Date(bars[index].t).toLocaleDateString('zh-CN', { month: '2-digit', day: '2-digit' })}</text>`).join('');
-    target.innerHTML = `<svg class="market-chart-svg" viewBox="0 0 ${width} ${height}" role="img" aria-label="SPY最近${bars.length}个交易日日K图">${grid}${candles}<polyline class="market-chart-ma" points="${maPoints}"/>${dates}</svg>`;
+    target.innerHTML = `<svg class="market-chart-svg" viewBox="0 0 ${width} ${height}" role="img" aria-label="SPY最近${bars.length}个交易日日K图，含20日、60日和200日均线">${grid}${candles}${averageLine('ma20', 'ma20')}${averageLine('ma60', 'ma60')}${averageLine('ma200', 'ma200')}${dates}</svg>`;
     const latest = bars.at(-1), change = ((latest.c / bars.at(-2).c) - 1) * 100;
     $('market-chart-status').textContent = `SPY $${latest.c.toFixed(2)} · ${percent(change)} · ${new Date(fetchedAt).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })} 更新`;
   }

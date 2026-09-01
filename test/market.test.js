@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { analyzeMarketRegime, completedDailyBars } from '../api/market.js';
+import { analyzeMarketRegime, buildMarketChart, completedDailyBars } from '../api/market.js';
 import { evaluateMomentumCandidate, evaluateMomentumUniverse, updateTrailingPosition } from '../api/momentum.js';
 import { evaluateDipOpportunity, updateDipPosition } from '../api/dip.js';
 import { compareDynamicRankings, DYNAMIC_RULES, evaluateDynamicUniverse, heldOutsideDynamicPool, rankDynamicCandidates } from '../api/dynamic-strategy.js';
@@ -55,6 +55,16 @@ test('open-market helper excludes an in-progress daily bar', () => {
   ];
   assert.equal(completedDailyBars(bars, true, now).length, 1);
   assert.equal(completedDailyBars(bars, false, now).length, 2);
+});
+
+test('market chart computes 20, 60, and 200 day averages without look-ahead', () => {
+  const bars = Array.from({ length: 220 }, (_, index) => ({ t: `day-${index}`, o: index + 1, h: index + 2, l: index, c: index + 1 }));
+  const chart = buildMarketChart(bars, 70);
+  assert.equal(chart.length, 70);
+  assert.equal(chart[0].ma20, 141.5);
+  assert.equal(chart[0].ma60, 121.5);
+  assert.equal(chart[0].ma200, null);
+  assert.equal(chart.at(-1).ma200, 120.5);
 });
 
 test('momentum candidate must pass every liquidity and price check', () => {

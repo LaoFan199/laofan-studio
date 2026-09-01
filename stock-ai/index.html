@@ -8,7 +8,7 @@
   <title>LaoFan AI 模拟交易</title>
   <link rel="stylesheet" href="app.css?v=20260901-1">
   <link rel="stylesheet" href="momentum.css?v=20260901-4">
-  <link rel="stylesheet" href="chart.css?v=20260901-1">
+  <link rel="stylesheet" href="chart.css?v=20260901-2">
   <style>
     .updated{font-weight:700}.market-open{color:#36d399}.market-closed{color:#8fa3bb}.reason{display:block;color:#6f86a2;font-size:10px;line-height:1.45;margin-top:5px;max-width:250px}
     .summary-grid{grid-template-columns:repeat(5,1fr)}
@@ -45,7 +45,7 @@
         <span class="updated" id="market-chart-status">等待大盘历史数据</span>
       </div>
       <div class="market-chart-wrap" id="market-chart"><div class="empty">正在加载最近约3个月日K</div></div>
-      <div class="market-chart-legend"><span><i class="legend-up"></i>上涨</span><span><i class="legend-down"></i>下跌</span><span><i class="legend-ma"></i>20日均线</span></div>
+      <div class="market-chart-legend"><span><i class="legend-up"></i>上涨</span><span><i class="legend-down"></i>下跌</span><span><i class="legend-ma20"></i>20日均线</span><span><i class="legend-ma60"></i>60日均线</span><span><i class="legend-ma200"></i>200日均线</span></div>
       <p class="disclaimer">SPY用于观察美国大盘整体走势；日K和均线仅供研究，不构成市场涨跌预测。</p>
     </section>
 
@@ -210,6 +210,6 @@
     </form>
   </dialog>
 
-  <script type="module" src="app.js?v=20260901-4"></script>
+  <script type="module" src="app.js?v=20260901-5"></script>
 </body>
 </html>

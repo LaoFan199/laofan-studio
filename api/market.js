@@ -16,6 +16,22 @@ export function completedDailyBars(bars, marketIsOpen, now = new Date()) {
   return marketDate(bars.at(-1).t) === marketDate(now) ? bars.slice(0, -1) : bars;
 }
 
+export function buildMarketChart(bars, visibleBars = 70) {
+  const normalized = (bars || []).map((bar) => ({
+    t: bar.t, o: Number(bar.o), h: Number(bar.h), l: Number(bar.l), c: Number(bar.c)
+  })).filter((bar) => [bar.o, bar.h, bar.l, bar.c].every(Number.isFinite));
+  const movingAverage = (index, days) => {
+    if (index < days - 1) return null;
+    return normalized.slice(index - days + 1, index + 1).reduce((sum, bar) => sum + bar.c, 0) / days;
+  };
+  return normalized.map((bar, index) => ({
+    ...bar,
+    ma20: movingAverage(index, 20),
+    ma60: movingAverage(index, 60),
+    ma200: movingAverage(index, 200)
+  })).slice(-visibleBars);
+}
+
 export function analyzeBars(bars, benchmarkBars) {
   if (!Array.isArray(bars) || bars.length < 61) return null;
   const closes = bars.map((bar) => Number(bar.c)).filter(Number.isFinite);
@@ -306,9 +322,7 @@ export default async function handler(req, res) {
     const trackedMomentumSymbols = String(req.query.momentumSymbols || '').toUpperCase().split(',')
       .map((value) => value.trim()).filter((value) => /^[A-Z.]{1,6}$/.test(value)).slice(0, 20);
     const momentum = await loadMomentumScanner(headers, Boolean(clock.is_open), trackedMomentumSymbols);
-    const marketChart = (completedHistory.SPY || []).slice(-70).map((bar) => ({
-      t: bar.t, o: Number(bar.o), h: Number(bar.h), l: Number(bar.l), c: Number(bar.c)
-    })).filter((bar) => [bar.o, bar.h, bar.l, bar.c].every(Number.isFinite));
+    const marketChart = buildMarketChart(completedHistory.SPY, 70);
 
     res.setHeader('Cache-Control', 's-maxage=10, stale-while-revalidate=30');
     return res.status(200).json({
