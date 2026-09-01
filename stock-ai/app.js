@@ -1,6 +1,7 @@
 import { updateTrailingPosition } from '../api/momentum.js';
 import { updateDipPosition } from '../api/dip.js';
 import { compareDynamicRankings, heldOutsideDynamicPool } from '../api/dynamic-strategy.js';
+import { BROAD_RULES, rankBroadCandidates } from '../api/broad-strategy.js';
 import { calculateFractionalOrder, FRACTIONAL_EXECUTION_VERSION, MIN_ORDER_AMOUNT } from './trading.js';
 
 (() => {
@@ -32,6 +33,7 @@ import { calculateFractionalOrder, FRACTIONAL_EXECUTION_VERSION, MIN_ORDER_AMOUN
   state.dip.completed ||= [];
   state.dip.signals ||= [];
   state.dynamicSnapshots ||= [];
+  state.broadScan ||= { date: null, status: 'idle', processed: 0, total: 0, eligible: 0, failedBatches: 0, candidates: [] };
   let selected = null;
   let marketRegime = null;
   let momentumScanner = null;
@@ -389,6 +391,54 @@ import { calculateFractionalOrder, FRACTIONAL_EXECUTION_VERSION, MIN_ORDER_AMOUN
       : '<p>目前没有前10名之外的合格股票。</p>';
   }
 
+  function renderBroadScan() {
+    const scan = state.broadScan;
+    const progress = scan.total ? Math.min(100, (scan.processed / scan.total) * 100) : 0;
+    const statusLabels = { idle: '等待启动', loading: '正在分批扫描', paused: '本批失败，稍后续扫', complete: '今日全量扫描完成' };
+    $('broad-status').textContent = `${statusLabels[scan.status] || scan.status} · 已扫描 ${scan.processed}/${scan.total || '—'} 只 · ${scan.eligible || 0} 只达到75分且全部合格`;
+    $('broad-progress-bar').style.width = `${progress}%`;
+    $('broad-progress').setAttribute('aria-valuenow', progress.toFixed(0));
+    $('broad-list').innerHTML = scan.candidates.length ? scan.candidates.map((item, index) => `<div class="momentum-row broad-row">
+      <span><strong class="dynamic-rank">#${index + 1}</strong><strong class="ticker">${item.symbol}</strong><small>全市场挑战榜 · 仅观察</small></span>
+      <span><small>现价</small>${money(item.price)}</span>
+      <span class="positive"><small>量化分数</small>${item.analysis.score}/100</span>
+      <span><small>相对SPY</small>${percent(item.analysis.metrics.relative20)}</span>
+      <span><small>风险</small>${item.analysis.risk}</span>
+    </div>`).join('') : '<div class="momentum-empty">完成更多批次后显示全市场领先候选</div>';
+  }
+
+  async function loadBroadData() {
+    if (!API_BASE || state.broadScan.status === 'loading') return;
+    try {
+      const universeResponse = await fetch(`${API_BASE}/api/universe`);
+      if (!universeResponse.ok) throw new Error('universe unavailable');
+      const universe = await universeResponse.json();
+      const marketDate = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
+      if (state.broadScan.date !== marketDate || state.broadScan.total !== universe.symbols.length) {
+        state.broadScan = { date: marketDate, status: 'idle', processed: 0, total: universe.symbols.length, eligible: 0, failedBatches: 0, candidates: [] };
+      }
+      if (state.broadScan.status === 'complete') { renderBroadScan(); return; }
+      state.broadScan.status = 'loading'; renderBroadScan(); save();
+      while (state.broadScan.processed < universe.symbols.length) {
+        const batch = universe.symbols.slice(state.broadScan.processed, state.broadScan.processed + BROAD_RULES.batchSize);
+        const response = await fetch(`${API_BASE}/api/broad-scan?symbols=${encodeURIComponent(batch.join(','))}`);
+        if (!response.ok) throw new Error('batch unavailable');
+        const result = await response.json();
+        const merged = new Map(state.broadScan.candidates.map((item) => [item.symbol, item]));
+        result.candidates.forEach((item) => merged.set(item.symbol, item));
+        state.broadScan.candidates = rankBroadCandidates([...merged.values()]);
+        state.broadScan.processed += result.scanned;
+        state.broadScan.eligible += result.eligible;
+        renderBroadScan(); save();
+      }
+      state.broadScan.status = 'complete'; renderBroadScan(); save();
+    } catch {
+      state.broadScan.status = 'paused';
+      state.broadScan.failedBatches += 1;
+      renderBroadScan(); save();
+    }
+  }
+
   function explainDynamicSymbol(symbol) {
     const query = String(symbol || '').trim().toUpperCase();
     const result = $('dynamic-lookup-result');
@@ -633,12 +683,13 @@ import { calculateFractionalOrder, FRACTIONAL_EXECUTION_VERSION, MIN_ORDER_AMOUN
     } else $('enable-momentum-alerts').textContent = '通知未授权';
   });
   if ('Notification' in window && Notification.permission === 'granted' && localStorage.getItem('laofan-momentum-alerts') === 'enabled') $('enable-momentum-alerts').textContent = '网页通知已开启';
-  $('reset-button').addEventListener('click', () => { if (confirm('确定清除全部模拟交易记录并恢复到 $1,000 吗？')) { state = { cash: STARTING_CASH, realized: 0, positions: {}, history: [], snapshots: [], benchmark: null, regimeSnapshots: [], momentum: { positions: {}, completed: [], signals: [] }, dip: { positions: {}, completed: [], signals: [] }, dynamicSnapshots: [] }; render(); } });
+  $('reset-button').addEventListener('click', () => { if (confirm('确定清除全部模拟交易记录并恢复到 $1,000 吗？')) { state = { cash: STARTING_CASH, realized: 0, positions: {}, history: [], snapshots: [], benchmark: null, regimeSnapshots: [], momentum: { positions: {}, completed: [], signals: [] }, dip: { positions: {}, completed: [], signals: [] }, dynamicSnapshots: [], broadScan: state.broadScan }; render(); } });
   $('dynamic-lookup').addEventListener('submit', (event) => {
     event.preventDefault();
     explainDynamicSymbol($('dynamic-symbol-query').value);
   });
-  renderIdeas(); render(); loadMarketData(); loadDynamicData();
+  renderIdeas(); render(); renderBroadScan(); loadMarketData(); loadDynamicData(); loadBroadData();
   setInterval(loadMarketData, 60 * 1000);
   setInterval(loadDynamicData, 5 * 60 * 1000);
+  setInterval(loadBroadData, 10 * 60 * 1000);
 })();
