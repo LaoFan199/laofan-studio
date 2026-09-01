@@ -66,6 +66,39 @@ import { calculateFractionalOrder, FRACTIONAL_EXECUTION_VERSION, MIN_ORDER_AMOUN
     ).join('')}</div></details>`;
   }
 
+  function renderMarketChart(bars, fetchedAt) {
+    const target = $('market-chart');
+    if (!Array.isArray(bars) || bars.length < 20) {
+      target.innerHTML = '<div class="empty">大盘历史数据不足，暂不绘图</div>';
+      $('market-chart-status').textContent = '数据不足';
+      return;
+    }
+    const width = 1000, height = 280, left = 22, right = 66, top = 12, bottom = 28;
+    const minimum = Math.min(...bars.map((bar) => bar.l));
+    const maximum = Math.max(...bars.map((bar) => bar.h));
+    const range = maximum - minimum || 1;
+    const step = (width - left - right) / bars.length;
+    const x = (index) => left + index * step + step / 2;
+    const y = (price) => top + ((maximum - price) / range) * (height - top - bottom);
+    const candleWidth = Math.max(2, step * 0.58);
+    const grid = Array.from({ length: 5 }, (_, index) => {
+      const price = maximum - range * (index / 4), py = y(price);
+      return `<line class="market-chart-grid" x1="${left}" y1="${py}" x2="${width - right}" y2="${py}"/><text class="market-chart-label" x="${width - right + 8}" y="${py + 4}">$${price.toFixed(0)}</text>`;
+    }).join('');
+    const candles = bars.map((bar, index) => {
+      const color = bar.c >= bar.o ? '#36d399' : '#ff6b7a';
+      const bodyTop = y(Math.max(bar.o, bar.c));
+      const bodyHeight = Math.max(1, Math.abs(y(bar.o) - y(bar.c)));
+      return `<line x1="${x(index)}" y1="${y(bar.h)}" x2="${x(index)}" y2="${y(bar.l)}" stroke="${color}"/><rect x="${x(index) - candleWidth / 2}" y="${bodyTop}" width="${candleWidth}" height="${bodyHeight}" fill="${color}" rx="1"/>`;
+    }).join('');
+    const maPoints = bars.map((_, index) => index < 19 ? null : `${x(index)},${y(bars.slice(index - 19, index + 1).reduce((sum, bar) => sum + bar.c, 0) / 20)}`).filter(Boolean).join(' ');
+    const dateIndexes = [0, Math.floor((bars.length - 1) / 2), bars.length - 1];
+    const dates = dateIndexes.map((index) => `<text class="market-chart-label" x="${x(index)}" y="${height - 6}" text-anchor="middle">${new Date(bars[index].t).toLocaleDateString('zh-CN', { month: '2-digit', day: '2-digit' })}</text>`).join('');
+    target.innerHTML = `<svg class="market-chart-svg" viewBox="0 0 ${width} ${height}" role="img" aria-label="SPY最近${bars.length}个交易日日K图">${grid}${candles}<polyline class="market-chart-ma" points="${maPoints}"/>${dates}</svg>`;
+    const latest = bars.at(-1), change = ((latest.c / bars.at(-2).c) - 1) * 100;
+    $('market-chart-status').textContent = `SPY $${latest.c.toFixed(2)} · ${percent(change)} · ${new Date(fetchedAt).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })} 更新`;
+  }
+
   function renderMarketShield() {
     if (!marketRegime) return;
     const value = marketValue();
@@ -504,6 +537,7 @@ import { calculateFractionalOrder, FRACTIONAL_EXECUTION_VERSION, MIN_ORDER_AMOUN
       const response = await fetch(`${API_BASE}/api/market?symbols=${encodeURIComponent(symbols)}&momentumSymbols=${encodeURIComponent(momentumSymbols)}`);
       if (!response.ok) throw new Error('market request failed');
       const data = await response.json();
+      renderMarketChart(data.marketChart, data.fetchedAt);
       marketRegime = data.marketRegime || null;
       ideas.forEach((item) => {
         const quote = data.quotes[item.symbol];
