@@ -5,6 +5,7 @@ import { evaluateMomentumCandidate, evaluateMomentumUniverse, updateTrailingPosi
 import { evaluateDipOpportunity, updateDipPosition } from '../api/dip.js';
 import { compareDynamicRankings, DYNAMIC_RULES, evaluateDynamicUniverse, heldOutsideDynamicPool, rankDynamicCandidates } from '../api/dynamic-strategy.js';
 import { diagnoseDownside } from '../api/downside.js';
+import { isBroadMarketAsset, rankBroadCandidates } from '../api/broad-strategy.js';
 
 const barsFrom = (values, start = '2025-01-02T21:00:00Z') => values.map((c, index) => ({
   c,
@@ -89,6 +90,23 @@ test('momentum universe keeps tracked common shares representable', () => {
   const result = evaluateMomentumUniverse('BRK.B', 500);
   assert.equal(result.eligible, true);
   assert.deepEqual(result.reasons, []);
+});
+
+test('broad universe keeps tradable common shares and rejects non-common securities', () => {
+  const base = { status: 'active', asset_class: 'us_equity', exchange: 'NASDAQ', tradable: true };
+  assert.equal(isBroadMarketAsset({ ...base, symbol: 'AAPL', name: 'Apple Inc. Common Stock' }), true);
+  assert.equal(isBroadMarketAsset({ ...base, symbol: 'TESTW', name: 'Test Corp Warrant' }), false);
+  assert.equal(isBroadMarketAsset({ ...base, symbol: 'ETF', name: 'Example Index ETF' }), false);
+  assert.equal(isBroadMarketAsset({ ...base, symbol: 'OTC', name: 'Example Common Stock', exchange: 'OTC' }), false);
+});
+
+test('broad candidates retain the strongest scores across batches', () => {
+  const result = rankBroadCandidates([
+    { symbol: 'B', analysis: { score: 80, metrics: { relative20: 1 } } },
+    { symbol: 'A', analysis: { score: 90, metrics: { relative20: 0 } } },
+    { symbol: 'C', analysis: { score: 80, metrics: { relative20: 2 } } }
+  ], 2);
+  assert.deepEqual(result.map((item) => item.symbol), ['A', 'C']);
 });
 
 test('trailing exit rises with the high and triggers at a 15 percent drawdown', () => {

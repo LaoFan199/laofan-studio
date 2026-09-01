@@ -556,6 +556,39 @@ them in response to a few recent sessions.
   limits remained visible. Forward comparative evaluation remains pending.
 - Decision: pending; expanded shadow challenger only
 
+### Experiment: Broad US Equity Layered Scan v1
+
+- Date proposed: 2026-09-01
+- Baseline version: `dynamic-universe-v1.1-manual` frozen 64-symbol universe
+- Challenger version: `broad-us-equity-v1-shadow`
+- Hypothesis: applying the unchanged deterministic score and eligibility rules
+  to the much broader active US common-stock universe can discover qualified
+  opportunities that a hand-curated 64-symbol list necessarily misses.
+- One primary change: universe breadth. Score weights, 75-point threshold, $5
+  minimum price, 61-bar history, $50 million average 20-session dollar volume,
+  SPY benchmark, account limits, and all existing strategies remain unchanged.
+- Instruments and dates: active tradable common/ordinary/ADS equities on
+  NASDAQ, NYSE, AMEX, or ARCA returned by Alpaca; deterministic name and symbol
+  filters exclude warrants, rights, units, preferreds, funds, ETFs, acquisition
+  shells, and unsupported symbols. Begin forward collection after deployment.
+- Architecture: the browser retrieves the current asset universe once and asks
+  the 10-second serverless backend to evaluate batches of at most 60 symbols.
+  It exposes processed/total progress, saves resumable daily progress locally,
+  and labels a result complete only after every batch succeeds.
+- Execution/cost assumptions: ranking-only shadow challenger. It creates no
+  paper or live order and does not replace the 64-symbol manual candidate pool.
+- Acceptance criteria chosen before evaluation:
+  - disclose the actual filtered universe size and exact completed count;
+  - never label a partial or failed scan as complete;
+  - fail closed on missing benchmark, bars, snapshots, or batch data;
+  - deterministically retain the global top-ranked names across batches;
+  - preserve account reconciliation and all enforced risk limits;
+  - pass tests plus desktop/390px checks, then observe at least 20-40 trading
+    days and compare coverage, turnover, SPY excess return, maximum drawdown,
+    and cost-adjusted performance before any promotion.
+- Results: implementation and deployment validation pending.
+- Decision: pending; broad ranking-only challenger
+
 Copy this section for each future strategy experiment:
 
 ```markdown
