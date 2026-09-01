@@ -497,6 +497,19 @@ them in response to a few recent sessions.
 - Decision: pending; shadow explanation only
 - Related commits: `f8fa324`, `a5b5390`
 
+### Product change: SPY market candlestick overview
+
+- Date proposed: 2026-09-01
+- Change: show approximately 70 completed SPY daily OHLC bars and a 20-session
+  moving average near the top of the page using a lightweight responsive SVG.
+- Strategy impact: none. The chart is observational and does not affect scores,
+  candidate membership, orders, holdings, or the crisis-shield classifier.
+- Acceptance criteria: visibly disclose SPY, interval and update time; fail
+  clearly with fewer than 20 bars; render desktop and 390px without overflow;
+  preserve account reconciliation and all enforced risk limits.
+- Results: implementation and deployment validation pending.
+- Decision: product observability improvement; no strategy promotion
+
 Copy this section for each future strategy experiment:
 
 ```markdown

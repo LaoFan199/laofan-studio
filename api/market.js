@@ -306,6 +306,9 @@ export default async function handler(req, res) {
     const trackedMomentumSymbols = String(req.query.momentumSymbols || '').toUpperCase().split(',')
       .map((value) => value.trim()).filter((value) => /^[A-Z.]{1,6}$/.test(value)).slice(0, 20);
     const momentum = await loadMomentumScanner(headers, Boolean(clock.is_open), trackedMomentumSymbols);
+    const marketChart = (completedHistory.SPY || []).slice(-70).map((bar) => ({
+      t: bar.t, o: Number(bar.o), h: Number(bar.h), l: Number(bar.l), c: Number(bar.c)
+    })).filter((bar) => [bar.o, bar.h, bar.l, bar.c].every(Number.isFinite));
 
     res.setHeader('Cache-Control', 's-maxage=10, stale-while-revalidate=30');
     return res.status(200).json({
@@ -315,6 +318,7 @@ export default async function handler(req, res) {
       momentum,
       dip,
       quotes,
+      marketChart,
       fetchedAt: new Date().toISOString()
     });
   } catch {
