@@ -516,6 +516,37 @@ them in response to a few recent sessions.
   remained visible.
 - Decision: product observability improvement; no strategy promotion
 
+### Experiment: Dip Opportunity Challenger v1.1 expanded observation
+
+- Date proposed: 2026-09-01
+- Baseline version: `dip-v1-shadow` fixed six-symbol observation set
+- Challenger version: `dip-v1.1-shadow`
+- Hypothesis: applying the unchanged drawdown and confirmation rules to the
+  existing frozen liquid large-company universe will surface more independent
+  post-drawdown observations without weakening entry discipline.
+- One primary change: observation-universe breadth. The 8%-30% drawdown range,
+  all three confirmation checks, $50 shadow amount, 2% setup-low stop, 10-day
+  time exit, and no-average-down rule remain unchanged.
+- Instruments and dates: symbols from the frozen dynamic large-company universe
+  that have a price of at least $5, at least 61 completed adjusted daily bars,
+  and at least $50 million average 20-session dollar volume.
+- Execution/cost assumptions: unchanged shadow observations only; no main cash,
+  automatic order, leverage, option, or brokerage connection. Holding-day
+  bookkeeping may recover completed exchange sessions from immutable daily
+  bars after entry instead of depending on whether the browser opened each day.
+- Acceptance criteria chosen before evaluation:
+  - preserve every v1 entry and exit threshold exactly;
+  - show the latest completed-session date and each confirmation check;
+  - recover elapsed completed trading sessions without counting weekends;
+  - fail closed on insufficient price, history, or liquidity data;
+  - pass deterministic tests, account reconciliation, enforced risk checks,
+    and desktop/390px visual validation;
+  - observe 20-40 trading days and compare breadth, trade count, SPY excess
+    return, maximum drawdown, profit factor, and cost-adjusted results before
+    any promotion.
+- Results: implementation and forward evaluation pending.
+- Decision: pending; expanded shadow challenger only
+
 Copy this section for each future strategy experiment:
 
 ```markdown

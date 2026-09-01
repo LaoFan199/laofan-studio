@@ -1,12 +1,14 @@
 import { analyzeBars, completedDailyBars } from './market.js';
 import { DYNAMIC_RULES, DYNAMIC_UNIVERSE, DYNAMIC_VERSION, evaluateDynamicUniverse } from './dynamic-strategy.js';
 import { diagnoseDownside, DOWNSIDE_VERSION } from './downside.js';
+import { evaluateDipOpportunity, DIP_DYNAMIC_VERSION, DIP_RULES } from './dip.js';
 
 const ALLOWED_ORIGIN = 'https://laofan199.github.io';
 const SECTOR_BY_SYMBOL = Object.freeze({
   AAPL:'XLK',MSFT:'XLK',GOOGL:'XLC',AMZN:'XLY',NVDA:'XLK',META:'XLC',AVGO:'XLK',TSLA:'XLY','BRK.B':'XLF',JPM:'XLF',V:'XLF',MA:'XLF',UNH:'XLV',XOM:'XLE',JNJ:'XLV',WMT:'XLP',PG:'XLP',HD:'XLY',COST:'XLP',ABBV:'XLV',BAC:'XLF',CRM:'XLK',ORCL:'XLK',NFLX:'XLC',AMD:'XLK',ADBE:'XLK',CSCO:'XLK',PEP:'XLP',TMO:'XLV',ACN:'XLK',MCD:'XLY',LIN:'XLB',ABT:'XLV',DIS:'XLC',IBM:'XLK',CAT:'XLI',GE:'XLI',ISRG:'XLV',INTU:'XLK',QCOM:'XLK',TXN:'XLK',AMAT:'XLK',NOW:'XLK',BKNG:'XLY',PM:'XLP',GS:'XLF',RTX:'XLI',SPGI:'XLF',UBER:'XLI',LOW:'XLY',NEE:'XLU',DHR:'XLV',HON:'XLI',COP:'XLE',AMGN:'XLV',SBUX:'XLY',GILD:'XLV',BLK:'XLF',MDLZ:'XLP',ADP:'XLI',CB:'XLF',DE:'XLI',LMT:'XLI',KO:'XLP'
 });
 const SECTOR_ETFS = [...new Set(Object.values(SECTOR_BY_SYMBOL))];
+const average = (values) => values.reduce((sum, value) => sum + value, 0) / values.length;
 
 function applyCors(req, res) {
   const origin = req.headers.origin;
@@ -84,6 +86,23 @@ export default async function handler(req, res) {
       changePercent: item.changePercent,
       timestamp: item.timestamp
     }]));
+    const dipUniverse = inputs.filter((item) => {
+      const recent = item.bars.slice(-20);
+      const averageDollarVolume = recent.length === 20
+        ? average(recent.map((bar) => Number(bar.c) * Number(bar.v)))
+        : null;
+      return Number(item.price) >= DYNAMIC_RULES.minimumPrice
+        && item.bars.length >= DIP_RULES.minimumBars
+        && Number.isFinite(averageDollarVolume)
+        && averageDollarVolume >= DYNAMIC_RULES.minimumAverageDollarVolume;
+    });
+    const dip = {
+      version: DIP_DYNAMIC_VERSION,
+      status: dipUniverse.length ? 'available' : 'unavailable',
+      rules: DIP_RULES,
+      universe: dipUniverse.map((item) => item.symbol),
+      opportunities: dipUniverse.map((item) => ({ symbol: item.symbol, ...evaluateDipOpportunity(item.bars) }))
+    };
     res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=120');
     return res.status(200).json({
       version: DYNAMIC_VERSION,
@@ -97,7 +116,8 @@ export default async function handler(req, res) {
       quotes,
       candidates,
       nearMisses,
-      diagnostics
+      diagnostics,
+      dip
     });
   } catch {
     return res.status(502).json({

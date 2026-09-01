@@ -140,6 +140,14 @@ test('dip shadow position exits below setup low or after ten unproductive observ
   assert.equal(held.exitReason, '10个交易日未达到5%反弹');
 });
 
+test('dip holding days recover elapsed exchange sessions without daily browser visits', () => {
+  const entry = { symbol: 'XYZ', entryPrice: 100, setupLow: 90, observedDates: ['2026-08-27'] };
+  const tradingDates = ['2026-08-27T04:00:00Z', '2026-08-28T04:00:00Z', '2026-08-31T04:00:00Z'];
+  const updated = updateDipPosition(entry, 101, '2026-09-01', undefined, tradingDates);
+  assert.deepEqual(updated.observedDates, ['2026-08-27', '2026-08-28', '2026-08-31', '2026-09-01']);
+  assert.equal(updated.holdingDays, 4);
+});
+
 test('dynamic universe fails closed on price, history, liquidity, or missing score', () => {
   const liquidBars = Array.from({ length: 61 }, () => ({ c: 100, v: 1_000_000 }));
   const candidates = rankDynamicCandidates([

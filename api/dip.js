@@ -1,6 +1,7 @@
 const average = (values) => values.reduce((sum, value) => sum + value, 0) / values.length;
 
 export const DIP_VERSION = 'dip-v1-shadow';
+export const DIP_DYNAMIC_VERSION = 'dip-v1.1-shadow';
 export const DIP_RULES = Object.freeze({
   minimumBars: 61,
   minimumDrawdownPercent: 8,
@@ -47,14 +48,19 @@ export function evaluateDipOpportunity(bars, rules = DIP_RULES) {
     sma5,
     checks,
     signalTime: latest.time,
+    latestCompletedDate: latest.time,
+    recentTradingDates: recent.map((bar) => bar.time).filter(Boolean),
     reason: status === 'excluded' ? '回撤超过安全观察范围' : confirmed ? '回撤后出现止跌确认' : inDrawdownRange ? '已进入回撤区间，等待止跌确认' : '尚未进入回撤机会区间'
   };
 }
 
-export function updateDipPosition(position, price, observedDate, rules = DIP_RULES) {
+export function updateDipPosition(position, price, observedDate, rules = DIP_RULES, tradingDates = []) {
   const currentPrice = Number(price);
   if (!position || !Number.isFinite(currentPrice) || currentPrice <= 0 || !observedDate) return null;
-  const dates = [...new Set([...(position.observedDates || []), observedDate])].sort();
+  const firstObservedDate = (position.observedDates || [observedDate]).filter(Boolean).sort()[0] || observedDate;
+  const elapsedTradingDates = (tradingDates || []).map((value) => new Date(value).toISOString().slice(0, 10))
+    .filter((date) => date >= firstObservedDate && date <= observedDate);
+  const dates = [...new Set([...(position.observedDates || []), ...elapsedTradingDates, observedDate])].sort();
   const returnPercent = ((currentPrice / Number(position.entryPrice)) - 1) * 100;
   const stopPrice = Number(position.setupLow) * (1 - rules.stopBelowSetupLowPercent / 100);
   const stopped = currentPrice <= stopPrice;

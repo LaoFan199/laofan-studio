@@ -210,12 +210,14 @@ import { calculateFractionalOrder, FRACTIONAL_EXECUTION_VERSION, MIN_ORDER_AMOUN
   }
 
   function updateDip(data, fetchedAt, marketIsOpen, quotes) {
+    if (dipScanner?.version === 'dip-v1.1-shadow' && data?.version === 'dip-v1-shadow') return;
     dipScanner = data;
     if (!data || data.status !== 'available') return;
     Object.entries(state.dip.positions).forEach(([symbol, position]) => {
       const price = Number(quotes?.[symbol]?.price);
       const observedDate = quotes?.[symbol]?.timestamp ? new Date(quotes[symbol].timestamp).toISOString().slice(0, 10) : null;
-      const updated = updateDipPosition(position, price, observedDate, data.rules);
+      const opportunity = data.opportunities.find((item) => item.symbol === symbol);
+      const updated = updateDipPosition(position, price, observedDate, data.rules, opportunity?.recentTradingDates);
       if (!updated) return;
       state.dip.positions[symbol] = { ...updated, lastObservedAt: fetchedAt };
       if (updated.shouldExit) {
@@ -284,8 +286,14 @@ import { calculateFractionalOrder, FRACTIONAL_EXECUTION_VERSION, MIN_ORDER_AMOUN
     const opportunities = dipScanner.opportunities.filter((item) => ['watch', 'confirmed', 'excluded'].includes(item.status)).map((item) => {
       const statusLabel = item.status === 'confirmed' ? '止跌已确认' : item.status === 'watch' ? '等待止跌确认' : '回撤过深，排除';
       const checks = item.checks ? Object.values(item.checks).filter(Boolean).length : 0;
+      const checkLabels = item.checks ? [
+        ['收盘上涨', item.checks.reboundClose],
+        ['低点抬高', item.checks.higherLow],
+        ['站上5日线', item.checks.aboveShortAverage]
+      ].map(([label, passed]) => `<b class="dip-check ${passed ? 'pass' : 'fail'}">${passed ? '✓' : '×'} ${label}</b>`).join('') : '';
+      const completedDate = item.latestCompletedDate ? new Date(item.latestCompletedDate).toLocaleDateString('zh-CN') : '—';
       return `<div class="momentum-row dip-${item.status}">
-        <span><strong class="ticker">${item.symbol}</strong><small>${statusLabel}</small></span>
+        <span><strong class="ticker">${item.symbol}</strong><small>${statusLabel} · 完整收盘 ${completedDate}</small><span class="dip-checks">${checkLabels}</span></span>
         <span><small>距60日高点</small>${percent(-item.drawdownPercent)}</span>
         <span><small>最新完整收盘</small>${money(item.latestClose)}</span>
         <span><small>确认条件</small>${item.checks ? `${checks}/3` : '—'}</span>
@@ -594,7 +602,9 @@ import { calculateFractionalOrder, FRACTIONAL_EXECUTION_VERSION, MIN_ORDER_AMOUN
     try {
       const response = await fetch(`${API_BASE}/api/dynamic`);
       if (!response.ok) throw new Error('dynamic request failed');
-      updateDynamic(await response.json());
+      const data = await response.json();
+      updateDynamic(data);
+      if (data.dip?.status === 'available') updateDip(data.dip, data.fetchedAt, Boolean(data.market?.isOpen), data.quotes);
     } catch {
       dynamicScanner = { status: 'unavailable', reason: '动态候选池暂不可用，固定5只基准组不受影响' };
     }
