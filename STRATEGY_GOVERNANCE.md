@@ -544,7 +544,16 @@ them in response to a few recent sessions.
   - observe 20-40 trading days and compare breadth, trade count, SPY excess
     return, maximum drawdown, profit factor, and cost-adjusted results before
     any promotion.
-- Results: implementation and forward evaluation pending.
+- Results: implementation and deployment validation passed on 2026-09-01.
+  Twenty-five deterministic tests pass, including recovery of four elapsed
+  exchange sessions across a weekend without daily browser visits. The live
+  expanded endpoint admitted 36 price/history/liquidity-qualified large-company
+  symbols, with 10 in the drawdown watch range and 3 meeting all confirmation
+  checks at validation time. The page exposed the 2026-08-31 latest completed
+  session and each check separately. Desktop and 390px layouts had no console
+  errors or horizontal overflow; isolated equity reconciled to $1,000 cash plus
+  $0 main holdings, while shadow positions used no account cash and all risk
+  limits remained visible. Forward comparative evaluation remains pending.
 - Decision: pending; expanded shadow challenger only
 
 Copy this section for each future strategy experiment:

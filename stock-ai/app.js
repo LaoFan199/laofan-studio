@@ -282,7 +282,7 @@ import { calculateFractionalOrder, FRACTIONAL_EXECUTION_VERSION, MIN_ORDER_AMOUN
     }
     const watched = dipScanner.opportunities.filter((item) => item.status === 'watch').length;
     const confirmed = dipScanner.opportunities.filter((item) => item.status === 'confirmed').length;
-    $('dip-status').textContent = `扫描 ${dipScanner.universe.length} 只白名单标的 · ${watched} 只等待确认 · ${confirmed} 只确认 · ${active.length} 个影子试仓 · ${state.dip.completed.length} 次已退出`;
+    $('dip-status').textContent = `扫描 ${dipScanner.universe.length} 只流动性合格大盘股 · ${watched} 只等待确认 · ${confirmed} 只确认 · ${active.length} 个影子试仓 · ${state.dip.completed.length} 次已退出`;
     const opportunities = dipScanner.opportunities.filter((item) => ['watch', 'confirmed', 'excluded'].includes(item.status)).map((item) => {
       const statusLabel = item.status === 'confirmed' ? '止跌已确认' : item.status === 'watch' ? '等待止跌确认' : '回撤过深，排除';
       const checks = item.checks ? Object.values(item.checks).filter(Boolean).length : 0;
