@@ -1,8 +1,8 @@
 export const BROAD_VERSION = 'broad-us-equity-v1-shadow';
 export const BROAD_RULES = Object.freeze({ batchSize: 60, displayedCandidates: 10 });
 
-const EXCLUDED_NAME = /warrant|right|unit|preferred|depositary note|bond|debenture|acquisition corp|etf|fund|portfolio|index|treasury/i;
-const INCLUDED_NAME = /common stock|ordinary shares|class [a-z]|american depositary|ads each|shares/i;
+const EXCLUDED_NAME = /warrant|right|unit|preferred|depositary note|bond|debenture|acquisition corp|etf|fund|portfolio|index|treasury|proshares|direxion|ultrapro|ultrashort|leveraged/i;
+const INCLUDED_NAME = /common stock|common shares|ordinary shares|class [a-z]|american depositary|ads each/i;
 
 export function isBroadMarketAsset(asset) {
   if (!asset?.tradable || asset.status !== 'active' || (asset.class || asset.asset_class) !== 'us_equity') return false;

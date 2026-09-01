@@ -97,6 +97,7 @@ test('broad universe keeps tradable common shares and rejects non-common securit
   assert.equal(isBroadMarketAsset({ ...base, symbol: 'AAPL', name: 'Apple Inc. Common Stock' }), true);
   assert.equal(isBroadMarketAsset({ ...base, symbol: 'TESTW', name: 'Test Corp Warrant' }), false);
   assert.equal(isBroadMarketAsset({ ...base, symbol: 'ETF', name: 'Example Index ETF' }), false);
+  assert.equal(isBroadMarketAsset({ ...base, symbol: 'SQQQ', name: 'ProShares UltraPro Short QQQ' }), false);
   assert.equal(isBroadMarketAsset({ ...base, symbol: 'OTC', name: 'Example Common Stock', exchange: 'OTC' }), false);
 });
 
