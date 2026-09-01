@@ -49,7 +49,7 @@ export function evaluateDipOpportunity(bars, rules = DIP_RULES) {
     checks,
     signalTime: latest.time,
     latestCompletedDate: latest.time,
-    recentTradingDates: recent.map((bar) => bar.time).filter(Boolean),
+    recentTradingDates: recent.slice(-15).map((bar) => bar.time).filter(Boolean),
     reason: status === 'excluded' ? '回撤超过安全观察范围' : confirmed ? '回撤后出现止跌确认' : inDrawdownRange ? '已进入回撤区间，等待止跌确认' : '尚未进入回撤机会区间'
   };
 }
