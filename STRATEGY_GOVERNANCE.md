@@ -586,7 +586,17 @@ them in response to a few recent sessions.
   - pass tests plus desktop/390px checks, then observe at least 20-40 trading
     days and compare coverage, turnover, SPY excess return, maximum drawdown,
     and cost-adjusted performance before any promotion.
-- Results: implementation and deployment validation pending.
+- Results: implementation and deployment validation passed on 2026-09-01.
+  Twenty-seven deterministic tests pass, including common-stock security-type
+  filtering and global ranking across independent batches. The live Alpaca
+  universe produced 3,324 active tradable common/ordinary/ADS symbols after
+  exclusions. A clean browser run processed 1,740 symbols in the first 15
+  seconds and completed 3,324/3,324 in about 35 seconds, identifying 12 fully
+  eligible score-75+ names and displaying the global top 10. Partial progress
+  remained labelled as scanning until the last batch succeeded. Desktop and
+  390px layouts had no console errors or horizontal overflow; isolated account
+  equity reconciled to $1,000 cash plus $0 holdings, and all risk limits stayed
+  visible and enforced. Forward comparison remains pending.
 - Decision: pending; broad ranking-only challenger
 
 Copy this section for each future strategy experiment:
