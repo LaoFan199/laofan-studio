@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <title>登录 · LaoFan AI</title>
+  <link rel="stylesheet" href="app.css">
+  <link rel="stylesheet" href="auth.css">
+</head>
+<body data-page="login">
+  <main class="auth-shell">
+    <a class="brand" href="../index.html">LaoFan <span>AI</span></a>
+    <h1 id="auth-title">登录 LaoFan AI</h1>
+    <p>登录后进入美股研究与模拟交易。</p>
+    <form id="auth-form" hidden>
+      <label for="email">邮箱<input id="email" name="email" type="email" autocomplete="email" required></label>
+      <label for="password">密码<input id="password" name="password" type="password" autocomplete="current-password" minlength="1" required></label>
+      <label id="confirm-field" for="confirm-password" hidden>确认密码（至少8位）<input id="confirm-password" type="password" autocomplete="new-password"></label>
+      <button id="auth-submit" class="buy-button" type="submit">登录</button>
+      <button id="auth-toggle" class="ghost" type="button">还没有账户？注册</button>
+    </form>
+    <p id="auth-status" class="auth-status" role="status" aria-live="polite">正在连接登录服务…</p>
+    <a id="auth-retry" href="login.html" hidden>重新连接</a>
+    <p>电脑和手机登录同一账号，可同步模拟账户与交易记录。</p>
+    <noscript>请启用 JavaScript 后登录。</noscript>
+  </main>
+  <script type="module" src="auth.bundle.js"></script>
+</body>
+</html>

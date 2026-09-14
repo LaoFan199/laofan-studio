@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="LaoFan AI 美股模拟交易助手">
   <meta name="api-base" content="https://laofan-studio.vercel.app">
+  <link rel="stylesheet" href="auth.css">
   <title>LaoFan AI 模拟交易</title>
   <link rel="stylesheet" href="app.css?v=20260901-1">
   <link rel="stylesheet" href="momentum.css?v=20260901-4">
@@ -24,18 +25,24 @@
   </style>
 </head>
 <body>
+  <p id="auth-status" class="auth-status" role="status">正在验证登录状态…</p>
+  <a id="auth-retry" href="index.html" hidden>重新连接</a>
+  <noscript>请启用 JavaScript 后登录，才能进入应用。</noscript>
+  <div id="app-root" hidden inert>
   <header class="topbar">
     <a class="brand" href="../index.html">LaoFan <span>AI</span></a>
     <div class="mode"><i></i> 模拟交易 · 不连接真钱</div>
+    <div class="auth-account"><span id="auth-email"></span><button class="ghost" id="logout-button" type="button">退出登录</button></div>
     <button class="ghost" id="reset-button" type="button">重置账户</button>
   </header>
 
+  <section class="sync-bar"><span id="sync-status" role="status">正在读取云端账户…</span> <a id="sync-reload" href="index.html" hidden>刷新核对</a> <button id="sync-backup" class="ghost" hidden>下载本机备份</button> <button id="sync-import" class="ghost" hidden>导入此设备旧账户</button></section>
   <main>
     <section class="hero">
       <div>
         <p class="eyebrow">US STOCKS · PAPER PORTFOLIO</p>
         <h1>老范 AI 炒股助手</h1>
-        <p class="intro">先用 1,000 美元验证选股和风控。交易仅保存在本机，不会向券商提交订单。</p>
+        <p class="intro">先用 1,000 美元验证选股和风控。模拟账户按登录账号同步，不会向券商提交订单。</p>
       </div>
       <div class="risk-badge">风险级别<br><strong>保守</strong></div>
     </section>
@@ -221,6 +228,7 @@
     </form>
   </dialog>
 
-  <script type="module" src="app.js?v=20260914-1"></script>
+  </div>
+  <script type="module" src="auth.bundle.js"></script>
 </body>
 </html>

@@ -1,3 +1,4 @@
+import { accountSync } from './cloud-sync.js';
 import { CORE_SYMBOLS, CORE_NAMES, selectedToday, isToday } from './core-research.js';
 import { updateTrailingPosition } from '../api/momentum.js';
 import { updateDipPosition } from '../api/dip.js';
@@ -20,7 +21,7 @@ import { calculateFractionalOrder, FRACTIONAL_EXECUTION_VERSION, MIN_ORDER_AMOUN
     { symbol: 'SCHD', name: 'Dividend ETF', price: 29.14, score: null, changePercent: null, risk: '待计算', reasons: [] }
   ];
 
-  const saved = JSON.parse(localStorage.getItem('laofan-paper-account') || 'null');
+  const saved = accountSync.initial;
   let state = saved || { cash: STARTING_CASH, realized: 0, positions: {}, history: [], snapshots: [], benchmark: null };
   state.snapshots ||= [];
   state.benchmark ||= null;
@@ -48,7 +49,7 @@ import { calculateFractionalOrder, FRACTIONAL_EXECUTION_VERSION, MIN_ORDER_AMOUN
   const percent = (n) => n == null ? '—' : `${n >= 0 ? '+' : ''}${n.toFixed(2)}%`;
   const shares = (n) => `${Number(n).toLocaleString('en-US', { maximumFractionDigits: 6 })} 股`;
 
-  function save() { localStorage.setItem('laofan-paper-account', JSON.stringify(state)); }
+  function save() { accountSync.save(state); }
   function currentPrice(symbol) {
     return ideas.find((item) => item.symbol === symbol)?.price
       || dynamicQuotes[symbol]?.price
@@ -125,7 +126,7 @@ import { calculateFractionalOrder, FRACTIONAL_EXECUTION_VERSION, MIN_ORDER_AMOUN
   }
 
   function notifyMomentum(title, body) {
-    if (!('Notification' in window) || localStorage.getItem('laofan-momentum-alerts') !== 'enabled' || Notification.permission !== 'granted') return;
+    if (!('Notification' in window) || !accountSync.settings.momentumAlerts || Notification.permission !== 'granted') return;
     new Notification(title, { body, tag: `laofan-${title}` });
   }
 
@@ -723,11 +724,11 @@ import { calculateFractionalOrder, FRACTIONAL_EXECUTION_VERSION, MIN_ORDER_AMOUN
     if (!('Notification' in window)) { $('enable-momentum-alerts').textContent = '浏览器不支持通知'; return; }
     const permission = await Notification.requestPermission();
     if (permission === 'granted') {
-      localStorage.setItem('laofan-momentum-alerts', 'enabled');
+      accountSync.settings.momentumAlerts = true; save();
       $('enable-momentum-alerts').textContent = '网页通知已开启';
     } else $('enable-momentum-alerts').textContent = '通知未授权';
   });
-  if ('Notification' in window && Notification.permission === 'granted' && localStorage.getItem('laofan-momentum-alerts') === 'enabled') $('enable-momentum-alerts').textContent = '网页通知已开启';
+  if ('Notification' in window && Notification.permission === 'granted' && accountSync.settings.momentumAlerts) $('enable-momentum-alerts').textContent = '网页通知已开启';
   $('reset-button').addEventListener('click', () => { if (confirm('确定清除全部模拟交易记录并恢复到 $1,000 吗？')) { state = { cash: STARTING_CASH, realized: 0, positions: {}, history: [], snapshots: [], benchmark: null, regimeSnapshots: [], momentum: { positions: {}, completed: [], signals: [] }, dip: { positions: {}, completed: [], signals: [] }, dynamicSnapshots: [], broadScan: state.broadScan }; render(); } });
   $('dynamic-lookup').addEventListener('submit', (event) => {
     event.preventDefault();
