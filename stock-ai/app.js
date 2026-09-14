@@ -1,3 +1,4 @@
+import { CORE_SYMBOLS, CORE_NAMES, selectedToday, isToday } from './core-research.js';
 import { updateTrailingPosition } from '../api/momentum.js';
 import { updateDipPosition } from '../api/dip.js';
 import { compareDynamicRankings, heldOutsideDynamicPool } from '../api/dynamic-strategy.js';
@@ -34,6 +35,8 @@ import { calculateFractionalOrder, FRACTIONAL_EXECUTION_VERSION, MIN_ORDER_AMOUN
   state.dip.signals ||= [];
   state.dynamicSnapshots ||= [];
   state.broadScan ||= { date: null, status: 'idle', processed: 0, total: 0, eligible: 0, failedBatches: 0, candidates: [] };
+  let coreResearchData = null;
+  let fixedSelections = [];
   let selected = null;
   let marketRegime = null;
   let momentumScanner = null;
@@ -613,6 +616,8 @@ import { calculateFractionalOrder, FRACTIONAL_EXECUTION_VERSION, MIN_ORDER_AMOUN
           item.confidence = quote.analysis.confidence || '中';
         }
       });
+      fixedSelections = !isToday(data.fetchedAt) ? [] : ideas.filter(item => data.quotes[item.symbol]?.analysis?.score >= BUY_SCORE).map(item => item.symbol);
+      renderCoreResearch();
       updateMomentum(data.momentum || null, data.fetchedAt, Boolean(data.market.isOpen));
       updateDip(data.dip || null, data.fetchedAt, Boolean(data.market.isOpen), data.quotes);
       const spy = data.quotes.SPY;
@@ -647,7 +652,43 @@ import { calculateFractionalOrder, FRACTIONAL_EXECUTION_VERSION, MIN_ORDER_AMOUN
       }
       renderIdeas(); render();
     } catch {
+      fixedSelections = [];
+      renderCoreResearch();
       $('market-status').textContent = '真实行情暂不可用 · 显示演示价格';
+    }
+  }
+
+  function renderCoreResearch(data = coreResearchData) {
+    coreResearchData = data;
+    $('core-status').textContent = data?.status === 'available'
+      ? `Alpaca IEX · 获取时间 ${new Date(data.fetchedAt).toLocaleString('zh-CN')} · 评分日期见各股票`
+      : data?.reason || '等待观察池数据';
+    $('core-list').innerHTML = CORE_SYMBOLS.map((symbol) => {
+      const item = data?.items?.find((entry) => entry.symbol === symbol);
+      const analysis = item?.analysis;
+      const signal = signalFor({ score: analysis?.score });
+      const label = analysis?.score >= BUY_SCORE ? '评分达标 · 等待筛选' : signal.label;
+      return `<div class="momentum-row">
+        <span><strong class="ticker">${symbol}</strong><small>${CORE_NAMES[symbol]}</small>${selectedToday(symbol, fixedSelections, dynamicScanner) ? '<span class="signal buy">今日入选</span>' : ''}</span>
+        <span><small>最新价</small>${item?.price != null ? money(item.price) : '—'}<small>${item?.timestamp ? new Date(item.timestamp).toLocaleString('zh-CN') : '行情时间待更新'}</small></span>
+        <span class="score"><small>量化分数</small>${analysis ? `${analysis.score}/100` : '—'}${factorDetails(analysis || {})}</span>
+        <span><small>风险</small>${analysis?.risk || '待计算'}</span>
+        <span><span class="signal ${signal.className}">${label}</span><small>长期观察｜${analysis ? `${analysis.score}分｜` : ''}${item?.reasons?.join('；') || '数据暂不可用，等待更新'}</small></span>
+        <span><small>评分交易日（美国东部）</small>${item?.scoreDate ? new Date(item.scoreDate).toLocaleDateString('zh-CN', { timeZone: 'America/New_York' }) : '—'}<small>估值未评估</small></span>
+      </div>`;
+    }).join('');
+  }
+
+  async function loadCoreResearch() {
+    if (!API_BASE) { renderCoreResearch({ reason: '等待服务器连接' }); return; }
+    try {
+      const response = await fetch(`${API_BASE}/api/core-research`, { signal: AbortSignal.timeout(15000) });
+      if (!response.ok) throw new Error('research unavailable');
+      const data = await response.json();
+      if (data.status !== 'available' || !Array.isArray(data.items)) throw new Error('research incomplete');
+      renderCoreResearch(data);
+    } catch {
+      renderCoreResearch({ reason: '观察池行情暂不可用 · 等待重试，未显示旧评分' });
     }
   }
 
@@ -662,7 +703,7 @@ import { calculateFractionalOrder, FRACTIONAL_EXECUTION_VERSION, MIN_ORDER_AMOUN
     } catch {
       dynamicScanner = { status: 'unavailable', reason: '动态候选池暂不可用，固定5只基准组不受影响' };
     }
-    renderDynamic(); save();
+    renderDynamic(); renderCoreResearch(); save();
   }
 
   document.addEventListener('click', (e) => {
@@ -692,6 +733,8 @@ import { calculateFractionalOrder, FRACTIONAL_EXECUTION_VERSION, MIN_ORDER_AMOUN
     event.preventDefault();
     explainDynamicSymbol($('dynamic-symbol-query').value);
   });
+  renderCoreResearch(); loadCoreResearch();
+  setInterval(loadCoreResearch, 5 * 60 * 1000);
   renderIdeas(); render(); renderBroadScan(); loadMarketData(); loadDynamicData(); loadBroadData();
   setInterval(loadMarketData, 60 * 1000);
   setInterval(loadDynamicData, 5 * 60 * 1000);

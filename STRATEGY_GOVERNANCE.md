@@ -644,3 +644,31 @@ Product changes such as accessibility, clearer P&L, error handling, responsive
 layout, and faster loading may ship frequently when tested. Changes to score
 weights, thresholds, portfolio construction, exits, or the stock universe must
 follow the strategy promotion process above.
+
+### Product change: core research watchlist
+
+- Date: 2026-09-13
+- Independent display of NVDA, AVGO, ETN, GEV, VRT, CCJ, ORCL, including
+  below-threshold and missing-data rows. Uses the existing analyzeBars and
+  eligibility rules without modifying scores, universes, ranking or orders.
+- Shows completed-session score date, risk, signal, threshold explanation,
+  source retrieval time and explicit unavailable state. Valuation is not an
+  existing input and is labelled unevaluated. No watchlist buy actions.
+- Verification: 31 tests passed, including endpoint success/failure and score
+  identity; JavaScript syntax and diff checks passed. Desktop 1280px and mobile
+  390px verified with seven rows and no overflow. Empty local account reconciles
+  $1,000 equity = $1,000 cash + $0 holdings; existing enforced order-limit tests
+  pass. No build command exists (static ES modules/serverless endpoints).
+- Limitation: new backend endpoint not deployed; local browser verified the
+  unavailable-data presentation, endpoint success checked with synthetic data.
+
+### Core research completion: 2026-09-14
+- Added fixed company names, timestamped latest prices and read-only daily
+  candidate badges. Old retrieval dates cannot receive today's badge.
+- Reuses signal/factor components and six-column responsive rows; no strategy,
+  order, ranking, threshold or risk-limit changes.
+- 32 tests pass, including price retention and non-mutating candidate badges.
+  Syntax and diff checks pass. Desktop 1280px and mobile 390px visually checked:
+  seven rows, no horizontal overflow, explicit unavailable data. Account shows
+  $1,000 equity = $1,000 cash + $0 holdings. Backend success is fixture-tested;
+  live core endpoint is not deployed. No build script exists.
