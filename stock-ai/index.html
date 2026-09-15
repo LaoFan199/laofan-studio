@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="app.css?v=20260901-1">
   <link rel="stylesheet" href="momentum.css?v=20260901-4">
   <link rel="stylesheet" href="chart.css?v=20260901-2">
+  <link rel="stylesheet" href="v2.css?v=20260915-1">
   <style>
     #core-list .momentum-row{grid-template-columns:1fr 1fr 1fr .65fr 1.6fr 1fr} @media(max-width:650px){#core-list .momentum-row{grid-template-columns:1fr 1fr}}
     .updated{font-weight:700}.market-open{color:#36d399}.market-closed{color:#8fa3bb}.reason{display:block;color:#6f86a2;font-size:10px;line-height:1.45;margin-top:5px;max-width:250px}
@@ -45,6 +46,39 @@
         <p class="intro">先用 1,000 美元验证选股和风控。模拟账户按登录账号同步，不会向券商提交订单。</p>
       </div>
       <div class="risk-badge">风险级别<br><strong>保守</strong></div>
+    </section>
+
+    <section class="panel v2-panel" aria-labelledby="v2-title">
+      <div class="v2-heading">
+        <div><p class="eyebrow">GROWTH + TREND · V2 RESEARCH</p><h2 id="v2-title">V2 增长趋势实验</h2></div>
+        <span class="v2-pill" id="v2-status" role="status">待数据接入 · 模拟尚未启动</span>
+      </div>
+      <p class="v2-intro">先验证盈利增长与价格趋势是否形成优势，再决定是否采用。20–30% 仅为研究目标，可能亏损；当前没有经过回测的收益结论。</p>
+      <div class="v2-factors" id="v2-factors" aria-label="V2评分权重"></div>
+      <div class="v2-body">
+        <div>
+          <h3>市场开关 · 仅用于 V2</h3>
+          <div class="v2-market"><div><span>市场状态</span><strong id="v2-regime">等待数据</strong></div><div><span>规则允许的最高仓位</span><strong id="v2-exposure">—</strong></div></div>
+          <p id="v2-regime-date">等待完整 SPY 日线。</p>
+          <p>强势 80% · 中性 50% · 弱势 20% · 防守 0%。仓位是上限，不是必须买满；V2 启动前不影响下方手动账户。</p>
+        </div>
+        <div><h3>启动前还缺什么</h3><ul id="v2-gaps"></ul><p>缺项时不计算完整评分、不产生买单，也不把空仓显示成已验证的策略收益。</p></div>
+      </div>
+      <div class="v2-comparison" aria-label="并行验证准备状态">
+        <div><strong>旧版策略对照</strong><span>等待共同起点</span><small>从新实验起点另行记账；下方是原有手动账户。</small></div>
+        <div><strong>V2 增长趋势</strong><span>未启动 · 收益 —</span><small>计划初始资金 $1,000；数据与执行检查通过后才能开始。</small></div>
+        <div><strong>SPY 买入持有</strong><span>等待共同起点</span><small>相同资金、日期和成本口径，计入分红。</small></div>
+      </div>
+      <div class="v2-actions"><button class="ghost" id="v2-start" type="button" disabled>V2 等待数据接入</button><a href="V2_RULES.md" target="_blank" rel="noopener">查看完整规则与当前限制</a></div>
+      <details class="v2-rules"><summary>买入、加仓和退出规则</summary><ul>
+        <li>买入：评分至少80，盈利上修、个股与行业趋势同时达标；每周选股，下一交易日才模拟成交。</li>
+        <li>仓位：每只计划最多10%，每笔计划风险最多0.5%；总风险最多3%，行业最多25%。</li>
+        <li>加仓：初买计划金额的2/3，上涨至少5%且继续达标时至多加一次；亏损不补仓。</li>
+        <li>卖出：触及保护价、趋势破坏或盈利明显下修时退出。上涨15%后启用移动保护，不因上涨30%自动卖出。</li>
+        <li>组合：回撤8%降低仓位上限；回撤12%触发清仓与暂停。跳空可能使实际模拟损失超过触发值。</li>
+        <li>验证：至少6个月与30笔完成交易，再结合成本、最大回撤及相对SPY收益判断；不保证收益。</li>
+      </ul></details>
+      <p id="v2-source">等待数据接口。</p>
     </section>
 
     <section class="panel market-chart-panel" aria-labelledby="market-chart-title">
@@ -167,6 +201,7 @@
         <article class="panel">
           <div class="panel-head"><div><p class="eyebrow">PORTFOLIO</p><h2>当前持仓</h2></div></div>
           <div id="positions" class="empty">还没有持仓。可从候选股中发起模拟买入。</div>
+          <p class="disclaimer">“建议卖出”在跌破200日均线，或连续两日低于50日均线时亮起，点开可查看理由并确认模拟卖出。依据完整日线，保守排除当天；尚未核验盈利与新闻。没有触发不代表持仓安全，不会自动卖出。</p>
         </article>
 
         <article class="panel">
@@ -209,6 +244,18 @@
     </section>
   </main>
 
+  <dialog id="sell-advice-dialog" aria-labelledby="sell-advice-title">
+    <form id="sell-advice-form" method="dialog">
+      <button class="dialog-close" id="sell-advice-close" type="button" aria-label="关闭卖出建议">×</button>
+      <p class="eyebrow">HOLDING REVIEW · PAPER ONLY</p>
+      <h2 id="sell-advice-title">建议卖出 <span id="sell-advice-symbol"></span></h2>
+      <p id="sell-advice-reasons" class="order-signal"></p>
+      <p id="sell-advice-price" class="order-check" role="status"></p>
+      <p class="disclaimer">这是价格趋势规则产生的辅助建议，未使用盈利或新闻判断。由你确认后才卖出全部模拟持仓；沿用当前手动账户的模拟成交口径，不收取模拟费用。</p>
+      <div class="sell-advice-dialog-actions"><button class="ghost" id="sell-advice-cancel" type="button">取消</button><button class="sell-button" id="sell-advice-confirm" type="submit" disabled>确认模拟卖出</button></div>
+    </form>
+  </dialog>
+
   <dialog id="trade-dialog">
     <form method="dialog" id="trade-form">
       <button class="dialog-close" id="close-order" type="button" aria-label="关闭" onclick="this.closest('dialog').close()">×</button>
@@ -232,6 +279,6 @@
   </dialog>
 
   </div>
-  <script type="module" src="auth.bundle.js"></script>
+  <script type="module" src="auth.bundle.js?v=20260915-1"></script>
 </body>
 </html>

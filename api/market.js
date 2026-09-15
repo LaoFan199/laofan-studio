@@ -1,5 +1,7 @@
 import { evaluateMomentumCandidate, evaluateMomentumUniverse, MOMENTUM_RULES, MOMENTUM_VERSION } from './momentum.js';
 import { evaluateDipOpportunity, DIP_RULES, DIP_VERSION } from './dip.js';
+import { v2Readiness } from '../stock-ai/v2-strategy.js';
+import sellAdviceService from '../stock-ai/sell-advice-service.js';
 
 const ALLOWED_SYMBOLS = new Set(['MSFT', 'GOOGL', 'NVDA', 'KO', 'SCHD', 'SPY']);
 const ALLOWED_ORIGIN = 'https://laofan199.github.io';
@@ -260,6 +262,7 @@ export default async function handler(req, res) {
   applyCors(req, res);
   if (req.method === 'OPTIONS') return res.status(204).end();
   if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
+  if (req.query.mode === 'sell-advice') return sellAdviceService(req, res);
 
   const key = process.env.ALPACA_API_KEY;
   const secret = process.env.ALPACA_SECRET_KEY;
@@ -333,6 +336,7 @@ export default async function handler(req, res) {
       dip,
       quotes,
       marketChart,
+      v2: v2Readiness(historical.bars?.SPY),
       fetchedAt: new Date().toISOString()
     });
   } catch {
