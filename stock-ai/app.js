@@ -1,4 +1,6 @@
 import { accountSync } from './cloud-sync.js';
+import { renderV2 } from './v2-view.js';
+import { sellAdviceState, SELL_ADVICE_VERSION } from './sell-advice.js';
 import { CORE_SYMBOLS, CORE_NAMES, selectedToday, isToday } from './core-research.js';
 import { updateTrailingPosition } from '../api/momentum.js';
 import { updateDipPosition } from '../api/dip.js';
@@ -39,6 +41,9 @@ import { calculateFractionalOrder, FRACTIONAL_EXECUTION_VERSION, MIN_ORDER_AMOUN
   let coreResearchData = null;
   let fixedSelections = [];
   let selected = null;
+  let sellAdvice = null;
+  let sellAdviceRequest = 0;
+  let suggestedExit = null;
   let marketRegime = null;
   let momentumScanner = null;
   let dipScanner = null;
@@ -48,6 +53,7 @@ import { calculateFractionalOrder, FRACTIONAL_EXECUTION_VERSION, MIN_ORDER_AMOUN
   const money = (n) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(n);
   const percent = (n) => n == null ? '—' : `${n >= 0 ? '+' : ''}${n.toFixed(2)}%`;
   const shares = (n) => `${Number(n).toLocaleString('en-US', { maximumFractionDigits: 6 })} 股`;
+  const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
   function save() { accountSync.save(state); }
   function currentPrice(symbol) {
@@ -507,18 +513,59 @@ import { calculateFractionalOrder, FRACTIONAL_EXECUTION_VERSION, MIN_ORDER_AMOUN
     renderDip();
     renderDynamic();
 
+    renderPositions();
+    save();
+  }
+
+  function renderPositions() {
     const entries = Object.entries(state.positions);
     $('positions').className = entries.length ? '' : 'empty';
     $('positions').innerHTML = entries.length ? entries.map(([symbol, p]) => {
       const price = currentPrice(symbol); const pnl = (price - p.avgPrice) * p.quantity;
       const pnlRate = p.avgPrice ? ((price / p.avgPrice) - 1) * 100 : 0;
       const priceLabel = p.source?.startsWith('dynamic') && p.lastPriceAt ? `最近有效价 · ${new Date(p.lastPriceAt).toLocaleDateString('zh-CN')}` : '现价';
-      return `<div class="position"><strong>${symbol}<span class="company">${shares(p.quantity)}</span></strong><span>成本 ${money(p.avgPrice * p.quantity)}<small>均价 ${money(p.avgPrice)}</small></span><span>现值 ${money(price * p.quantity)}<small>${priceLabel} ${money(price)}</small></span><span class="${pnl >= 0 ? 'positive' : 'negative'}">${pnl >= 0 ? '+' : ''}${money(pnl)}<small>${percent(pnlRate)}</small></span><button class="sell-button" data-sell="${symbol}">全部卖出</button></div>`;
+      const advice = sellAdviceState(sellAdvice, symbol);
+      const explanation = advice.reasons.join('；');
+      return `<div class="position"><strong>${symbol}<span class="company">${shares(p.quantity)}</span></strong><span>成本 ${money(p.avgPrice * p.quantity)}<small>均价 ${money(p.avgPrice)}</small></span><span>现值 ${money(price * p.quantity)}<small>${priceLabel} ${money(price)}</small></span><span class="${pnl >= 0 ? 'positive' : 'negative'}">${pnl >= 0 ? '+' : ''}${money(pnl)}<small>${percent(pnlRate)}</small></span><div class="position-actions"><div class="position-buttons"><button class="sell-advice-button" data-suggested-sell="${symbol}" ${advice.active ? '' : 'disabled'}>建议卖出</button><button class="sell-button" data-sell="${symbol}">全部卖出</button></div><small class="sell-advice-reason">${escapeHtml(explanation)}${advice.item?.signalDate ? `<br>依据 ${escapeHtml(advice.item.signalDate)} 日线` : ''}</small></div></div>`;
     }).join('') : '还没有持仓。可从候选股中发起模拟买入。';
 
     $('history').className = state.history.length ? '' : 'empty';
-    $('history').innerHTML = state.history.length ? state.history.slice().reverse().map((h) => `<div class="history-row"><strong>${h.type} ${h.symbol}</strong><span>${shares(h.quantity)}</span><span>${money(h.price)}</span><span>${h.time}</span><span>${money(h.total)}</span></div>`).join('') : '交易记录为空。';
-    save();
+    $('history').innerHTML = state.history.length ? state.history.slice().reverse().map((h) => `<div class="history-row"><strong>${h.type} ${h.symbol}${h.exitSignal ? `<small class="sell-advice-reason">按建议确认 · ${escapeHtml(h.exitSignal.reasons?.join('；'))}</small>` : ''}</strong><span>${shares(h.quantity)}</span><span>${money(h.price)}</span><span>${h.time}</span><span>${money(h.total)}</span></div>`).join('') : '交易记录为空。';
+  }
+
+  async function loadSellAdvice() {
+    const symbols = Object.keys(state.positions), request = ++sellAdviceRequest;
+    if (!API_BASE || !symbols.length) { sellAdvice = null; renderPositions(); return; }
+    try {
+      const groups = Array.from({ length: Math.ceil(symbols.length / 20) }, (_, i) => symbols.slice(i * 20, i * 20 + 20));
+      const results = await Promise.all(groups.map(async group => {
+        const response = await fetch(`${API_BASE}/api/market?mode=sell-advice&symbols=${encodeURIComponent(group.join(','))}`, { signal: AbortSignal.timeout(15000), cache: 'no-store' });
+        if (!response.ok) throw new Error('sell advice unavailable');
+        const data = await response.json();
+        if (data.version !== SELL_ADVICE_VERSION) throw new Error('sell advice version unavailable');
+        return data;
+      }));
+      if (request !== sellAdviceRequest) return;
+      sellAdvice = { ...results[0], fetchedAt: results.map(r => r.fetchedAt).sort()[0],
+        marketIsOpen: results.every(r => r.marketIsOpen === true), items: Object.assign({}, ...results.map(r => r.items)) };
+    } catch { if (request === sellAdviceRequest) sellAdvice = null; }
+    if (request === sellAdviceRequest) { renderPositions(); refreshSuggestedExit(); }
+  }
+
+  function refreshSuggestedExit() {
+    if (!suggestedExit || !$('sell-advice-dialog').open) return;
+    const p = state.positions[suggestedExit.symbol], advice = sellAdviceState(sellAdvice, suggestedExit.symbol);
+    const unchanged = p && p.quantity === suggestedExit.quantity && p.avgPrice === suggestedExit.avgPrice;
+    $('sell-advice-reasons').textContent = advice.reasons.join('；');
+    $('sell-advice-price').textContent = advice.canExecute ? `当前模拟参考价 ${money(advice.item.price)} · ${shares(p?.quantity || 0)} · 预计金额 ${money(advice.item.price * (p?.quantity || 0))}` : advice.executionReason || '评估已失效，等待新数据';
+    $('sell-advice-confirm').disabled = !unchanged || !advice.canExecute || accountSync.blocked;
+  }
+  function openSuggestedExit(symbol) {
+    const p = state.positions[symbol], advice = sellAdviceState(sellAdvice, symbol);
+    if (!p || !advice.active || accountSync.blocked) return;
+    suggestedExit = { symbol, quantity: p.quantity, avgPrice: p.avgPrice };
+    $('sell-advice-symbol').textContent = symbol;
+    $('sell-advice-dialog').showModal(); refreshSuggestedExit();
   }
 
   function openOrder(symbol, source = 'fixed') {
@@ -587,14 +634,16 @@ import { calculateFractionalOrder, FRACTIONAL_EXECUTION_VERSION, MIN_ORDER_AMOUN
     };
     state.cash = Math.round((state.cash - order.amount + Number.EPSILON) * 100) / 100;
     state.history.push({ type: '买入', symbol: selected.symbol, quantity: order.quantity, price: selected.price, total: order.amount, score: selected.score, confidence: selected.confidence, source: selected.source || 'fixed-v1.1', strategyVersion: selected.strategyVersion || 'v1.1', executionVersion: FRACTIONAL_EXECUTION_VERSION, time: new Date().toLocaleDateString('zh-CN') });
-    render(); $('trade-dialog').close();
+    render(); $('trade-dialog').close(); loadSellAdvice();
   }
 
-  function sell(symbol) {
-    const p = state.positions[symbol]; const price = currentPrice(symbol); const total = price * p.quantity;
+  function sell(symbol, recommendation = null) {
+    const p = state.positions[symbol]; if (!p || accountSync.blocked) return;
+    const price = recommendation?.price ?? currentPrice(symbol); const total = price * p.quantity;
     state.cash += total; state.realized += (price - p.avgPrice) * p.quantity;
-    state.history.push({ type: '卖出', symbol, quantity: p.quantity, price, total, executionVersion: p.executionVersion || 'legacy-whole-share', time: new Date().toLocaleDateString('zh-CN') });
-    delete state.positions[symbol]; render();
+    state.history.push({ type: '卖出', symbol, quantity: p.quantity, price, total, executionVersion: p.executionVersion || 'legacy-whole-share', time: new Date().toLocaleDateString('zh-CN'),
+      ...(recommendation ? { exitSignal: structuredClone(recommendation), executedAt: new Date().toISOString(), id: crypto.randomUUID() } : {}) });
+    delete state.positions[symbol]; render(); loadSellAdvice();
   }
 
   async function loadMarketData() {
@@ -609,6 +658,7 @@ import { calculateFractionalOrder, FRACTIONAL_EXECUTION_VERSION, MIN_ORDER_AMOUN
       if (!response.ok) throw new Error('market request failed');
       const data = await response.json();
       renderMarketChart(data.marketChart, data.fetchedAt);
+      renderV2(data.v2);
       marketRegime = data.marketRegime || null;
       ideas.forEach((item) => {
         const quote = data.quotes[item.symbol];
@@ -659,6 +709,7 @@ import { calculateFractionalOrder, FRACTIONAL_EXECUTION_VERSION, MIN_ORDER_AMOUN
       renderIdeas(); render();
     } catch {
       fixedSelections = [];
+      renderV2(null);
       renderCoreResearch();
       $('market-status').textContent = '真实行情暂不可用 · 显示演示价格';
     }
@@ -716,6 +767,7 @@ import { calculateFractionalOrder, FRACTIONAL_EXECUTION_VERSION, MIN_ORDER_AMOUN
     if (e.target.matches('[data-symbol]')) openOrder(e.target.dataset.symbol);
     if (e.target.matches('[data-dynamic-symbol]')) openOrder(e.target.dataset.dynamicSymbol, 'dynamic');
     if (e.target.matches('[data-sell]')) sell(e.target.dataset.sell);
+    if (e.target.matches('[data-suggested-sell]')) openSuggestedExit(e.target.dataset.suggestedSell);
   });
   $('order-amount').addEventListener('input', validateOrder);
   document.querySelectorAll('[data-order-amount]').forEach((button) => button.addEventListener('click', () => {
@@ -726,6 +778,20 @@ import { calculateFractionalOrder, FRACTIONAL_EXECUTION_VERSION, MIN_ORDER_AMOUN
   }));
   $('close-order').addEventListener('click', closeOrder);
   $('cancel-order').addEventListener('click', closeOrder);
+  $('sell-advice-dialog').addEventListener('close', () => { suggestedExit = null; });
+  $('sell-advice-cancel').addEventListener('click', () => $('sell-advice-dialog').close());
+  $('sell-advice-close').addEventListener('click', () => $('sell-advice-dialog').close());
+  $('sell-advice-form').addEventListener('submit', async event => {
+    event.preventDefault();
+    refreshSuggestedExit();
+    if (!suggestedExit || $('sell-advice-confirm').disabled) return;
+    const symbol = suggestedExit.symbol, advice = sellAdviceState(sellAdvice, symbol);
+    if (!advice.canExecute) return;
+    $('sell-advice-confirm').disabled = true;
+    sell(symbol, { version: SELL_ADVICE_VERSION, price: advice.item.price, quoteAt: advice.item.quoteAt,
+      signalDate: advice.item.signalDate, reasons: advice.reasons, metrics: advice.item.metrics, fetchedAt: sellAdvice.fetchedAt });
+    if (await accountSync.flush()) $('sell-advice-dialog').close();
+  });
   $('trade-form').addEventListener('submit', (e) => { e.preventDefault(); buy(); });
   $('enable-momentum-alerts').addEventListener('click', async () => {
     if (!('Notification' in window)) { $('enable-momentum-alerts').textContent = '浏览器不支持通知'; return; }
@@ -741,6 +807,10 @@ import { calculateFractionalOrder, FRACTIONAL_EXECUTION_VERSION, MIN_ORDER_AMOUN
     event.preventDefault();
     explainDynamicSymbol($('dynamic-symbol-query').value);
   });
+  renderV2(null);
+  loadSellAdvice();
+  setInterval(loadSellAdvice, 60 * 1000);
+  setInterval(() => { renderPositions(); refreshSuggestedExit(); }, 10000);
   renderCoreResearch(); loadCoreResearch();
   setInterval(loadCoreResearch, 5 * 60 * 1000);
   renderIdeas(); render(); renderBroadScan(); loadMarketData(); loadDynamicData(); loadBroadData();

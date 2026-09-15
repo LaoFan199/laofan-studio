@@ -15,7 +15,7 @@ test('auth return path accepts app deep links and rejects open redirects and log
 const source = (await readFile(new URL('../stock-ai/auth.js', import.meta.url), 'utf8'))
   .replace(/^import .*;\n/gm, '')
   .replace("await import('./auth-config.js')", 'await Promise.resolve({ default: fixtureConfig })')
-  .replace("await import('./app.js')", 'await loadApp()');
+  .replace(/await import\('\.\/app\.js(?:\?[^']*)?'\)/, 'await loadApp()');
 async function setup({ login = false, session = null, userError = null, signoutError = null, signupSession = null, badConfig = false, sync = undefined } = {}) {
   const elements = new Map();
   const element = id => {

@@ -67,7 +67,7 @@ async function start() {
     } catch (error) { fail(error); event.target.disabled = false; }
   });
   await initializeAccount(client, user.id);
-  await import('./app.js');
+  await import('./app.js?v=20260915-1');
   if (leaving) return;
   loaded = true;
   appRoot.hidden = false;

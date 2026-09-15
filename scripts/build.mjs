@@ -16,7 +16,7 @@ for (const path of ['index.html', 'style.css', 'script.js', 'stock-ai', 'api']) 
   await cp(path, `dist/${path}`, { recursive: true });
 }
 await writeFile('dist/stock-ai/auth-config.js', `export default ${JSON.stringify({ url, key })};\n`);
-await build({ entryPoints: ['stock-ai/auth.js'], bundle: true, format: 'esm', target: 'es2022', outfile: 'dist/stock-ai/auth.bundle.js', external: ['./auth-config.js', './app.js', './cloud-sync.js'], minify: true });
+await build({ entryPoints: ['stock-ai/auth.js'], bundle: true, format: 'esm', target: 'es2022', outfile: 'dist/stock-ai/auth.bundle.js', external: ['./auth-config.js', './app.js', './app.js?*', './cloud-sync.js'], minify: true });
 console.log('Built dist with publishable Auth configuration.');
 
 // Preserve the existing GitHub Pages branch publishing workflow.
