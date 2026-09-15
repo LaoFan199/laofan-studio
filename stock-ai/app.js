@@ -550,6 +550,11 @@ import { calculateFractionalOrder, FRACTIONAL_EXECUTION_VERSION, MIN_ORDER_AMOUN
     validateOrder(); $('trade-dialog').showModal();
   }
 
+  function closeOrder() {
+    $('trade-dialog').close();
+    selected = null;
+  }
+
   function validateOrder() {
     const current = selected && state.positions[selected.symbol] ? state.positions[selected.symbol].quantity * selected.price : 0;
     const order = calculateFractionalOrder({
@@ -719,6 +724,8 @@ import { calculateFractionalOrder, FRACTIONAL_EXECUTION_VERSION, MIN_ORDER_AMOUN
     $('order-amount').value = button.dataset.orderAmount === 'max' ? limit.toFixed(2) : button.dataset.orderAmount;
     validateOrder();
   }));
+  $('close-order').addEventListener('click', closeOrder);
+  $('cancel-order').addEventListener('click', closeOrder);
   $('trade-form').addEventListener('submit', (e) => { e.preventDefault(); buy(); });
   $('enable-momentum-alerts').addEventListener('click', async () => {
     if (!('Notification' in window)) { $('enable-momentum-alerts').textContent = '浏览器不支持通知'; return; }
