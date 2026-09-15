@@ -60,7 +60,7 @@ async function start() {
   document.getElementById('logout-button').addEventListener('click', async (event) => {
     event.target.disabled = true;
     try {
-      if (accountSync && !(await accountSync.flush())) throw new Error('账户仍有未同步修改，请先处理同步提示再退出。');
+      accountSync?.prepareLogout();
       const { error } = await client.auth.signOut({ scope: 'local' });
       if (error) throw error;
       redirectToLogin();

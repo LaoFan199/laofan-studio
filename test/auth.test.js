@@ -16,7 +16,7 @@ const source = (await readFile(new URL('../stock-ai/auth.js', import.meta.url), 
   .replace(/^import .*;\n/gm, '')
   .replace("await import('./auth-config.js')", 'await Promise.resolve({ default: fixtureConfig })')
   .replace("await import('./app.js')", 'await loadApp()');
-async function setup({ login = false, session = null, userError = null, signoutError = null, signupSession = null, badConfig = false } = {}) {
+async function setup({ login = false, session = null, userError = null, signoutError = null, signupSession = null, badConfig = false, sync = undefined } = {}) {
   const elements = new Map();
   const element = id => {
     if (!elements.has(id)) elements.set(id, { hidden: ['auth-form', 'app-root', 'auth-retry'].includes(id), inert: true, textContent: '', value: '', listeners: {}, addEventListener(name, fn) { this.listeners[name] = fn; } });
@@ -35,7 +35,7 @@ async function setup({ login = false, session = null, userError = null, signoutE
   const location = { href: base.href + (login ? 'login.html?next=index.html%23core-title' : 'index.html#core-title'), pathname: base.pathname + 'index.html', search: login ? '?next=index.html%23core-title' : '', hash: '#core-title', replace(url) { redirects.push(url); }, reload() { reloads++; } };
   vm.runInNewContext(source, { URL, URLSearchParams, setTimeout, safeReturnTo, location,
     fixtureConfig: { url: 'https://project.supabase.co', key: badConfig ? 'secret' : 'sb_publishable_test' },
-    initializeAccount: async () => {}, accountSync: undefined, createClient: () => ({ auth }), loadApp: async () => { imports++; },
+    initializeAccount: async () => {}, accountSync: sync, createClient: () => ({ auth }), loadApp: async () => { imports++; },
     document: { body: { dataset: { page: login ? 'login' : '' } }, getElementById: id => id === 'auth-form' && !login ? null : id === 'app-root' && login ? null : element(id) },
     window: { addEventListener(name, fn) { windowEvents[name] = fn; } }
   });
@@ -43,6 +43,12 @@ async function setup({ login = false, session = null, userError = null, signoutE
   return { element, redirects, calls, imports: () => imports, reloads: () => reloads, windowEvents, event: (name, value) => onAuth(name, value) };
 }
 const session = { user: { id: 'one', email: 'test@example.com' } };
+test('logout still calls Supabase when sync is blocked after a conflict', async () => {
+  let backedUp=false;
+  const c=await setup({session,sync:{blocked:true,prepareLogout(){backedUp=true;},stop(){}}});
+  await c.element('logout-button').listeners.click({target:c.element('logout-button')});
+  assert.equal(backedUp,true);assert.equal(c.calls[0][0],'signOut');assert.match(c.redirects[0],/login.html/);
+});
 test('unauthenticated app remains hidden and never initializes trading', async () => {
   const c = await setup(); assert.equal(c.imports(), 0); assert.equal(c.element('app-root').hidden, true);
   assert.match(c.redirects[0], /login.html\?next=/);

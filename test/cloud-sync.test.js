@@ -37,3 +37,30 @@ test('network failure preserves pending trade; fresh device cannot silently eras
 test('successful writes synchronize settings and next device polls for changes',async()=>{
   const db={row:null};const a=setup(db),b=setup(db);await a.sync.init();await b.sync.init();a.sync.settings.momentumAlerts=true;a.sync.save(emptyAccount());assert.equal(await a.sync.flush(),true);assert.equal(db.row.settings.momentumAlerts,true);await b.sync.poll();assert.equal(b.reloads(),1);assert.equal(a.values.has(a.sync.key+':pending'),false);
 });
+test('logout after conflict backs up unsent trades and clears the navigation blocker', async () => {
+  const db = {row:null}; const a=setup(db), b=setup(db);
+  await a.sync.init(); await b.sync.init();
+  a.sync.save({...emptyAccount(),cash:950}); await a.sync.flush();
+  b.sync.save({...emptyAccount(),cash:800}); await b.sync.flush();
+  b.sync.prepareLogout();
+  assert.equal(b.sync.pending,null);
+  assert.equal(b.values.has(b.sync.key+':pending'),false);
+  assert.ok([...b.values.entries()].some(([k,v])=>k.includes(':backup:') && JSON.parse(v).state.cash===800));
+  assert.equal(db.row.state.cash,950);
+});
+test('quote-only remote updates do not interrupt a viewing device', async () => {
+  const db={row:null};const a=setup(db),b=setup(db);await a.sync.init();await b.sync.init();
+  a.sync.save({...emptyAccount(),broadScan:{processed:100}});await a.sync.flush();
+  await b.sync.poll();assert.equal(b.reloads(),0);assert.equal(b.sync.row.revision,db.row.revision);
+});
+test('a trade can rebase over a quote-only update without overwriting other trades', async () => {
+  const db={row:null};const a=setup(db),b=setup(db);await a.sync.init();await b.sync.init();
+  a.sync.save({...emptyAccount(),broadScan:{processed:100}});await a.sync.flush();
+  b.sync.save({...emptyAccount(),cash:900});assert.equal(await b.sync.flush(),true);assert.equal(db.row.state.cash,900);
+});
+test('stale quote-only viewer loads restored trades without getting locked in conflict', async () => {
+  const db={row:null};const a=setup(db),b=setup(db);await a.sync.init();await b.sync.init();
+  a.sync.save({...emptyAccount(),cash:636.12,history:[{symbol:'KO',type:'买入'}]});await a.sync.flush();
+  b.sync.save({...emptyAccount(),broadScan:{processed:100}});await b.sync.flush();
+  assert.equal(b.reloads(),1);assert.equal(b.sync.pending,null);assert.equal(db.row.state.cash,636.12);
+});

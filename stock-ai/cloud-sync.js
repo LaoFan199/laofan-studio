@@ -1,6 +1,17 @@
 export const emptyAccount = () => ({ cash: 1000, realized: 0, positions: {}, history: [], snapshots: [], benchmark: null });
 export function hasAccountData(state) { return !!state && (state.history?.length > 0 || Object.keys(state.positions || {}).length > 0 || state.cash !== 1000); }
 export function validAccount(state) { return !!state && Number.isFinite(state.cash) && state.cash >= 0 && Number.isFinite(state.realized) && state.positions && typeof state.positions === 'object' && !Array.isArray(state.positions) && Array.isArray(state.history); }
+// Market refreshes are not account edits. Keep trade/strategy state in conflict checks.
+export function accountIdentity(snapshot) {
+  const state = structuredClone(snapshot.state);
+  for (const key of ['broadScan', 'dynamicSnapshots', 'snapshots', 'regimeSnapshots']) delete state[key];
+  if (state.benchmark) delete state.benchmark.currentPrice;
+  for (const position of Object.values(state.positions || {})) {
+    delete position.lastPrice;
+    delete position.lastPriceAt;
+  }
+  return JSON.stringify({ state, settings: snapshot.settings || {} });
+}
 export class AccountSync {
   constructor({ client, userId, storage, notify, reload }) {
     Object.assign(this, { client, userId, storage, notify, reload });
@@ -34,7 +45,10 @@ export class AccountSync {
     this.storage.setItem(this.key, JSON.stringify(row));
     if (pending) {
       this.storage.setItem(this.key + ':backup:' + Date.now(), pending);
+      this.storage.removeItem(this.key + ':pending');
       this.notify('发现尚未同步的本机备份；当前显示云端账户，可下载备份核对。', 'backup');
+    } else if (this.storage.getItem(this.key + ':backup-latest')) {
+      this.notify('云端账户已同步；上次退出前的本机备份可下载核对。', 'backup');
     } else this.notify('云端账户已同步', 'ok');
     return this.initial;
   }
@@ -55,9 +69,27 @@ export class AccountSync {
     this.busy = true;
     const snapshot = this.pending;
     try {
-      const { data, error } = await this.client.from('paper_accounts').update({ ...snapshot, revision: this.row.revision + 1, updated_at: new Date().toISOString() }).eq('user_id', this.userId).eq('revision', this.row.revision).select().maybeSingle();
+      let { data, error } = await this.client.from('paper_accounts').update({ ...snapshot, revision: this.row.revision + 1, updated_at: new Date().toISOString() }).eq('user_id', this.userId).eq('revision', this.row.revision).select().maybeSingle();
       if (error) throw error;
+      if (!data && !this.blocked) {
+        const current = await this.read();
+        if (current && accountIdentity(current) === accountIdentity(this.row)) {
+          ({ data, error } = await this.client.from('paper_accounts').update({ ...snapshot, revision: current.revision + 1, updated_at: new Date().toISOString() }).eq('user_id', this.userId).eq('revision', current.revision).select().maybeSingle());
+          if (error) throw error;
+        }
+      }
       if (!data) {
+        if (!this.pending) return false;
+        // If only quote/cache values changed locally, load the other device's
+        // account instead of trapping a read-only visitor in a conflict state.
+        if (accountIdentity(this.pending) === accountIdentity(this.row)) {
+          this.storage.setItem(this.key + ':backup:' + Date.now(), JSON.stringify(this.pending));
+          this.storage.removeItem(this.key + ':pending');
+          this.pending = null;
+          this.stop();
+          this.reload();
+          return true;
+        }
         this.blocked = true;
         this.storage.setItem(this.key + ':backup:' + Date.now(), JSON.stringify(this.pending));
         this.notify('另一台设备已更新账户。本机修改已备份，请下载备份后刷新核对，避免覆盖。', 'conflict');
@@ -74,8 +106,27 @@ export class AccountSync {
   }
   async poll() {
     if (this.busy || this.pending || this.blocked) return;
-    try { const row = await this.read(); if (row && row.revision !== this.row.revision) this.reload(); }
+    try {
+      const row = await this.read();
+      if (row && row.revision !== this.row.revision) {
+        if (accountIdentity(row) === accountIdentity(this.row)) this.row = row;
+        else this.reload();
+      }
+    }
     catch { this.notify('暂时无法检查云端更新', 'offline'); }
+  }
+  prepareLogout() {
+    // Logout must not depend on a successful network write. Preserve the latest
+    // local snapshot durably before clearing its unsent marker and leaving.
+    const pending = this.pending ? JSON.stringify(this.pending) : this.storage.getItem(this.key + ':pending');
+    if (pending) {
+      this.storage.setItem(this.key + ':backup:' + Date.now(), pending);
+      this.storage.setItem(this.key + ':backup-latest', pending);
+    }
+    this.storage.removeItem(this.key + ':pending');
+    this.pending = null;
+    this.stop();
+    this.notify('本机备份已保留，正在退出登录…', 'error');
   }
   stop() { this.blocked = true; clearTimeout(this.timer); clearInterval(this.pollTimer); }
 }
