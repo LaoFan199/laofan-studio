@@ -211,7 +211,7 @@
 
   <dialog id="trade-dialog">
     <form method="dialog" id="trade-form">
-      <button class="dialog-close" id="close-order" type="button" aria-label="关闭">×</button>
+      <button class="dialog-close" id="close-order" type="button" aria-label="关闭" onclick="this.closest('dialog').close()">×</button>
       <p class="eyebrow">PAPER ORDER</p>
       <h2>模拟买入 <span id="order-symbol"></span></h2>
       <p id="order-price" class="order-price"></p>
@@ -225,7 +225,7 @@
       </div>
       <div class="order-check" id="order-check"></div>
       <div style="display:grid;grid-template-columns:110px 1fr;gap:10px">
-        <button class="ghost" id="cancel-order" type="button">取消</button>
+        <button class="ghost" id="cancel-order" type="button" onclick="this.closest('dialog').close()">取消</button>
         <button class="buy-button" id="confirm-order" type="submit">确认按金额模拟买入</button>
       </div>
     </form>
