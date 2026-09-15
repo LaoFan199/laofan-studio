@@ -640,6 +640,62 @@ Copy this section for each future strategy experiment:
 
 ## Product changes versus strategy changes
 
+### Experiment: growth-trend-v2.0-research (2026-09-15)
+
+- Hypothesis: a complete growth/trend portfolio with explicit exits and portfolio
+  risk controls may improve cost-adjusted returns over the existing price-only
+  v1.1 research score. The earlier conversational description of the old score
+  as quality/valuation/news weights was incorrect; `analyzeBars` is authoritative.
+- Primary change: an independent portfolio policy. This is a user-requested
+  composite experiment (growth inputs, portfolio sizing and exits), not a
+  single-factor test; any performance difference cannot be attributed to one
+  weight. Existing strategy and account are not promoted or migrated.
+- Frozen rules and implementation status: `stock-ai/V2_RULES.md`.
+- Baseline: v1.1 plus a same-start SPY total-return account. Existing manually
+  traded account history is not an automated baseline or a matched comparison.
+- Acceptance fixed before evaluation: complete point-in-time inputs, verified
+  corporate actions and continuous next-session execution; at least 126 forward
+  sessions and 30 complete trades, plus isolated historical tests. Require net
+  SPY excess return without materially worse drawdown, cost sensitivity checks,
+  and no dependence on a single name or interval. No automatic promotion.
+- Delivery gate: fundamental/estimate feed, complete universe, corporate-action
+  ledger and continuous comparison runner are absent. The UI must say not
+  started and must not display invented V2 performance. Pure calculations are
+  testable but are not connected to the live account or a timer.
+- Results: 67 repository tests pass, including 10 V2 tests and 4 exit-advice
+  tests. Build, JavaScript syntax and diff checks pass. The data gate stays
+  closed in both 1280px and 390px browser checks. No investment results measured.
+
+### Experiment: holding-exit-v1-advisory (2026-09-15)
+
+- User request: add an independently enabled “建议卖出” beside each existing
+  “全部卖出” button, only active when the app has a sell reason.
+- Hypothesis / primary variable: expose deterministic trend exit advice to help
+  the user review held positions. No new automatic exit or score change.
+- Frozen trigger: latest completed close below SMA200 OR the latest two closes
+  below their respective SMA50. Require 201 ordered complete daily observations.
+  Conservatively exclude today's bar, even after close, until session-calendar
+  completion is available. Show actual signal date. Split-adjusted bars only.
+- Data gates: historical bar at most four calendar days old; response at most
+  two minutes old. A recommendation can be reviewed while the market is closed;
+  confirmation requires market open and a quote at most 15 minutes old. No
+  fundamentals/news assertion. Symbols leaving the top-10 are still evaluated.
+- Execution: user confirmation at the most recent valid observed quote, using
+  the existing fee-free fractional-v1 manual execution convention. Store the
+  signal version, reasons, metrics, quote timestamp and execution timestamp.
+  Do not count these user-chosen exits as a V2 strategy performance result.
+- Acceptance fixed before testing: active/inactive/missing/expired states;
+  no effect from cancel, refresh, or repeated submit; never sell automatically;
+  account reconciliation and signal journal; desktop and 390px buttons side by
+  side. Promotion/performance evidence remains pending as above.
+- Results: 1280px and 390px fixture browser checks pass: both buttons side by
+  side, trigger/non-trigger states, cancel and close preserve holdings,
+  confirmation records one signal-tagged sale, closed market and missing API
+  disable confirmation, and no overflow or JavaScript page errors. A synthetic
+  KO sale reconciled cash $930 + MSFT value $50 = equity $980 and realized
+  P&L -$20. Existing auth and concurrent-device sync tests pass. No live user
+  account was accessed or changed; deployment and live endpoint check pending.
+
 Product changes such as accessibility, clearer P&L, error handling, responsive
 layout, and faster loading may ship frequently when tested. Changes to score
 weights, thresholds, portfolio construction, exits, or the stock universe must
