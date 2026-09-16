@@ -67,6 +67,16 @@ try {
     assert.equal(await page.locator('[data-suggested-sell="MSFT"]').isDisabled(), true);
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
     await page.locator('.v2-panel').screenshot({ path: `${output}/v2-${width}.png` });
+    await page.waitForFunction(() => document.querySelector('#financial-symbol option'));
+    await page.locator('#financial-symbol').selectOption('MSFT');
+    assert.ok((await page.locator('#financial-rows').textContent()).includes('全年'));
+    const captureStyle = await page.addStyleTag({content:'header { position: static !important; }'});
+    await page.locator('#financial-panel').screenshot({ path: `${output}/financial-${width}.png` });
+    await captureStyle.evaluate(el => el.remove());
+    await page.locator('#financial-symbol').selectOption('CCJ');
+    assert.ok((await page.locator('#financial-status').textContent()).includes('暂无可展示数据'));
+    assert.equal(await page.locator('#v2-start').isDisabled(), true);
+    assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
     await page.locator('#positions').scrollIntoViewIfNeeded();
     const a = await page.locator('[data-suggested-sell="KO"]').boundingBox(), b = await page.locator('[data-sell="KO"]').boundingBox();
     assert.ok(Math.abs(a.y - b.y) < 2, 'both buttons must be side by side');
@@ -90,7 +100,11 @@ try {
     await page.locator('[data-suggested-sell="KO"]').click();
     assert.equal(await page.locator('#sell-advice-confirm').isDisabled(), true);
     await page.locator('#sell-advice-close').click();
+    await page.route('**/data/financials.json', route => route.fulfill({status:503,body:'Unavailable'}));
     offline = true; await page.reload();
+    await page.waitForFunction(() => document.querySelector('#financial-status').textContent.includes('加载失败'));
+    assert.equal(await page.locator('#financial-rows').textContent(), '');
+
     await page.locator('#app-root').waitFor({ state: 'visible' });
     assert.equal(await page.locator('[data-suggested-sell="KO"]').isDisabled(), true);
     assert.deepEqual(errors, []);

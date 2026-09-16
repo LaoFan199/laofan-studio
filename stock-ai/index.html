@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="app.css?v=20260901-1">
   <link rel="stylesheet" href="momentum.css?v=20260901-4">
   <link rel="stylesheet" href="chart.css?v=20260901-2">
-  <link rel="stylesheet" href="v2.css?v=20260915-1">
+  <link rel="stylesheet" href="v2.css?v=20260916-1">
   <style>
     #core-list .momentum-row{grid-template-columns:1fr 1fr 1fr .65fr 1.6fr 1fr} @media(max-width:650px){#core-list .momentum-row{grid-template-columns:1fr 1fr}}
     .updated{font-weight:700}.market-open{color:#36d399}.market-closed{color:#8fa3bb}.reason{display:block;color:#6f86a2;font-size:10px;line-height:1.45;margin-top:5px;max-width:250px}
@@ -79,6 +79,15 @@
         <li>验证：至少6个月与30笔完成交易，再结合成本、最大回撤及相对SPY收益判断；不保证收益。</li>
       </ul></details>
       <p id="v2-source">等待数据接口。</p>
+      <section id="financial-panel" aria-labelledby="financial-title">
+        <h3 id="financial-title">历史财报 · 首批数据</h3>
+        <p>覆盖固定股票中的4家公司及7只核心观察股（合计10家公司）；SCHD 为基金，其他持仓暂未覆盖。这里只展示可核对的财报，不参与评分或买卖。</p>
+        <div class="v2-actions"><label for="financial-symbol">公司</label><select id="financial-symbol" aria-label="查看公司财报"></select><button class="ghost" id="financial-reload" type="button">重新读取快照</button></div>
+        <p id="financial-status" role="status">等待读取历史财报…</p>
+        <div id="financial-rows"></div>
+        <p>金额按美元展示；单季与全年分开，现金流仅展示全年。历史比较值可能经后续财报重述或拆股调整，不能直接用于历史回测。申报日不等于首次业绩公告日。</p>
+        <p>快照由维护时批量更新，尚未安排自动更新；重新读取不会向 SEC 发起下载。盈利预期、完整质量指标和模拟执行尚未接齐，V2 仍未启动。</p>
+      </section>
     </section>
 
     <section class="panel market-chart-panel" aria-labelledby="market-chart-title">
@@ -280,5 +289,6 @@
 
   </div>
   <script type="module" src="auth.bundle.js?v=20260915-1"></script>
+  <script type="module" src="financial-view.js?v=20260916-1"></script>
 </body>
 </html>

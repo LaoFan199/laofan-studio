@@ -728,3 +728,26 @@ follow the strategy promotion process above.
   seven rows, no horizontal overflow, explicit unavailable data. Account shows
   $1,000 equity = $1,000 cash + $0 holdings. Backend success is fixture-tested;
   live core endpoint is not deployed. No build script exists.
+
+### Product change: SEC historical financial snapshots (2026-09-16)
+
+- Problem: V2 has no financial data and fetching full issuer histories on each
+  browser visit would create unnecessary external calls and fragile loading.
+- Change: independent `sec-facts-v1` research panel and repeatable paced SEC
+  ingestion. Cache a small versioned static snapshot shared by desktop/mobile.
+  Ten initial symbols; unsupported data remains explicit. No score, order,
+  account, universe eligibility, or V2 readiness-gate changes.
+- Data contract and refresh instructions: `stock-ai/data/README.md`. Preserve
+  filing provenance and old timestamps after partial failure. Never treat YTD
+  cash flow as a quarter, missing facts as zero, restated history as point-in-time
+  inputs, or a reloaded snapshot as a fresh SEC collection.
+- Acceptance: issuer identity, time filtering, restatements, period/currency gaps,
+  corrupt/old cache states; desktop and 390px layouts; failure isolation from
+  holdings; existing ledger reconciliation and code-enforced risk tests.
+- Validation: 72 tests pass; build, syntax and diff checks pass. Desktop 1280px
+  and mobile 390px show annual/quarter separation, unsupported CCJ, source dates
+  and HTTP-failure isolation without overflow/page errors. Existing simulated
+  sell flow reconciles cash $930 + MSFT value $50 = equity $980; risk gates pass.
+  SEC retrieval succeeded for all 10 identities; 9 have supported observations.
+  Continuous refresh and complete V2 fundamentals/consensus/execution remain
+  outstanding; V2 stays disabled.

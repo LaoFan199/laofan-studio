@@ -1,0 +1,3773 @@
+{
+  "version": "sec-facts-v1",
+  "generatedAt": "2026-09-16T12:36:04.233Z",
+  "companies": [
+    {
+      "symbol": "MSFT",
+      "cik": 789019,
+      "name": "MICROSOFT CORPORATION",
+      "retrievedAt": "2026-09-16T12:36:04.233Z",
+      "status": "available",
+      "series": {
+        "revenue": {
+          "annual": [
+            {
+              "start": "2025-07-01",
+              "end": "2026-06-30",
+              "filed": "2026-07-29",
+              "value": 331839000000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "annual",
+              "accession": "0001193125-26-323660",
+              "form": "10-K"
+            },
+            {
+              "start": "2024-07-01",
+              "end": "2025-06-30",
+              "filed": "2026-07-29",
+              "value": 281724000000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "annual",
+              "accession": "0001193125-26-323660",
+              "form": "10-K"
+            },
+            {
+              "start": "2023-07-01",
+              "end": "2024-06-30",
+              "filed": "2026-07-29",
+              "value": 245122000000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "annual",
+              "accession": "0001193125-26-323660",
+              "form": "10-K"
+            },
+            {
+              "start": "2022-07-01",
+              "end": "2023-06-30",
+              "filed": "2025-07-30",
+              "value": 211915000000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "annual",
+              "accession": "0000950170-25-100235",
+              "form": "10-K"
+            },
+            {
+              "start": "2021-07-01",
+              "end": "2022-06-30",
+              "filed": "2024-07-30",
+              "value": 198270000000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "annual",
+              "accession": "0000950170-24-087843",
+              "form": "10-K"
+            }
+          ],
+          "quarter": [
+            {
+              "start": "2026-01-01",
+              "end": "2026-03-31",
+              "filed": "2026-04-29",
+              "value": 82886000000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "quarter",
+              "accession": "0001193125-26-191507",
+              "form": "10-Q"
+            },
+            {
+              "start": "2025-10-01",
+              "end": "2025-12-31",
+              "filed": "2026-01-28",
+              "value": 81273000000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "quarter",
+              "accession": "0001193125-26-027207",
+              "form": "10-Q"
+            },
+            {
+              "start": "2025-07-01",
+              "end": "2025-09-30",
+              "filed": "2025-10-29",
+              "value": 77673000000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "quarter",
+              "accession": "0001193125-25-256321",
+              "form": "10-Q"
+            },
+            {
+              "start": "2025-01-01",
+              "end": "2025-03-31",
+              "filed": "2026-04-29",
+              "value": 70066000000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "quarter",
+              "accession": "0001193125-26-191507",
+              "form": "10-Q"
+            },
+            {
+              "start": "2024-10-01",
+              "end": "2024-12-31",
+              "filed": "2026-01-28",
+              "value": 69632000000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "quarter",
+              "accession": "0001193125-26-027207",
+              "form": "10-Q"
+            },
+            {
+              "start": "2024-07-01",
+              "end": "2024-09-30",
+              "filed": "2025-10-29",
+              "value": 65585000000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "quarter",
+              "accession": "0001193125-25-256321",
+              "form": "10-Q"
+            },
+            {
+              "start": "2024-01-01",
+              "end": "2024-03-31",
+              "filed": "2025-04-30",
+              "value": 61858000000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "quarter",
+              "accession": "0000950170-25-061046",
+              "form": "10-Q"
+            },
+            {
+              "start": "2023-10-01",
+              "end": "2023-12-31",
+              "filed": "2025-01-29",
+              "value": 62020000000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "quarter",
+              "accession": "0000950170-25-010491",
+              "form": "10-Q"
+            }
+          ]
+        },
+        "eps": {
+          "annual": [
+            {
+              "start": "2025-07-01",
+              "end": "2026-06-30",
+              "filed": "2026-07-29",
+              "value": 17.95,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "annual",
+              "accession": "0001193125-26-323660",
+              "form": "10-K"
+            },
+            {
+              "start": "2024-07-01",
+              "end": "2025-06-30",
+              "filed": "2026-07-29",
+              "value": 13.64,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "annual",
+              "accession": "0001193125-26-323660",
+              "form": "10-K"
+            },
+            {
+              "start": "2023-07-01",
+              "end": "2024-06-30",
+              "filed": "2026-07-29",
+              "value": 11.8,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "annual",
+              "accession": "0001193125-26-323660",
+              "form": "10-K"
+            },
+            {
+              "start": "2022-07-01",
+              "end": "2023-06-30",
+              "filed": "2025-07-30",
+              "value": 9.68,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "annual",
+              "accession": "0000950170-25-100235",
+              "form": "10-K"
+            },
+            {
+              "start": "2021-07-01",
+              "end": "2022-06-30",
+              "filed": "2024-07-30",
+              "value": 9.65,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "annual",
+              "accession": "0000950170-24-087843",
+              "form": "10-K"
+            }
+          ],
+          "quarter": [
+            {
+              "start": "2026-01-01",
+              "end": "2026-03-31",
+              "filed": "2026-04-29",
+              "value": 4.27,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "quarter",
+              "accession": "0001193125-26-191507",
+              "form": "10-Q"
+            },
+            {
+              "start": "2025-10-01",
+              "end": "2025-12-31",
+              "filed": "2026-01-28",
+              "value": 5.16,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "quarter",
+              "accession": "0001193125-26-027207",
+              "form": "10-Q"
+            },
+            {
+              "start": "2025-07-01",
+              "end": "2025-09-30",
+              "filed": "2025-10-29",
+              "value": 3.72,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "quarter",
+              "accession": "0001193125-25-256321",
+              "form": "10-Q"
+            },
+            {
+              "start": "2025-01-01",
+              "end": "2025-03-31",
+              "filed": "2026-04-29",
+              "value": 3.46,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "quarter",
+              "accession": "0001193125-26-191507",
+              "form": "10-Q"
+            },
+            {
+              "start": "2024-10-01",
+              "end": "2024-12-31",
+              "filed": "2026-01-28",
+              "value": 3.23,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "quarter",
+              "accession": "0001193125-26-027207",
+              "form": "10-Q"
+            },
+            {
+              "start": "2024-07-01",
+              "end": "2024-09-30",
+              "filed": "2025-10-29",
+              "value": 3.3,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "quarter",
+              "accession": "0001193125-25-256321",
+              "form": "10-Q"
+            },
+            {
+              "start": "2024-01-01",
+              "end": "2024-03-31",
+              "filed": "2025-04-30",
+              "value": 2.94,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "quarter",
+              "accession": "0000950170-25-061046",
+              "form": "10-Q"
+            },
+            {
+              "start": "2023-10-01",
+              "end": "2023-12-31",
+              "filed": "2025-01-29",
+              "value": 2.93,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "quarter",
+              "accession": "0000950170-25-010491",
+              "form": "10-Q"
+            }
+          ]
+        },
+        "operatingCashFlow": {
+          "annual": [
+            {
+              "start": "2025-07-01",
+              "end": "2026-06-30",
+              "filed": "2026-07-29",
+              "value": 182935000000,
+              "unit": "USD",
+              "tag": "NetCashProvidedByUsedInOperatingActivities",
+              "period": "annual",
+              "accession": "0001193125-26-323660",
+              "form": "10-K"
+            },
+            {
+              "start": "2024-07-01",
+              "end": "2025-06-30",
+              "filed": "2026-07-29",
+              "value": 136162000000,
+              "unit": "USD",
+              "tag": "NetCashProvidedByUsedInOperatingActivities",
+              "period": "annual",
+              "accession": "0001193125-26-323660",
+              "form": "10-K"
+            },
+            {
+              "start": "2023-07-01",
+              "end": "2024-06-30",
+              "filed": "2026-07-29",
+              "value": 118548000000,
+              "unit": "USD",
+              "tag": "NetCashProvidedByUsedInOperatingActivities",
+              "period": "annual",
+              "accession": "0001193125-26-323660",
+              "form": "10-K"
+            },
+            {
+              "start": "2022-07-01",
+              "end": "2023-06-30",
+              "filed": "2025-07-30",
+              "value": 87582000000,
+              "unit": "USD",
+              "tag": "NetCashProvidedByUsedInOperatingActivities",
+              "period": "annual",
+              "accession": "0000950170-25-100235",
+              "form": "10-K"
+            },
+            {
+              "start": "2021-07-01",
+              "end": "2022-06-30",
+              "filed": "2024-07-30",
+              "value": 89035000000,
+              "unit": "USD",
+              "tag": "NetCashProvidedByUsedInOperatingActivities",
+              "period": "annual",
+              "accession": "0000950170-24-087843",
+              "form": "10-K"
+            }
+          ],
+          "quarter": []
+        },
+        "capex": {
+          "annual": [
+            {
+              "start": "2025-07-01",
+              "end": "2026-06-30",
+              "filed": "2026-07-29",
+              "value": 115948000000,
+              "unit": "USD",
+              "tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+              "period": "annual",
+              "accession": "0001193125-26-323660",
+              "form": "10-K"
+            },
+            {
+              "start": "2024-07-01",
+              "end": "2025-06-30",
+              "filed": "2026-07-29",
+              "value": 64551000000,
+              "unit": "USD",
+              "tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+              "period": "annual",
+              "accession": "0001193125-26-323660",
+              "form": "10-K"
+            },
+            {
+              "start": "2023-07-01",
+              "end": "2024-06-30",
+              "filed": "2026-07-29",
+              "value": 44477000000,
+              "unit": "USD",
+              "tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+              "period": "annual",
+              "accession": "0001193125-26-323660",
+              "form": "10-K"
+            },
+            {
+              "start": "2022-07-01",
+              "end": "2023-06-30",
+              "filed": "2025-07-30",
+              "value": 28107000000,
+              "unit": "USD",
+              "tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+              "period": "annual",
+              "accession": "0000950170-25-100235",
+              "form": "10-K"
+            },
+            {
+              "start": "2021-07-01",
+              "end": "2022-06-30",
+              "filed": "2024-07-30",
+              "value": 23886000000,
+              "unit": "USD",
+              "tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+              "period": "annual",
+              "accession": "0000950170-24-087843",
+              "form": "10-K"
+            }
+          ],
+          "quarter": []
+        }
+      },
+      "source": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000789019.json"
+    },
+    {
+      "symbol": "GOOGL",
+      "cik": 1652044,
+      "name": "Alphabet Inc.",
+      "retrievedAt": "2026-09-16T12:36:04.233Z",
+      "status": "available",
+      "series": {
+        "revenue": {
+          "annual": [
+            {
+              "start": "2025-01-01",
+              "end": "2025-12-31",
+              "filed": "2026-02-05",
+              "value": 402836000000,
+              "unit": "USD",
+              "tag": "Revenues",
+              "period": "annual",
+              "accession": "0001652044-26-000018",
+              "form": "10-K"
+            },
+            {
+              "start": "2024-01-01",
+              "end": "2024-12-31",
+              "filed": "2026-02-05",
+              "value": 350018000000,
+              "unit": "USD",
+              "tag": "Revenues",
+              "period": "annual",
+              "accession": "0001652044-26-000018",
+              "form": "10-K"
+            },
+            {
+              "start": "2023-01-01",
+              "end": "2023-12-31",
+              "filed": "2026-02-05",
+              "value": 307394000000,
+              "unit": "USD",
+              "tag": "Revenues",
+              "period": "annual",
+              "accession": "0001652044-26-000018",
+              "form": "10-K"
+            },
+            {
+              "start": "2022-01-01",
+              "end": "2022-12-31",
+              "filed": "2025-02-05",
+              "value": 282836000000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "annual",
+              "accession": "0001652044-25-000014",
+              "form": "10-K"
+            },
+            {
+              "start": "2021-01-01",
+              "end": "2021-12-31",
+              "filed": "2024-01-31",
+              "value": 257637000000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "annual",
+              "accession": "0001652044-24-000022",
+              "form": "10-K"
+            }
+          ],
+          "quarter": [
+            {
+              "start": "2026-04-01",
+              "end": "2026-06-30",
+              "filed": "2026-07-23",
+              "value": 119796000000,
+              "unit": "USD",
+              "tag": "Revenues",
+              "period": "quarter",
+              "accession": "0001652044-26-000071",
+              "form": "10-Q"
+            },
+            {
+              "start": "2026-01-01",
+              "end": "2026-03-31",
+              "filed": "2026-04-30",
+              "value": 109896000000,
+              "unit": "USD",
+              "tag": "Revenues",
+              "period": "quarter",
+              "accession": "0001652044-26-000048",
+              "form": "10-Q"
+            },
+            {
+              "start": "2025-07-01",
+              "end": "2025-09-30",
+              "filed": "2025-10-30",
+              "value": 102346000000,
+              "unit": "USD",
+              "tag": "Revenues",
+              "period": "quarter",
+              "accession": "0001652044-25-000091",
+              "form": "10-Q"
+            },
+            {
+              "start": "2025-04-01",
+              "end": "2025-06-30",
+              "filed": "2026-07-23",
+              "value": 96428000000,
+              "unit": "USD",
+              "tag": "Revenues",
+              "period": "quarter",
+              "accession": "0001652044-26-000071",
+              "form": "10-Q"
+            },
+            {
+              "start": "2025-01-01",
+              "end": "2025-03-31",
+              "filed": "2026-04-30",
+              "value": 90234000000,
+              "unit": "USD",
+              "tag": "Revenues",
+              "period": "quarter",
+              "accession": "0001652044-26-000048",
+              "form": "10-Q"
+            },
+            {
+              "start": "2024-07-01",
+              "end": "2024-09-30",
+              "filed": "2025-10-30",
+              "value": 88268000000,
+              "unit": "USD",
+              "tag": "Revenues",
+              "period": "quarter",
+              "accession": "0001652044-25-000091",
+              "form": "10-Q"
+            },
+            {
+              "start": "2024-04-01",
+              "end": "2024-06-30",
+              "filed": "2025-07-24",
+              "value": 84742000000,
+              "unit": "USD",
+              "tag": "Revenues",
+              "period": "quarter",
+              "accession": "0001652044-25-000062",
+              "form": "10-Q"
+            },
+            {
+              "start": "2024-01-01",
+              "end": "2024-03-31",
+              "filed": "2025-04-25",
+              "value": 80539000000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "quarter",
+              "accession": "0001652044-25-000043",
+              "form": "10-Q"
+            }
+          ]
+        },
+        "eps": {
+          "annual": [
+            {
+              "start": "2025-01-01",
+              "end": "2025-12-31",
+              "filed": "2026-02-05",
+              "value": 10.81,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "annual",
+              "accession": "0001652044-26-000018",
+              "form": "10-K"
+            },
+            {
+              "start": "2024-01-01",
+              "end": "2024-12-31",
+              "filed": "2026-02-05",
+              "value": 8.04,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "annual",
+              "accession": "0001652044-26-000018",
+              "form": "10-K"
+            },
+            {
+              "start": "2023-01-01",
+              "end": "2023-12-31",
+              "filed": "2026-02-05",
+              "value": 5.8,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "annual",
+              "accession": "0001652044-26-000018",
+              "form": "10-K"
+            },
+            {
+              "start": "2022-01-01",
+              "end": "2022-12-31",
+              "filed": "2025-02-05",
+              "value": 4.56,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "annual",
+              "accession": "0001652044-25-000014",
+              "form": "10-K"
+            },
+            {
+              "start": "2021-01-01",
+              "end": "2021-12-31",
+              "filed": "2024-01-31",
+              "value": 5.61,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "annual",
+              "accession": "0001652044-24-000022",
+              "form": "10-K"
+            }
+          ],
+          "quarter": [
+            {
+              "start": "2026-04-01",
+              "end": "2026-06-30",
+              "filed": "2026-07-23",
+              "value": 9.11,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "quarter",
+              "accession": "0001652044-26-000071",
+              "form": "10-Q"
+            },
+            {
+              "start": "2026-01-01",
+              "end": "2026-03-31",
+              "filed": "2026-04-30",
+              "value": 5.11,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "quarter",
+              "accession": "0001652044-26-000048",
+              "form": "10-Q"
+            },
+            {
+              "start": "2025-07-01",
+              "end": "2025-09-30",
+              "filed": "2025-10-30",
+              "value": 2.87,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "quarter",
+              "accession": "0001652044-25-000091",
+              "form": "10-Q"
+            },
+            {
+              "start": "2025-04-01",
+              "end": "2025-06-30",
+              "filed": "2026-07-23",
+              "value": 2.31,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "quarter",
+              "accession": "0001652044-26-000071",
+              "form": "10-Q"
+            },
+            {
+              "start": "2025-01-01",
+              "end": "2025-03-31",
+              "filed": "2026-04-30",
+              "value": 2.81,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "quarter",
+              "accession": "0001652044-26-000048",
+              "form": "10-Q"
+            },
+            {
+              "start": "2024-07-01",
+              "end": "2024-09-30",
+              "filed": "2025-10-30",
+              "value": 2.12,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "quarter",
+              "accession": "0001652044-25-000091",
+              "form": "10-Q"
+            },
+            {
+              "start": "2024-04-01",
+              "end": "2024-06-30",
+              "filed": "2025-07-24",
+              "value": 1.89,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "quarter",
+              "accession": "0001652044-25-000062",
+              "form": "10-Q"
+            },
+            {
+              "start": "2024-01-01",
+              "end": "2024-03-31",
+              "filed": "2025-04-25",
+              "value": 1.89,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "quarter",
+              "accession": "0001652044-25-000043",
+              "form": "10-Q"
+            }
+          ]
+        },
+        "operatingCashFlow": {
+          "annual": [
+            {
+              "start": "2025-01-01",
+              "end": "2025-12-31",
+              "filed": "2026-02-05",
+              "value": 164713000000,
+              "unit": "USD",
+              "tag": "NetCashProvidedByUsedInOperatingActivities",
+              "period": "annual",
+              "accession": "0001652044-26-000018",
+              "form": "10-K"
+            },
+            {
+              "start": "2024-01-01",
+              "end": "2024-12-31",
+              "filed": "2026-02-05",
+              "value": 125299000000,
+              "unit": "USD",
+              "tag": "NetCashProvidedByUsedInOperatingActivities",
+              "period": "annual",
+              "accession": "0001652044-26-000018",
+              "form": "10-K"
+            },
+            {
+              "start": "2023-01-01",
+              "end": "2023-12-31",
+              "filed": "2026-02-05",
+              "value": 101746000000,
+              "unit": "USD",
+              "tag": "NetCashProvidedByUsedInOperatingActivities",
+              "period": "annual",
+              "accession": "0001652044-26-000018",
+              "form": "10-K"
+            },
+            {
+              "start": "2022-01-01",
+              "end": "2022-12-31",
+              "filed": "2025-02-05",
+              "value": 91495000000,
+              "unit": "USD",
+              "tag": "NetCashProvidedByUsedInOperatingActivities",
+              "period": "annual",
+              "accession": "0001652044-25-000014",
+              "form": "10-K"
+            },
+            {
+              "start": "2021-01-01",
+              "end": "2021-12-31",
+              "filed": "2024-01-31",
+              "value": 91652000000,
+              "unit": "USD",
+              "tag": "NetCashProvidedByUsedInOperatingActivities",
+              "period": "annual",
+              "accession": "0001652044-24-000022",
+              "form": "10-K"
+            }
+          ],
+          "quarter": []
+        },
+        "capex": {
+          "annual": [
+            {
+              "start": "2025-01-01",
+              "end": "2025-12-31",
+              "filed": "2026-02-05",
+              "value": 91447000000,
+              "unit": "USD",
+              "tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+              "period": "annual",
+              "accession": "0001652044-26-000018",
+              "form": "10-K"
+            },
+            {
+              "start": "2024-01-01",
+              "end": "2024-12-31",
+              "filed": "2026-02-05",
+              "value": 52535000000,
+              "unit": "USD",
+              "tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+              "period": "annual",
+              "accession": "0001652044-26-000018",
+              "form": "10-K"
+            },
+            {
+              "start": "2023-01-01",
+              "end": "2023-12-31",
+              "filed": "2026-02-05",
+              "value": 32251000000,
+              "unit": "USD",
+              "tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+              "period": "annual",
+              "accession": "0001652044-26-000018",
+              "form": "10-K"
+            },
+            {
+              "start": "2022-01-01",
+              "end": "2022-12-31",
+              "filed": "2025-02-05",
+              "value": 31485000000,
+              "unit": "USD",
+              "tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+              "period": "annual",
+              "accession": "0001652044-25-000014",
+              "form": "10-K"
+            },
+            {
+              "start": "2021-01-01",
+              "end": "2021-12-31",
+              "filed": "2024-01-31",
+              "value": 24640000000,
+              "unit": "USD",
+              "tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+              "period": "annual",
+              "accession": "0001652044-24-000022",
+              "form": "10-K"
+            }
+          ],
+          "quarter": []
+        }
+      },
+      "source": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001652044.json"
+    },
+    {
+      "symbol": "KO",
+      "cik": 21344,
+      "name": "COCA COLA CO",
+      "retrievedAt": "2026-09-16T12:36:04.233Z",
+      "status": "available",
+      "series": {
+        "revenue": {
+          "annual": [
+            {
+              "start": "2025-01-01",
+              "end": "2025-12-31",
+              "filed": "2026-02-20",
+              "value": 47941000000,
+              "unit": "USD",
+              "tag": "Revenues",
+              "period": "annual",
+              "accession": "0001628280-26-010047",
+              "form": "10-K"
+            },
+            {
+              "start": "2024-01-01",
+              "end": "2024-12-31",
+              "filed": "2026-02-20",
+              "value": 47061000000,
+              "unit": "USD",
+              "tag": "Revenues",
+              "period": "annual",
+              "accession": "0001628280-26-010047",
+              "form": "10-K"
+            },
+            {
+              "start": "2023-01-01",
+              "end": "2023-12-31",
+              "filed": "2026-02-20",
+              "value": 45754000000,
+              "unit": "USD",
+              "tag": "Revenues",
+              "period": "annual",
+              "accession": "0001628280-26-010047",
+              "form": "10-K"
+            },
+            {
+              "start": "2022-01-01",
+              "end": "2022-12-31",
+              "filed": "2025-02-20",
+              "value": 43004000000,
+              "unit": "USD",
+              "tag": "Revenues",
+              "period": "annual",
+              "accession": "0000021344-25-000011",
+              "form": "10-K"
+            },
+            {
+              "start": "2021-01-01",
+              "end": "2021-12-31",
+              "filed": "2024-02-20",
+              "value": 38655000000,
+              "unit": "USD",
+              "tag": "Revenues",
+              "period": "annual",
+              "accession": "0000021344-24-000009",
+              "form": "10-K"
+            }
+          ],
+          "quarter": [
+            {
+              "start": "2026-01-01",
+              "end": "2026-04-03",
+              "filed": "2026-04-30",
+              "value": 12472000000,
+              "unit": "USD",
+              "tag": "Revenues",
+              "period": "quarter",
+              "accession": "0001628280-26-028802",
+              "form": "10-Q"
+            },
+            {
+              "start": "2025-06-28",
+              "end": "2025-09-26",
+              "filed": "2025-10-23",
+              "value": 12455000000,
+              "unit": "USD",
+              "tag": "Revenues",
+              "period": "quarter",
+              "accession": "0001628280-25-046054",
+              "form": "10-Q"
+            },
+            {
+              "start": "2025-03-29",
+              "end": "2025-06-27",
+              "filed": "2025-07-24",
+              "value": 12535000000,
+              "unit": "USD",
+              "tag": "Revenues",
+              "period": "quarter",
+              "accession": "0000021344-25-000061",
+              "form": "10-Q"
+            },
+            {
+              "start": "2025-01-01",
+              "end": "2025-03-28",
+              "filed": "2026-04-30",
+              "value": 11129000000,
+              "unit": "USD",
+              "tag": "Revenues",
+              "period": "quarter",
+              "accession": "0001628280-26-028802",
+              "form": "10-Q"
+            },
+            {
+              "start": "2024-06-29",
+              "end": "2024-09-27",
+              "filed": "2025-10-23",
+              "value": 11854000000,
+              "unit": "USD",
+              "tag": "Revenues",
+              "period": "quarter",
+              "accession": "0001628280-25-046054",
+              "form": "10-Q"
+            },
+            {
+              "start": "2024-03-30",
+              "end": "2024-06-28",
+              "filed": "2025-07-24",
+              "value": 12363000000,
+              "unit": "USD",
+              "tag": "Revenues",
+              "period": "quarter",
+              "accession": "0000021344-25-000061",
+              "form": "10-Q"
+            },
+            {
+              "start": "2024-01-01",
+              "end": "2024-03-29",
+              "filed": "2025-05-01",
+              "value": 11300000000,
+              "unit": "USD",
+              "tag": "Revenues",
+              "period": "quarter",
+              "accession": "0000021344-25-000029",
+              "form": "10-Q"
+            },
+            {
+              "start": "2023-07-01",
+              "end": "2023-09-29",
+              "filed": "2024-10-24",
+              "value": 11953000000,
+              "unit": "USD",
+              "tag": "Revenues",
+              "period": "quarter",
+              "accession": "0000021344-24-000060",
+              "form": "10-Q"
+            }
+          ]
+        },
+        "eps": {
+          "annual": [
+            {
+              "start": "2025-01-01",
+              "end": "2025-12-31",
+              "filed": "2026-02-20",
+              "value": 3.04,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "annual",
+              "accession": "0001628280-26-010047",
+              "form": "10-K"
+            },
+            {
+              "start": "2024-01-01",
+              "end": "2024-12-31",
+              "filed": "2026-02-20",
+              "value": 2.46,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "annual",
+              "accession": "0001628280-26-010047",
+              "form": "10-K"
+            },
+            {
+              "start": "2023-01-01",
+              "end": "2023-12-31",
+              "filed": "2026-02-20",
+              "value": 2.47,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "annual",
+              "accession": "0001628280-26-010047",
+              "form": "10-K"
+            },
+            {
+              "start": "2022-01-01",
+              "end": "2022-12-31",
+              "filed": "2025-02-20",
+              "value": 2.19,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "annual",
+              "accession": "0000021344-25-000011",
+              "form": "10-K"
+            },
+            {
+              "start": "2021-01-01",
+              "end": "2021-12-31",
+              "filed": "2024-02-20",
+              "value": 2.25,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "annual",
+              "accession": "0000021344-24-000009",
+              "form": "10-K"
+            }
+          ],
+          "quarter": [
+            {
+              "start": "2026-01-01",
+              "end": "2026-04-03",
+              "filed": "2026-04-30",
+              "value": 0.91,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "quarter",
+              "accession": "0001628280-26-028802",
+              "form": "10-Q"
+            },
+            {
+              "start": "2025-06-28",
+              "end": "2025-09-26",
+              "filed": "2025-10-23",
+              "value": 0.86,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "quarter",
+              "accession": "0001628280-25-046054",
+              "form": "10-Q"
+            },
+            {
+              "start": "2025-03-29",
+              "end": "2025-06-27",
+              "filed": "2025-07-24",
+              "value": 0.88,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "quarter",
+              "accession": "0000021344-25-000061",
+              "form": "10-Q"
+            },
+            {
+              "start": "2025-01-01",
+              "end": "2025-03-28",
+              "filed": "2026-04-30",
+              "value": 0.77,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "quarter",
+              "accession": "0001628280-26-028802",
+              "form": "10-Q"
+            },
+            {
+              "start": "2024-06-29",
+              "end": "2024-09-27",
+              "filed": "2025-10-23",
+              "value": 0.66,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "quarter",
+              "accession": "0001628280-25-046054",
+              "form": "10-Q"
+            },
+            {
+              "start": "2024-03-30",
+              "end": "2024-06-28",
+              "filed": "2025-07-24",
+              "value": 0.56,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "quarter",
+              "accession": "0000021344-25-000061",
+              "form": "10-Q"
+            },
+            {
+              "start": "2024-01-01",
+              "end": "2024-03-29",
+              "filed": "2025-05-01",
+              "value": 0.74,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "quarter",
+              "accession": "0000021344-25-000029",
+              "form": "10-Q"
+            },
+            {
+              "start": "2023-07-01",
+              "end": "2023-09-29",
+              "filed": "2024-10-24",
+              "value": 0.71,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "quarter",
+              "accession": "0000021344-24-000060",
+              "form": "10-Q"
+            }
+          ]
+        },
+        "operatingCashFlow": {
+          "annual": [
+            {
+              "start": "2025-01-01",
+              "end": "2025-12-31",
+              "filed": "2026-02-20",
+              "value": 7408000000,
+              "unit": "USD",
+              "tag": "NetCashProvidedByUsedInOperatingActivities",
+              "period": "annual",
+              "accession": "0001628280-26-010047",
+              "form": "10-K"
+            },
+            {
+              "start": "2024-01-01",
+              "end": "2024-12-31",
+              "filed": "2026-02-20",
+              "value": 6805000000,
+              "unit": "USD",
+              "tag": "NetCashProvidedByUsedInOperatingActivities",
+              "period": "annual",
+              "accession": "0001628280-26-010047",
+              "form": "10-K"
+            },
+            {
+              "start": "2023-01-01",
+              "end": "2023-12-31",
+              "filed": "2026-02-20",
+              "value": 11599000000,
+              "unit": "USD",
+              "tag": "NetCashProvidedByUsedInOperatingActivities",
+              "period": "annual",
+              "accession": "0001628280-26-010047",
+              "form": "10-K"
+            },
+            {
+              "start": "2022-01-01",
+              "end": "2022-12-31",
+              "filed": "2025-02-20",
+              "value": 11018000000,
+              "unit": "USD",
+              "tag": "NetCashProvidedByUsedInOperatingActivities",
+              "period": "annual",
+              "accession": "0000021344-25-000011",
+              "form": "10-K"
+            },
+            {
+              "start": "2021-01-01",
+              "end": "2021-12-31",
+              "filed": "2024-02-20",
+              "value": 12625000000,
+              "unit": "USD",
+              "tag": "NetCashProvidedByUsedInOperatingActivities",
+              "period": "annual",
+              "accession": "0000021344-24-000009",
+              "form": "10-K"
+            }
+          ],
+          "quarter": []
+        },
+        "capex": {
+          "annual": [
+            {
+              "start": "2025-01-01",
+              "end": "2025-12-31",
+              "filed": "2026-02-20",
+              "value": 2112000000,
+              "unit": "USD",
+              "tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+              "period": "annual",
+              "accession": "0001628280-26-010047",
+              "form": "10-K"
+            },
+            {
+              "start": "2024-01-01",
+              "end": "2024-12-31",
+              "filed": "2026-02-20",
+              "value": 2064000000,
+              "unit": "USD",
+              "tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+              "period": "annual",
+              "accession": "0001628280-26-010047",
+              "form": "10-K"
+            },
+            {
+              "start": "2023-01-01",
+              "end": "2023-12-31",
+              "filed": "2026-02-20",
+              "value": 1852000000,
+              "unit": "USD",
+              "tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+              "period": "annual",
+              "accession": "0001628280-26-010047",
+              "form": "10-K"
+            },
+            {
+              "start": "2022-01-01",
+              "end": "2022-12-31",
+              "filed": "2025-02-20",
+              "value": 1484000000,
+              "unit": "USD",
+              "tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+              "period": "annual",
+              "accession": "0000021344-25-000011",
+              "form": "10-K"
+            },
+            {
+              "start": "2021-01-01",
+              "end": "2021-12-31",
+              "filed": "2024-02-20",
+              "value": 1367000000,
+              "unit": "USD",
+              "tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+              "period": "annual",
+              "accession": "0000021344-24-000009",
+              "form": "10-K"
+            }
+          ],
+          "quarter": []
+        }
+      },
+      "source": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000021344.json"
+    },
+    {
+      "symbol": "NVDA",
+      "cik": 1045810,
+      "name": "NVIDIA CORP",
+      "retrievedAt": "2026-09-16T12:36:04.233Z",
+      "status": "available",
+      "series": {
+        "revenue": {
+          "annual": [
+            {
+              "start": "2025-01-27",
+              "end": "2026-01-25",
+              "filed": "2026-02-25",
+              "value": 215938000000,
+              "unit": "USD",
+              "tag": "Revenues",
+              "period": "annual",
+              "accession": "0001045810-26-000021",
+              "form": "10-K"
+            },
+            {
+              "start": "2024-01-29",
+              "end": "2025-01-26",
+              "filed": "2026-02-25",
+              "value": 130497000000,
+              "unit": "USD",
+              "tag": "Revenues",
+              "period": "annual",
+              "accession": "0001045810-26-000021",
+              "form": "10-K"
+            },
+            {
+              "start": "2023-01-30",
+              "end": "2024-01-28",
+              "filed": "2026-02-25",
+              "value": 60922000000,
+              "unit": "USD",
+              "tag": "Revenues",
+              "period": "annual",
+              "accession": "0001045810-26-000021",
+              "form": "10-K"
+            },
+            {
+              "start": "2022-01-31",
+              "end": "2023-01-29",
+              "filed": "2025-02-26",
+              "value": 26974000000,
+              "unit": "USD",
+              "tag": "Revenues",
+              "period": "annual",
+              "accession": "0001045810-25-000023",
+              "form": "10-K"
+            },
+            {
+              "start": "2021-02-01",
+              "end": "2022-01-30",
+              "filed": "2024-02-21",
+              "value": 26914000000,
+              "unit": "USD",
+              "tag": "Revenues",
+              "period": "annual",
+              "accession": "0001045810-24-000029",
+              "form": "10-K"
+            }
+          ],
+          "quarter": [
+            {
+              "start": "2026-04-27",
+              "end": "2026-07-26",
+              "filed": "2026-08-26",
+              "value": 96221000000,
+              "unit": "USD",
+              "tag": "Revenues",
+              "period": "quarter",
+              "accession": "0001045810-26-000075",
+              "form": "10-Q"
+            },
+            {
+              "start": "2026-01-26",
+              "end": "2026-04-26",
+              "filed": "2026-05-20",
+              "value": 81615000000,
+              "unit": "USD",
+              "tag": "Revenues",
+              "period": "quarter",
+              "accession": "0001045810-26-000052",
+              "form": "10-Q"
+            },
+            {
+              "start": "2025-07-28",
+              "end": "2025-10-26",
+              "filed": "2025-11-19",
+              "value": 57006000000,
+              "unit": "USD",
+              "tag": "Revenues",
+              "period": "quarter",
+              "accession": "0001045810-25-000230",
+              "form": "10-Q"
+            },
+            {
+              "start": "2025-04-28",
+              "end": "2025-07-27",
+              "filed": "2026-08-26",
+              "value": 46743000000,
+              "unit": "USD",
+              "tag": "Revenues",
+              "period": "quarter",
+              "accession": "0001045810-26-000075",
+              "form": "10-Q"
+            },
+            {
+              "start": "2025-01-27",
+              "end": "2025-04-27",
+              "filed": "2026-05-20",
+              "value": 44062000000,
+              "unit": "USD",
+              "tag": "Revenues",
+              "period": "quarter",
+              "accession": "0001045810-26-000052",
+              "form": "10-Q"
+            },
+            {
+              "start": "2024-07-29",
+              "end": "2024-10-27",
+              "filed": "2025-11-19",
+              "value": 35082000000,
+              "unit": "USD",
+              "tag": "Revenues",
+              "period": "quarter",
+              "accession": "0001045810-25-000230",
+              "form": "10-Q"
+            },
+            {
+              "start": "2024-04-29",
+              "end": "2024-07-28",
+              "filed": "2025-08-27",
+              "value": 30040000000,
+              "unit": "USD",
+              "tag": "Revenues",
+              "period": "quarter",
+              "accession": "0001045810-25-000209",
+              "form": "10-Q"
+            },
+            {
+              "start": "2024-01-29",
+              "end": "2024-04-28",
+              "filed": "2025-05-28",
+              "value": 26044000000,
+              "unit": "USD",
+              "tag": "Revenues",
+              "period": "quarter",
+              "accession": "0001045810-25-000116",
+              "form": "10-Q"
+            }
+          ]
+        },
+        "eps": {
+          "annual": [
+            {
+              "start": "2025-01-27",
+              "end": "2026-01-25",
+              "filed": "2026-02-25",
+              "value": 4.9,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "annual",
+              "accession": "0001045810-26-000021",
+              "form": "10-K"
+            },
+            {
+              "start": "2024-01-29",
+              "end": "2025-01-26",
+              "filed": "2026-02-25",
+              "value": 2.94,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "annual",
+              "accession": "0001045810-26-000021",
+              "form": "10-K"
+            },
+            {
+              "start": "2023-01-30",
+              "end": "2024-01-28",
+              "filed": "2026-02-25",
+              "value": 1.19,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "annual",
+              "accession": "0001045810-26-000021",
+              "form": "10-K"
+            },
+            {
+              "start": "2022-01-31",
+              "end": "2023-01-29",
+              "filed": "2025-02-26",
+              "value": 0.17,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "annual",
+              "accession": "0001045810-25-000023",
+              "form": "10-K"
+            },
+            {
+              "start": "2021-02-01",
+              "end": "2022-01-30",
+              "filed": "2024-02-21",
+              "value": 3.85,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "annual",
+              "accession": "0001045810-24-000029",
+              "form": "10-K"
+            }
+          ],
+          "quarter": [
+            {
+              "start": "2026-04-27",
+              "end": "2026-07-26",
+              "filed": "2026-08-26",
+              "value": 2.46,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "quarter",
+              "accession": "0001045810-26-000075",
+              "form": "10-Q"
+            },
+            {
+              "start": "2026-01-26",
+              "end": "2026-04-26",
+              "filed": "2026-05-20",
+              "value": 2.39,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "quarter",
+              "accession": "0001045810-26-000052",
+              "form": "10-Q"
+            },
+            {
+              "start": "2025-07-28",
+              "end": "2025-10-26",
+              "filed": "2025-11-19",
+              "value": 1.3,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "quarter",
+              "accession": "0001045810-25-000230",
+              "form": "10-Q"
+            },
+            {
+              "start": "2025-04-28",
+              "end": "2025-07-27",
+              "filed": "2026-08-26",
+              "value": 1.08,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "quarter",
+              "accession": "0001045810-26-000075",
+              "form": "10-Q"
+            },
+            {
+              "start": "2025-01-27",
+              "end": "2025-04-27",
+              "filed": "2026-05-20",
+              "value": 0.76,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "quarter",
+              "accession": "0001045810-26-000052",
+              "form": "10-Q"
+            },
+            {
+              "start": "2024-07-29",
+              "end": "2024-10-27",
+              "filed": "2025-11-19",
+              "value": 0.78,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "quarter",
+              "accession": "0001045810-25-000230",
+              "form": "10-Q"
+            },
+            {
+              "start": "2024-04-29",
+              "end": "2024-07-28",
+              "filed": "2025-08-27",
+              "value": 0.67,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "quarter",
+              "accession": "0001045810-25-000209",
+              "form": "10-Q"
+            },
+            {
+              "start": "2024-01-29",
+              "end": "2024-04-28",
+              "filed": "2025-05-28",
+              "value": 0.6,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "quarter",
+              "accession": "0001045810-25-000116",
+              "form": "10-Q"
+            }
+          ]
+        },
+        "operatingCashFlow": {
+          "annual": [
+            {
+              "start": "2025-01-27",
+              "end": "2026-01-25",
+              "filed": "2026-02-25",
+              "value": 102718000000,
+              "unit": "USD",
+              "tag": "NetCashProvidedByUsedInOperatingActivities",
+              "period": "annual",
+              "accession": "0001045810-26-000021",
+              "form": "10-K"
+            },
+            {
+              "start": "2024-01-29",
+              "end": "2025-01-26",
+              "filed": "2026-02-25",
+              "value": 64089000000,
+              "unit": "USD",
+              "tag": "NetCashProvidedByUsedInOperatingActivities",
+              "period": "annual",
+              "accession": "0001045810-26-000021",
+              "form": "10-K"
+            },
+            {
+              "start": "2023-01-30",
+              "end": "2024-01-28",
+              "filed": "2026-02-25",
+              "value": 28090000000,
+              "unit": "USD",
+              "tag": "NetCashProvidedByUsedInOperatingActivities",
+              "period": "annual",
+              "accession": "0001045810-26-000021",
+              "form": "10-K"
+            },
+            {
+              "start": "2022-01-31",
+              "end": "2023-01-29",
+              "filed": "2025-02-26",
+              "value": 5641000000,
+              "unit": "USD",
+              "tag": "NetCashProvidedByUsedInOperatingActivities",
+              "period": "annual",
+              "accession": "0001045810-25-000023",
+              "form": "10-K"
+            },
+            {
+              "start": "2021-02-01",
+              "end": "2022-01-30",
+              "filed": "2024-02-21",
+              "value": 9108000000,
+              "unit": "USD",
+              "tag": "NetCashProvidedByUsedInOperatingActivities",
+              "period": "annual",
+              "accession": "0001045810-24-000029",
+              "form": "10-K"
+            }
+          ],
+          "quarter": []
+        },
+        "capex": {
+          "annual": [
+            {
+              "start": "2011-01-31",
+              "end": "2012-01-29",
+              "filed": "2012-03-13",
+              "value": 138735000,
+              "unit": "USD",
+              "tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+              "period": "annual",
+              "accession": "0001045810-12-000013",
+              "form": "10-K"
+            },
+            {
+              "start": "2010-02-01",
+              "end": "2011-01-30",
+              "filed": "2012-03-13",
+              "value": 97890000,
+              "unit": "USD",
+              "tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+              "period": "annual",
+              "accession": "0001045810-12-000013",
+              "form": "10-K"
+            },
+            {
+              "start": "2009-01-26",
+              "end": "2010-01-31",
+              "filed": "2012-03-13",
+              "value": 77601000,
+              "unit": "USD",
+              "tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+              "period": "annual",
+              "accession": "0001045810-12-000013",
+              "form": "10-K"
+            }
+          ],
+          "quarter": []
+        }
+      },
+      "source": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001045810.json"
+    },
+    {
+      "symbol": "AVGO",
+      "cik": 1730168,
+      "name": "Broadcom Inc.",
+      "retrievedAt": "2026-09-16T12:36:04.233Z",
+      "status": "available",
+      "series": {
+        "revenue": {
+          "annual": [
+            {
+              "start": "2024-11-04",
+              "end": "2025-11-02",
+              "filed": "2025-12-18",
+              "value": 63887000000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "annual",
+              "accession": "0001730168-25-000121",
+              "form": "10-K"
+            },
+            {
+              "start": "2023-10-30",
+              "end": "2024-11-03",
+              "filed": "2025-12-18",
+              "value": 51574000000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "annual",
+              "accession": "0001730168-25-000121",
+              "form": "10-K"
+            },
+            {
+              "start": "2022-10-31",
+              "end": "2023-10-29",
+              "filed": "2025-12-18",
+              "value": 35819000000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "annual",
+              "accession": "0001730168-25-000121",
+              "form": "10-K"
+            },
+            {
+              "start": "2021-11-01",
+              "end": "2022-10-30",
+              "filed": "2024-12-20",
+              "value": 33203000000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "annual",
+              "accession": "0001730168-24-000139",
+              "form": "10-K"
+            },
+            {
+              "start": "2020-11-02",
+              "end": "2021-10-31",
+              "filed": "2023-12-14",
+              "value": 27450000000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "annual",
+              "accession": "0001730168-23-000096",
+              "form": "10-K"
+            }
+          ],
+          "quarter": [
+            {
+              "start": "2026-05-04",
+              "end": "2026-08-02",
+              "filed": "2026-09-10",
+              "value": 29591000000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "quarter",
+              "accession": "0001730168-26-000080",
+              "form": "10-Q"
+            },
+            {
+              "start": "2026-02-02",
+              "end": "2026-05-03",
+              "filed": "2026-06-09",
+              "value": 22187000000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "quarter",
+              "accession": "0001730168-26-000054",
+              "form": "10-Q"
+            },
+            {
+              "start": "2025-11-03",
+              "end": "2026-02-01",
+              "filed": "2026-03-11",
+              "value": 19311000000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "quarter",
+              "accession": "0001730168-26-000016",
+              "form": "10-Q"
+            },
+            {
+              "start": "2025-05-05",
+              "end": "2025-08-03",
+              "filed": "2026-09-10",
+              "value": 15952000000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "quarter",
+              "accession": "0001730168-26-000080",
+              "form": "10-Q"
+            },
+            {
+              "start": "2025-02-03",
+              "end": "2025-05-04",
+              "filed": "2026-06-09",
+              "value": 15004000000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "quarter",
+              "accession": "0001730168-26-000054",
+              "form": "10-Q"
+            },
+            {
+              "start": "2024-11-04",
+              "end": "2025-02-02",
+              "filed": "2026-03-11",
+              "value": 14916000000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "quarter",
+              "accession": "0001730168-26-000016",
+              "form": "10-Q"
+            },
+            {
+              "start": "2024-05-06",
+              "end": "2024-08-04",
+              "filed": "2025-09-10",
+              "value": 13072000000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "quarter",
+              "accession": "0001730168-25-000098",
+              "form": "10-Q"
+            },
+            {
+              "start": "2024-02-05",
+              "end": "2024-05-05",
+              "filed": "2025-06-11",
+              "value": 12487000000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "quarter",
+              "accession": "0001730168-25-000064",
+              "form": "10-Q"
+            }
+          ]
+        },
+        "eps": {
+          "annual": [
+            {
+              "start": "2024-11-04",
+              "end": "2025-11-02",
+              "filed": "2025-12-18",
+              "value": 4.77,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "annual",
+              "accession": "0001730168-25-000121",
+              "form": "10-K"
+            },
+            {
+              "start": "2023-10-30",
+              "end": "2024-11-03",
+              "filed": "2025-12-18",
+              "value": 1.23,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "annual",
+              "accession": "0001730168-25-000121",
+              "form": "10-K"
+            },
+            {
+              "start": "2022-10-31",
+              "end": "2023-10-29",
+              "filed": "2025-12-18",
+              "value": 3.3,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "annual",
+              "accession": "0001730168-25-000121",
+              "form": "10-K"
+            },
+            {
+              "start": "2021-11-01",
+              "end": "2022-10-30",
+              "filed": "2024-12-20",
+              "value": 2.65,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "annual",
+              "accession": "0001730168-24-000139",
+              "form": "10-K"
+            },
+            {
+              "start": "2020-11-02",
+              "end": "2021-10-31",
+              "filed": "2023-12-14",
+              "value": 15,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "annual",
+              "accession": "0001730168-23-000096",
+              "form": "10-K"
+            }
+          ],
+          "quarter": [
+            {
+              "start": "2026-05-04",
+              "end": "2026-08-02",
+              "filed": "2026-09-10",
+              "value": 2.68,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "quarter",
+              "accession": "0001730168-26-000080",
+              "form": "10-Q"
+            },
+            {
+              "start": "2026-02-02",
+              "end": "2026-05-03",
+              "filed": "2026-06-09",
+              "value": 1.91,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "quarter",
+              "accession": "0001730168-26-000054",
+              "form": "10-Q"
+            },
+            {
+              "start": "2025-11-03",
+              "end": "2026-02-01",
+              "filed": "2026-03-11",
+              "value": 1.5,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "quarter",
+              "accession": "0001730168-26-000016",
+              "form": "10-Q"
+            },
+            {
+              "start": "2025-05-05",
+              "end": "2025-08-03",
+              "filed": "2026-09-10",
+              "value": 0.85,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "quarter",
+              "accession": "0001730168-26-000080",
+              "form": "10-Q"
+            },
+            {
+              "start": "2025-02-03",
+              "end": "2025-05-04",
+              "filed": "2026-06-09",
+              "value": 1.03,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "quarter",
+              "accession": "0001730168-26-000054",
+              "form": "10-Q"
+            },
+            {
+              "start": "2024-11-04",
+              "end": "2025-02-02",
+              "filed": "2026-03-11",
+              "value": 1.14,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "quarter",
+              "accession": "0001730168-26-000016",
+              "form": "10-Q"
+            },
+            {
+              "start": "2024-05-06",
+              "end": "2024-08-04",
+              "filed": "2025-09-10",
+              "value": -0.4,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "quarter",
+              "accession": "0001730168-25-000098",
+              "form": "10-Q"
+            },
+            {
+              "start": "2024-02-05",
+              "end": "2024-05-05",
+              "filed": "2025-06-11",
+              "value": 0.44,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "quarter",
+              "accession": "0001730168-25-000064",
+              "form": "10-Q"
+            }
+          ]
+        },
+        "operatingCashFlow": {
+          "annual": [
+            {
+              "start": "2024-11-04",
+              "end": "2025-11-02",
+              "filed": "2025-12-18",
+              "value": 27537000000,
+              "unit": "USD",
+              "tag": "NetCashProvidedByUsedInOperatingActivities",
+              "period": "annual",
+              "accession": "0001730168-25-000121",
+              "form": "10-K"
+            },
+            {
+              "start": "2023-10-30",
+              "end": "2024-11-03",
+              "filed": "2025-12-18",
+              "value": 19962000000,
+              "unit": "USD",
+              "tag": "NetCashProvidedByUsedInOperatingActivities",
+              "period": "annual",
+              "accession": "0001730168-25-000121",
+              "form": "10-K"
+            },
+            {
+              "start": "2022-10-31",
+              "end": "2023-10-29",
+              "filed": "2025-12-18",
+              "value": 18085000000,
+              "unit": "USD",
+              "tag": "NetCashProvidedByUsedInOperatingActivities",
+              "period": "annual",
+              "accession": "0001730168-25-000121",
+              "form": "10-K"
+            },
+            {
+              "start": "2021-11-01",
+              "end": "2022-10-30",
+              "filed": "2024-12-20",
+              "value": 16736000000,
+              "unit": "USD",
+              "tag": "NetCashProvidedByUsedInOperatingActivities",
+              "period": "annual",
+              "accession": "0001730168-24-000139",
+              "form": "10-K"
+            },
+            {
+              "start": "2020-11-02",
+              "end": "2021-10-31",
+              "filed": "2023-12-14",
+              "value": 13764000000,
+              "unit": "USD",
+              "tag": "NetCashProvidedByUsedInOperatingActivities",
+              "period": "annual",
+              "accession": "0001730168-23-000096",
+              "form": "10-K"
+            }
+          ],
+          "quarter": []
+        },
+        "capex": {
+          "annual": [
+            {
+              "start": "2024-11-04",
+              "end": "2025-11-02",
+              "filed": "2025-12-18",
+              "value": 623000000,
+              "unit": "USD",
+              "tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+              "period": "annual",
+              "accession": "0001730168-25-000121",
+              "form": "10-K"
+            },
+            {
+              "start": "2023-10-30",
+              "end": "2024-11-03",
+              "filed": "2025-12-18",
+              "value": 548000000,
+              "unit": "USD",
+              "tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+              "period": "annual",
+              "accession": "0001730168-25-000121",
+              "form": "10-K"
+            },
+            {
+              "start": "2022-10-31",
+              "end": "2023-10-29",
+              "filed": "2025-12-18",
+              "value": 452000000,
+              "unit": "USD",
+              "tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+              "period": "annual",
+              "accession": "0001730168-25-000121",
+              "form": "10-K"
+            },
+            {
+              "start": "2021-11-01",
+              "end": "2022-10-30",
+              "filed": "2024-12-20",
+              "value": 424000000,
+              "unit": "USD",
+              "tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+              "period": "annual",
+              "accession": "0001730168-24-000139",
+              "form": "10-K"
+            },
+            {
+              "start": "2020-11-02",
+              "end": "2021-10-31",
+              "filed": "2023-12-14",
+              "value": 443000000,
+              "unit": "USD",
+              "tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+              "period": "annual",
+              "accession": "0001730168-23-000096",
+              "form": "10-K"
+            }
+          ],
+          "quarter": []
+        }
+      },
+      "source": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001730168.json"
+    },
+    {
+      "symbol": "ETN",
+      "cik": 1551182,
+      "name": "EATON CORPORATION plc",
+      "retrievedAt": "2026-09-16T12:36:04.233Z",
+      "status": "available",
+      "series": {
+        "revenue": {
+          "annual": [
+            {
+              "start": "2025-01-01",
+              "end": "2025-12-31",
+              "filed": "2026-02-26",
+              "value": 27448000000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "annual",
+              "accession": "0001551182-26-000007",
+              "form": "10-K"
+            },
+            {
+              "start": "2024-01-01",
+              "end": "2024-12-31",
+              "filed": "2026-02-26",
+              "value": 24878000000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "annual",
+              "accession": "0001551182-26-000007",
+              "form": "10-K"
+            },
+            {
+              "start": "2023-01-01",
+              "end": "2023-12-31",
+              "filed": "2026-02-26",
+              "value": 23196000000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "annual",
+              "accession": "0001551182-26-000007",
+              "form": "10-K"
+            },
+            {
+              "start": "2022-01-01",
+              "end": "2022-12-31",
+              "filed": "2025-02-27",
+              "value": 20752000000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "annual",
+              "accession": "0001551182-25-000006",
+              "form": "10-K"
+            },
+            {
+              "start": "2021-01-01",
+              "end": "2021-12-31",
+              "filed": "2024-02-29",
+              "value": 19628000000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "annual",
+              "accession": "0001551182-24-000006",
+              "form": "10-K"
+            }
+          ],
+          "quarter": [
+            {
+              "start": "2026-04-01",
+              "end": "2026-06-30",
+              "filed": "2026-07-31",
+              "value": 8531000000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "quarter",
+              "accession": "0001551182-26-000030",
+              "form": "10-Q"
+            },
+            {
+              "start": "2026-01-01",
+              "end": "2026-03-31",
+              "filed": "2026-05-05",
+              "value": 7451000000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "quarter",
+              "accession": "0001551182-26-000013",
+              "form": "10-Q"
+            },
+            {
+              "start": "2025-07-01",
+              "end": "2025-09-30",
+              "filed": "2025-11-04",
+              "value": 6988000000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "quarter",
+              "accession": "0001551182-25-000036",
+              "form": "10-Q"
+            },
+            {
+              "start": "2025-04-01",
+              "end": "2025-06-30",
+              "filed": "2026-07-31",
+              "value": 7028000000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "quarter",
+              "accession": "0001551182-26-000030",
+              "form": "10-Q"
+            },
+            {
+              "start": "2025-01-01",
+              "end": "2025-03-31",
+              "filed": "2026-05-05",
+              "value": 6377000000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "quarter",
+              "accession": "0001551182-26-000013",
+              "form": "10-Q"
+            },
+            {
+              "start": "2024-07-01",
+              "end": "2024-09-30",
+              "filed": "2025-11-04",
+              "value": 6345000000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "quarter",
+              "accession": "0001551182-25-000036",
+              "form": "10-Q"
+            },
+            {
+              "start": "2024-04-01",
+              "end": "2024-06-30",
+              "filed": "2025-08-05",
+              "value": 6350000000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "quarter",
+              "accession": "0001551182-25-000028",
+              "form": "10-Q"
+            },
+            {
+              "start": "2024-01-01",
+              "end": "2024-03-31",
+              "filed": "2025-05-02",
+              "value": 5943000000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "quarter",
+              "accession": "0001551182-25-000014",
+              "form": "10-Q"
+            }
+          ]
+        },
+        "eps": {
+          "annual": [
+            {
+              "start": "2025-01-01",
+              "end": "2025-12-31",
+              "filed": "2026-02-26",
+              "value": 10.45,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "annual",
+              "accession": "0001551182-26-000007",
+              "form": "10-K"
+            },
+            {
+              "start": "2024-01-01",
+              "end": "2024-12-31",
+              "filed": "2026-02-26",
+              "value": 9.5,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "annual",
+              "accession": "0001551182-26-000007",
+              "form": "10-K"
+            },
+            {
+              "start": "2023-01-01",
+              "end": "2023-12-31",
+              "filed": "2026-02-26",
+              "value": 8.02,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "annual",
+              "accession": "0001551182-26-000007",
+              "form": "10-K"
+            },
+            {
+              "start": "2022-01-01",
+              "end": "2022-12-31",
+              "filed": "2025-02-27",
+              "value": 6.14,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "annual",
+              "accession": "0001551182-25-000006",
+              "form": "10-K"
+            },
+            {
+              "start": "2021-01-01",
+              "end": "2021-12-31",
+              "filed": "2024-02-29",
+              "value": 5.34,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "annual",
+              "accession": "0001551182-24-000006",
+              "form": "10-K"
+            }
+          ],
+          "quarter": [
+            {
+              "start": "2026-04-01",
+              "end": "2026-06-30",
+              "filed": "2026-07-31",
+              "value": 2.11,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "quarter",
+              "accession": "0001551182-26-000030",
+              "form": "10-Q"
+            },
+            {
+              "start": "2026-01-01",
+              "end": "2026-03-31",
+              "filed": "2026-05-05",
+              "value": 2.22,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "quarter",
+              "accession": "0001551182-26-000013",
+              "form": "10-Q"
+            },
+            {
+              "start": "2025-07-01",
+              "end": "2025-09-30",
+              "filed": "2025-11-04",
+              "value": 2.59,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "quarter",
+              "accession": "0001551182-25-000036",
+              "form": "10-Q"
+            },
+            {
+              "start": "2025-04-01",
+              "end": "2025-06-30",
+              "filed": "2026-07-31",
+              "value": 2.51,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "quarter",
+              "accession": "0001551182-26-000030",
+              "form": "10-Q"
+            },
+            {
+              "start": "2025-01-01",
+              "end": "2025-03-31",
+              "filed": "2026-05-05",
+              "value": 2.45,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "quarter",
+              "accession": "0001551182-26-000013",
+              "form": "10-Q"
+            },
+            {
+              "start": "2024-07-01",
+              "end": "2024-09-30",
+              "filed": "2025-11-04",
+              "value": 2.53,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "quarter",
+              "accession": "0001551182-25-000036",
+              "form": "10-Q"
+            },
+            {
+              "start": "2024-04-01",
+              "end": "2024-06-30",
+              "filed": "2025-08-05",
+              "value": 2.48,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "quarter",
+              "accession": "0001551182-25-000028",
+              "form": "10-Q"
+            },
+            {
+              "start": "2024-01-01",
+              "end": "2024-03-31",
+              "filed": "2025-05-02",
+              "value": 2.04,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "quarter",
+              "accession": "0001551182-25-000014",
+              "form": "10-Q"
+            }
+          ]
+        },
+        "operatingCashFlow": {
+          "annual": [
+            {
+              "start": "2025-01-01",
+              "end": "2025-12-31",
+              "filed": "2026-02-26",
+              "value": 4472000000,
+              "unit": "USD",
+              "tag": "NetCashProvidedByUsedInOperatingActivities",
+              "period": "annual",
+              "accession": "0001551182-26-000007",
+              "form": "10-K"
+            },
+            {
+              "start": "2024-01-01",
+              "end": "2024-12-31",
+              "filed": "2026-02-26",
+              "value": 4327000000,
+              "unit": "USD",
+              "tag": "NetCashProvidedByUsedInOperatingActivities",
+              "period": "annual",
+              "accession": "0001551182-26-000007",
+              "form": "10-K"
+            },
+            {
+              "start": "2023-01-01",
+              "end": "2023-12-31",
+              "filed": "2026-02-26",
+              "value": 3624000000,
+              "unit": "USD",
+              "tag": "NetCashProvidedByUsedInOperatingActivities",
+              "period": "annual",
+              "accession": "0001551182-26-000007",
+              "form": "10-K"
+            },
+            {
+              "start": "2022-01-01",
+              "end": "2022-12-31",
+              "filed": "2025-02-27",
+              "value": 2533000000,
+              "unit": "USD",
+              "tag": "NetCashProvidedByUsedInOperatingActivities",
+              "period": "annual",
+              "accession": "0001551182-25-000006",
+              "form": "10-K"
+            },
+            {
+              "start": "2021-01-01",
+              "end": "2021-12-31",
+              "filed": "2024-02-29",
+              "value": 2163000000,
+              "unit": "USD",
+              "tag": "NetCashProvidedByUsedInOperatingActivities",
+              "period": "annual",
+              "accession": "0001551182-24-000006",
+              "form": "10-K"
+            }
+          ],
+          "quarter": []
+        },
+        "capex": {
+          "annual": [
+            {
+              "start": "2025-01-01",
+              "end": "2025-12-31",
+              "filed": "2026-02-26",
+              "value": 919000000,
+              "unit": "USD",
+              "tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+              "period": "annual",
+              "accession": "0001551182-26-000007",
+              "form": "10-K"
+            },
+            {
+              "start": "2024-01-01",
+              "end": "2024-12-31",
+              "filed": "2026-02-26",
+              "value": 808000000,
+              "unit": "USD",
+              "tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+              "period": "annual",
+              "accession": "0001551182-26-000007",
+              "form": "10-K"
+            },
+            {
+              "start": "2023-01-01",
+              "end": "2023-12-31",
+              "filed": "2026-02-26",
+              "value": 757000000,
+              "unit": "USD",
+              "tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+              "period": "annual",
+              "accession": "0001551182-26-000007",
+              "form": "10-K"
+            },
+            {
+              "start": "2022-01-01",
+              "end": "2022-12-31",
+              "filed": "2025-02-27",
+              "value": 598000000,
+              "unit": "USD",
+              "tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+              "period": "annual",
+              "accession": "0001551182-25-000006",
+              "form": "10-K"
+            },
+            {
+              "start": "2021-01-01",
+              "end": "2021-12-31",
+              "filed": "2024-02-29",
+              "value": 575000000,
+              "unit": "USD",
+              "tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+              "period": "annual",
+              "accession": "0001551182-24-000006",
+              "form": "10-K"
+            }
+          ],
+          "quarter": []
+        }
+      },
+      "source": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001551182.json"
+    },
+    {
+      "symbol": "GEV",
+      "cik": 1996810,
+      "name": "GE Vernova Inc.",
+      "retrievedAt": "2026-09-16T12:36:04.233Z",
+      "status": "available",
+      "series": {
+        "revenue": {
+          "annual": [
+            {
+              "start": "2025-01-01",
+              "end": "2025-12-31",
+              "filed": "2026-01-29",
+              "value": 38068000000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "annual",
+              "accession": "0001996810-26-000015",
+              "form": "10-K"
+            },
+            {
+              "start": "2024-01-01",
+              "end": "2024-12-31",
+              "filed": "2026-01-29",
+              "value": 34935000000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "annual",
+              "accession": "0001996810-26-000015",
+              "form": "10-K"
+            },
+            {
+              "start": "2023-01-01",
+              "end": "2023-12-31",
+              "filed": "2026-01-29",
+              "value": 33239000000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "annual",
+              "accession": "0001996810-26-000015",
+              "form": "10-K"
+            },
+            {
+              "start": "2022-01-01",
+              "end": "2022-12-31",
+              "filed": "2025-02-06",
+              "value": 29654000000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "annual",
+              "accession": "0001996810-25-000011",
+              "form": "10-K"
+            }
+          ],
+          "quarter": [
+            {
+              "start": "2026-04-01",
+              "end": "2026-06-30",
+              "filed": "2026-07-22",
+              "value": 11104000000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "quarter",
+              "accession": "0001996810-26-000148",
+              "form": "10-Q"
+            },
+            {
+              "start": "2026-01-01",
+              "end": "2026-03-31",
+              "filed": "2026-04-22",
+              "value": 9339000000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "quarter",
+              "accession": "0001996810-26-000064",
+              "form": "10-Q"
+            },
+            {
+              "start": "2025-07-01",
+              "end": "2025-09-30",
+              "filed": "2025-10-22",
+              "value": 9969000000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "quarter",
+              "accession": "0001996810-25-000160",
+              "form": "10-Q"
+            },
+            {
+              "start": "2025-04-01",
+              "end": "2025-06-30",
+              "filed": "2026-07-22",
+              "value": 9111000000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "quarter",
+              "accession": "0001996810-26-000148",
+              "form": "10-Q"
+            },
+            {
+              "start": "2025-01-01",
+              "end": "2025-03-31",
+              "filed": "2026-04-22",
+              "value": 8032000000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "quarter",
+              "accession": "0001996810-26-000064",
+              "form": "10-Q"
+            },
+            {
+              "start": "2024-07-01",
+              "end": "2024-09-30",
+              "filed": "2025-10-22",
+              "value": 8913000000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "quarter",
+              "accession": "0001996810-25-000160",
+              "form": "10-Q"
+            },
+            {
+              "start": "2024-04-01",
+              "end": "2024-06-30",
+              "filed": "2025-07-23",
+              "value": 8204000000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "quarter",
+              "accession": "0001996810-25-000133",
+              "form": "10-Q"
+            },
+            {
+              "start": "2024-01-01",
+              "end": "2024-03-31",
+              "filed": "2025-04-23",
+              "value": 7260000000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "quarter",
+              "accession": "0001996810-25-000073",
+              "form": "10-Q"
+            }
+          ]
+        },
+        "eps": {
+          "annual": [
+            {
+              "start": "2025-01-01",
+              "end": "2025-12-31",
+              "filed": "2026-01-29",
+              "value": 17.69,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "annual",
+              "accession": "0001996810-26-000015",
+              "form": "10-K"
+            },
+            {
+              "start": "2024-01-01",
+              "end": "2024-12-31",
+              "filed": "2026-01-29",
+              "value": 5.58,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "annual",
+              "accession": "0001996810-26-000015",
+              "form": "10-K"
+            },
+            {
+              "start": "2023-01-01",
+              "end": "2023-12-31",
+              "filed": "2026-01-29",
+              "value": -1.6,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "annual",
+              "accession": "0001996810-26-000015",
+              "form": "10-K"
+            },
+            {
+              "start": "2022-01-01",
+              "end": "2022-12-31",
+              "filed": "2025-02-06",
+              "value": -10,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "annual",
+              "accession": "0001996810-25-000011",
+              "form": "10-K"
+            }
+          ],
+          "quarter": [
+            {
+              "start": "2026-04-01",
+              "end": "2026-06-30",
+              "filed": "2026-07-22",
+              "value": 2.47,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "quarter",
+              "accession": "0001996810-26-000148",
+              "form": "10-Q"
+            },
+            {
+              "start": "2026-01-01",
+              "end": "2026-03-31",
+              "filed": "2026-04-22",
+              "value": 17.44,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "quarter",
+              "accession": "0001996810-26-000064",
+              "form": "10-Q"
+            },
+            {
+              "start": "2025-07-01",
+              "end": "2025-09-30",
+              "filed": "2025-10-22",
+              "value": 1.64,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "quarter",
+              "accession": "0001996810-25-000160",
+              "form": "10-Q"
+            },
+            {
+              "start": "2025-04-01",
+              "end": "2025-06-30",
+              "filed": "2026-07-22",
+              "value": 1.86,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "quarter",
+              "accession": "0001996810-26-000148",
+              "form": "10-Q"
+            },
+            {
+              "start": "2025-01-01",
+              "end": "2025-03-31",
+              "filed": "2026-04-22",
+              "value": 0.91,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "quarter",
+              "accession": "0001996810-26-000064",
+              "form": "10-Q"
+            },
+            {
+              "start": "2024-07-01",
+              "end": "2024-09-30",
+              "filed": "2025-10-22",
+              "value": -0.35,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "quarter",
+              "accession": "0001996810-25-000160",
+              "form": "10-Q"
+            },
+            {
+              "start": "2024-04-01",
+              "end": "2024-06-30",
+              "filed": "2025-07-23",
+              "value": 4.65,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "quarter",
+              "accession": "0001996810-25-000133",
+              "form": "10-Q"
+            },
+            {
+              "start": "2024-01-01",
+              "end": "2024-03-31",
+              "filed": "2025-04-23",
+              "value": -0.47,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "quarter",
+              "accession": "0001996810-25-000073",
+              "form": "10-Q"
+            }
+          ]
+        },
+        "operatingCashFlow": {
+          "annual": [
+            {
+              "start": "2025-01-01",
+              "end": "2025-12-31",
+              "filed": "2026-01-29",
+              "value": 4987000000,
+              "unit": "USD",
+              "tag": "NetCashProvidedByUsedInOperatingActivities",
+              "period": "annual",
+              "accession": "0001996810-26-000015",
+              "form": "10-K"
+            },
+            {
+              "start": "2024-01-01",
+              "end": "2024-12-31",
+              "filed": "2026-01-29",
+              "value": 2583000000,
+              "unit": "USD",
+              "tag": "NetCashProvidedByUsedInOperatingActivities",
+              "period": "annual",
+              "accession": "0001996810-26-000015",
+              "form": "10-K"
+            },
+            {
+              "start": "2023-01-01",
+              "end": "2023-12-31",
+              "filed": "2026-01-29",
+              "value": 1186000000,
+              "unit": "USD",
+              "tag": "NetCashProvidedByUsedInOperatingActivities",
+              "period": "annual",
+              "accession": "0001996810-26-000015",
+              "form": "10-K"
+            },
+            {
+              "start": "2022-01-01",
+              "end": "2022-12-31",
+              "filed": "2025-02-06",
+              "value": -114000000,
+              "unit": "USD",
+              "tag": "NetCashProvidedByUsedInOperatingActivities",
+              "period": "annual",
+              "accession": "0001996810-25-000011",
+              "form": "10-K"
+            }
+          ],
+          "quarter": []
+        },
+        "capex": {
+          "annual": [],
+          "quarter": []
+        }
+      },
+      "source": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001996810.json"
+    },
+    {
+      "symbol": "VRT",
+      "cik": 1674101,
+      "name": "Vertiv Holdings Co",
+      "retrievedAt": "2026-09-16T12:36:04.233Z",
+      "status": "available",
+      "series": {
+        "revenue": {
+          "annual": [
+            {
+              "start": "2025-01-01",
+              "end": "2025-12-31",
+              "filed": "2026-02-13",
+              "value": 10229900000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "annual",
+              "accession": "0001674101-26-000008",
+              "form": "10-K"
+            },
+            {
+              "start": "2024-01-01",
+              "end": "2024-12-31",
+              "filed": "2026-02-13",
+              "value": 8011800000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "annual",
+              "accession": "0001674101-26-000008",
+              "form": "10-K"
+            },
+            {
+              "start": "2023-01-01",
+              "end": "2023-12-31",
+              "filed": "2026-02-13",
+              "value": 6863200000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "annual",
+              "accession": "0001674101-26-000008",
+              "form": "10-K"
+            },
+            {
+              "start": "2022-01-01",
+              "end": "2022-12-31",
+              "filed": "2025-02-18",
+              "value": 5691500000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "annual",
+              "accession": "0001628280-25-005905",
+              "form": "10-K"
+            },
+            {
+              "start": "2021-01-01",
+              "end": "2021-12-31",
+              "filed": "2024-02-23",
+              "value": 4998100000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "annual",
+              "accession": "0001628280-24-006498",
+              "form": "10-K"
+            }
+          ],
+          "quarter": [
+            {
+              "start": "2026-04-01",
+              "end": "2026-06-30",
+              "filed": "2026-07-29",
+              "value": 3274300000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "quarter",
+              "accession": "0001628280-26-050609",
+              "form": "10-Q"
+            },
+            {
+              "start": "2026-01-01",
+              "end": "2026-03-31",
+              "filed": "2026-04-22",
+              "value": 2649500000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "quarter",
+              "accession": "0001628280-26-026556",
+              "form": "10-Q"
+            },
+            {
+              "start": "2025-07-01",
+              "end": "2025-09-30",
+              "filed": "2025-10-22",
+              "value": 2675800000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "quarter",
+              "accession": "0001674101-25-000024",
+              "form": "10-Q"
+            },
+            {
+              "start": "2025-04-01",
+              "end": "2025-06-30",
+              "filed": "2026-07-29",
+              "value": 2638100000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "quarter",
+              "accession": "0001628280-26-050609",
+              "form": "10-Q"
+            },
+            {
+              "start": "2025-01-01",
+              "end": "2025-03-31",
+              "filed": "2026-04-22",
+              "value": 2036000000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "quarter",
+              "accession": "0001628280-26-026556",
+              "form": "10-Q"
+            },
+            {
+              "start": "2024-07-01",
+              "end": "2024-09-30",
+              "filed": "2025-10-22",
+              "value": 2073500000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "quarter",
+              "accession": "0001674101-25-000024",
+              "form": "10-Q"
+            },
+            {
+              "start": "2024-04-01",
+              "end": "2024-06-30",
+              "filed": "2025-07-30",
+              "value": 1952800000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "quarter",
+              "accession": "0001674101-25-000008",
+              "form": "10-Q"
+            },
+            {
+              "start": "2024-01-01",
+              "end": "2024-03-31",
+              "filed": "2025-04-23",
+              "value": 1639100000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "quarter",
+              "accession": "0001628280-25-019372",
+              "form": "10-Q"
+            }
+          ]
+        },
+        "eps": {
+          "annual": [
+            {
+              "start": "2025-01-01",
+              "end": "2025-12-31",
+              "filed": "2026-02-13",
+              "value": 3.41,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "annual",
+              "accession": "0001674101-26-000008",
+              "form": "10-K"
+            },
+            {
+              "start": "2024-01-01",
+              "end": "2024-12-31",
+              "filed": "2026-02-13",
+              "value": 1.28,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "annual",
+              "accession": "0001674101-26-000008",
+              "form": "10-K"
+            },
+            {
+              "start": "2023-01-01",
+              "end": "2023-12-31",
+              "filed": "2026-02-13",
+              "value": 1.19,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "annual",
+              "accession": "0001674101-26-000008",
+              "form": "10-K"
+            },
+            {
+              "start": "2022-01-01",
+              "end": "2022-12-31",
+              "filed": "2025-02-18",
+              "value": -0.04,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "annual",
+              "accession": "0001628280-25-005905",
+              "form": "10-K"
+            },
+            {
+              "start": "2021-01-01",
+              "end": "2021-12-31",
+              "filed": "2024-02-23",
+              "value": 0.33,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "annual",
+              "accession": "0001628280-24-006498",
+              "form": "10-K"
+            }
+          ],
+          "quarter": [
+            {
+              "start": "2026-04-01",
+              "end": "2026-06-30",
+              "filed": "2026-07-29",
+              "value": 1.27,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "quarter",
+              "accession": "0001628280-26-050609",
+              "form": "10-Q"
+            },
+            {
+              "start": "2026-01-01",
+              "end": "2026-03-31",
+              "filed": "2026-04-22",
+              "value": 0.99,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "quarter",
+              "accession": "0001628280-26-026556",
+              "form": "10-Q"
+            },
+            {
+              "start": "2025-07-01",
+              "end": "2025-09-30",
+              "filed": "2025-10-22",
+              "value": 1.02,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "quarter",
+              "accession": "0001674101-25-000024",
+              "form": "10-Q"
+            },
+            {
+              "start": "2025-04-01",
+              "end": "2025-06-30",
+              "filed": "2026-07-29",
+              "value": 0.83,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "quarter",
+              "accession": "0001628280-26-050609",
+              "form": "10-Q"
+            },
+            {
+              "start": "2025-01-01",
+              "end": "2025-03-31",
+              "filed": "2026-04-22",
+              "value": 0.42,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "quarter",
+              "accession": "0001628280-26-026556",
+              "form": "10-Q"
+            },
+            {
+              "start": "2024-07-01",
+              "end": "2024-09-30",
+              "filed": "2025-10-22",
+              "value": 0.46,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "quarter",
+              "accession": "0001674101-25-000024",
+              "form": "10-Q"
+            },
+            {
+              "start": "2024-04-01",
+              "end": "2024-06-30",
+              "filed": "2025-07-30",
+              "value": 0.46,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "quarter",
+              "accession": "0001674101-25-000008",
+              "form": "10-Q"
+            },
+            {
+              "start": "2024-01-01",
+              "end": "2024-03-31",
+              "filed": "2025-04-23",
+              "value": -0.02,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "quarter",
+              "accession": "0001628280-25-019372",
+              "form": "10-Q"
+            }
+          ]
+        },
+        "operatingCashFlow": {
+          "annual": [
+            {
+              "start": "2025-01-01",
+              "end": "2025-12-31",
+              "filed": "2026-02-13",
+              "value": 2113800000,
+              "unit": "USD",
+              "tag": "NetCashProvidedByUsedInOperatingActivities",
+              "period": "annual",
+              "accession": "0001674101-26-000008",
+              "form": "10-K"
+            },
+            {
+              "start": "2024-01-01",
+              "end": "2024-12-31",
+              "filed": "2026-02-13",
+              "value": 1319300000,
+              "unit": "USD",
+              "tag": "NetCashProvidedByUsedInOperatingActivities",
+              "period": "annual",
+              "accession": "0001674101-26-000008",
+              "form": "10-K"
+            },
+            {
+              "start": "2023-01-01",
+              "end": "2023-12-31",
+              "filed": "2026-02-13",
+              "value": 900500000,
+              "unit": "USD",
+              "tag": "NetCashProvidedByUsedInOperatingActivities",
+              "period": "annual",
+              "accession": "0001674101-26-000008",
+              "form": "10-K"
+            },
+            {
+              "start": "2022-01-01",
+              "end": "2022-12-31",
+              "filed": "2025-02-18",
+              "value": -152800000,
+              "unit": "USD",
+              "tag": "NetCashProvidedByUsedInOperatingActivities",
+              "period": "annual",
+              "accession": "0001628280-25-005905",
+              "form": "10-K"
+            },
+            {
+              "start": "2021-01-01",
+              "end": "2021-12-31",
+              "filed": "2024-02-23",
+              "value": 210900000,
+              "unit": "USD",
+              "tag": "NetCashProvidedByUsedInOperatingActivities",
+              "period": "annual",
+              "accession": "0001628280-24-006498",
+              "form": "10-K"
+            }
+          ],
+          "quarter": []
+        },
+        "capex": {
+          "annual": [
+            {
+              "start": "2025-01-01",
+              "end": "2025-12-31",
+              "filed": "2026-02-13",
+              "value": 220000000,
+              "unit": "USD",
+              "tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+              "period": "annual",
+              "accession": "0001674101-26-000008",
+              "form": "10-K"
+            },
+            {
+              "start": "2024-01-01",
+              "end": "2024-12-31",
+              "filed": "2026-02-13",
+              "value": 167000000,
+              "unit": "USD",
+              "tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+              "period": "annual",
+              "accession": "0001674101-26-000008",
+              "form": "10-K"
+            },
+            {
+              "start": "2023-01-01",
+              "end": "2023-12-31",
+              "filed": "2026-02-13",
+              "value": 127900000,
+              "unit": "USD",
+              "tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+              "period": "annual",
+              "accession": "0001674101-26-000008",
+              "form": "10-K"
+            },
+            {
+              "start": "2022-01-01",
+              "end": "2022-12-31",
+              "filed": "2025-02-18",
+              "value": 100000000,
+              "unit": "USD",
+              "tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+              "period": "annual",
+              "accession": "0001628280-25-005905",
+              "form": "10-K"
+            },
+            {
+              "start": "2021-01-01",
+              "end": "2021-12-31",
+              "filed": "2024-02-23",
+              "value": 73400000,
+              "unit": "USD",
+              "tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+              "period": "annual",
+              "accession": "0001628280-24-006498",
+              "form": "10-K"
+            }
+          ],
+          "quarter": []
+        }
+      },
+      "source": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001674101.json"
+    },
+    {
+      "symbol": "CCJ",
+      "cik": 1009001,
+      "name": "CAMECO CORPORATION",
+      "retrievedAt": "2026-09-16T12:36:04.233Z",
+      "status": "unsupported",
+      "series": {
+        "revenue": {
+          "annual": [],
+          "quarter": []
+        },
+        "eps": {
+          "annual": [],
+          "quarter": []
+        },
+        "operatingCashFlow": {
+          "annual": [],
+          "quarter": []
+        },
+        "capex": {
+          "annual": [],
+          "quarter": []
+        }
+      },
+      "source": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001009001.json"
+    },
+    {
+      "symbol": "ORCL",
+      "cik": 1341439,
+      "name": "Oracle Corporation",
+      "retrievedAt": "2026-09-16T12:36:04.233Z",
+      "status": "available",
+      "series": {
+        "revenue": {
+          "annual": [
+            {
+              "start": "2025-06-01",
+              "end": "2026-05-31",
+              "filed": "2026-06-22",
+              "value": 67357000000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "annual",
+              "accession": "0001193125-26-277521",
+              "form": "10-K"
+            },
+            {
+              "start": "2024-06-01",
+              "end": "2025-05-31",
+              "filed": "2026-06-22",
+              "value": 57399000000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "annual",
+              "accession": "0001193125-26-277521",
+              "form": "10-K"
+            },
+            {
+              "start": "2023-06-01",
+              "end": "2024-05-31",
+              "filed": "2026-06-22",
+              "value": 52961000000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "annual",
+              "accession": "0001193125-26-277521",
+              "form": "10-K"
+            },
+            {
+              "start": "2022-06-01",
+              "end": "2023-05-31",
+              "filed": "2025-06-18",
+              "value": 49954000000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "annual",
+              "accession": "0000950170-25-087926",
+              "form": "10-K"
+            },
+            {
+              "start": "2021-06-01",
+              "end": "2022-05-31",
+              "filed": "2024-06-20",
+              "value": 42440000000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "annual",
+              "accession": "0000950170-24-075605",
+              "form": "10-K"
+            }
+          ],
+          "quarter": [
+            {
+              "start": "2026-06-01",
+              "end": "2026-08-31",
+              "filed": "2026-09-11",
+              "value": 19345000000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "quarter",
+              "accession": "0001193125-26-389274",
+              "form": "10-Q"
+            },
+            {
+              "start": "2025-12-01",
+              "end": "2026-02-28",
+              "filed": "2026-03-11",
+              "value": 17190000000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "quarter",
+              "accession": "0001193125-26-101045",
+              "form": "10-Q"
+            },
+            {
+              "start": "2025-09-01",
+              "end": "2025-11-30",
+              "filed": "2025-12-11",
+              "value": 16058000000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "quarter",
+              "accession": "0001193125-25-315925",
+              "form": "10-Q"
+            },
+            {
+              "start": "2025-06-01",
+              "end": "2025-08-31",
+              "filed": "2026-09-11",
+              "value": 14926000000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "quarter",
+              "accession": "0001193125-26-389274",
+              "form": "10-Q"
+            },
+            {
+              "start": "2024-12-01",
+              "end": "2025-02-28",
+              "filed": "2026-03-11",
+              "value": 14130000000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "quarter",
+              "accession": "0001193125-26-101045",
+              "form": "10-Q"
+            },
+            {
+              "start": "2024-09-01",
+              "end": "2024-11-30",
+              "filed": "2025-12-11",
+              "value": 14059000000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "quarter",
+              "accession": "0001193125-25-315925",
+              "form": "10-Q"
+            },
+            {
+              "start": "2024-06-01",
+              "end": "2024-08-31",
+              "filed": "2025-09-10",
+              "value": 13307000000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "quarter",
+              "accession": "0001193125-25-200095",
+              "form": "10-Q"
+            },
+            {
+              "start": "2023-12-01",
+              "end": "2024-02-29",
+              "filed": "2025-03-11",
+              "value": 13280000000,
+              "unit": "USD",
+              "tag": "RevenueFromContractWithCustomerExcludingAssessedTax",
+              "period": "quarter",
+              "accession": "0000950170-25-037143",
+              "form": "10-Q"
+            }
+          ]
+        },
+        "eps": {
+          "annual": [
+            {
+              "start": "2025-06-01",
+              "end": "2026-05-31",
+              "filed": "2026-06-22",
+              "value": 5.83,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "annual",
+              "accession": "0001193125-26-277521",
+              "form": "10-K"
+            },
+            {
+              "start": "2024-06-01",
+              "end": "2025-05-31",
+              "filed": "2026-06-22",
+              "value": 4.34,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "annual",
+              "accession": "0001193125-26-277521",
+              "form": "10-K"
+            },
+            {
+              "start": "2023-06-01",
+              "end": "2024-05-31",
+              "filed": "2026-06-22",
+              "value": 3.71,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "annual",
+              "accession": "0001193125-26-277521",
+              "form": "10-K"
+            },
+            {
+              "start": "2022-06-01",
+              "end": "2023-05-31",
+              "filed": "2025-06-18",
+              "value": 3.07,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "annual",
+              "accession": "0000950170-25-087926",
+              "form": "10-K"
+            },
+            {
+              "start": "2021-06-01",
+              "end": "2022-05-31",
+              "filed": "2024-06-20",
+              "value": 2.41,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "annual",
+              "accession": "0000950170-24-075605",
+              "form": "10-K"
+            }
+          ],
+          "quarter": [
+            {
+              "start": "2026-06-01",
+              "end": "2026-08-31",
+              "filed": "2026-09-11",
+              "value": 1.56,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "quarter",
+              "accession": "0001193125-26-389274",
+              "form": "10-Q"
+            },
+            {
+              "start": "2025-12-01",
+              "end": "2026-02-28",
+              "filed": "2026-03-11",
+              "value": 1.27,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "quarter",
+              "accession": "0001193125-26-101045",
+              "form": "10-Q"
+            },
+            {
+              "start": "2025-09-01",
+              "end": "2025-11-30",
+              "filed": "2025-12-11",
+              "value": 2.1,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "quarter",
+              "accession": "0001193125-25-315925",
+              "form": "10-Q"
+            },
+            {
+              "start": "2025-06-01",
+              "end": "2025-08-31",
+              "filed": "2026-09-11",
+              "value": 1.01,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "quarter",
+              "accession": "0001193125-26-389274",
+              "form": "10-Q"
+            },
+            {
+              "start": "2024-12-01",
+              "end": "2025-02-28",
+              "filed": "2026-03-11",
+              "value": 1.02,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "quarter",
+              "accession": "0001193125-26-101045",
+              "form": "10-Q"
+            },
+            {
+              "start": "2024-09-01",
+              "end": "2024-11-30",
+              "filed": "2025-12-11",
+              "value": 1.1,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "quarter",
+              "accession": "0001193125-25-315925",
+              "form": "10-Q"
+            },
+            {
+              "start": "2024-06-01",
+              "end": "2024-08-31",
+              "filed": "2025-09-10",
+              "value": 1.03,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "quarter",
+              "accession": "0001193125-25-200095",
+              "form": "10-Q"
+            },
+            {
+              "start": "2023-12-01",
+              "end": "2024-02-29",
+              "filed": "2025-03-11",
+              "value": 0.85,
+              "unit": "USD/shares",
+              "tag": "EarningsPerShareDiluted",
+              "period": "quarter",
+              "accession": "0000950170-25-037143",
+              "form": "10-Q"
+            }
+          ]
+        },
+        "operatingCashFlow": {
+          "annual": [
+            {
+              "start": "2025-06-01",
+              "end": "2026-05-31",
+              "filed": "2026-06-22",
+              "value": 31977000000,
+              "unit": "USD",
+              "tag": "NetCashProvidedByUsedInOperatingActivities",
+              "period": "annual",
+              "accession": "0001193125-26-277521",
+              "form": "10-K"
+            },
+            {
+              "start": "2024-06-01",
+              "end": "2025-05-31",
+              "filed": "2026-06-22",
+              "value": 20821000000,
+              "unit": "USD",
+              "tag": "NetCashProvidedByUsedInOperatingActivities",
+              "period": "annual",
+              "accession": "0001193125-26-277521",
+              "form": "10-K"
+            },
+            {
+              "start": "2023-06-01",
+              "end": "2024-05-31",
+              "filed": "2026-06-22",
+              "value": 18673000000,
+              "unit": "USD",
+              "tag": "NetCashProvidedByUsedInOperatingActivities",
+              "period": "annual",
+              "accession": "0001193125-26-277521",
+              "form": "10-K"
+            },
+            {
+              "start": "2022-06-01",
+              "end": "2023-05-31",
+              "filed": "2025-06-18",
+              "value": 17165000000,
+              "unit": "USD",
+              "tag": "NetCashProvidedByUsedInOperatingActivities",
+              "period": "annual",
+              "accession": "0000950170-25-087926",
+              "form": "10-K"
+            },
+            {
+              "start": "2021-06-01",
+              "end": "2022-05-31",
+              "filed": "2024-06-20",
+              "value": 9539000000,
+              "unit": "USD",
+              "tag": "NetCashProvidedByUsedInOperatingActivities",
+              "period": "annual",
+              "accession": "0000950170-24-075605",
+              "form": "10-K"
+            }
+          ],
+          "quarter": []
+        },
+        "capex": {
+          "annual": [
+            {
+              "start": "2025-06-01",
+              "end": "2026-05-31",
+              "filed": "2026-06-22",
+              "value": 55663000000,
+              "unit": "USD",
+              "tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+              "period": "annual",
+              "accession": "0001193125-26-277521",
+              "form": "10-K"
+            },
+            {
+              "start": "2024-06-01",
+              "end": "2025-05-31",
+              "filed": "2026-06-22",
+              "value": 21215000000,
+              "unit": "USD",
+              "tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+              "period": "annual",
+              "accession": "0001193125-26-277521",
+              "form": "10-K"
+            },
+            {
+              "start": "2023-06-01",
+              "end": "2024-05-31",
+              "filed": "2026-06-22",
+              "value": 6866000000,
+              "unit": "USD",
+              "tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+              "period": "annual",
+              "accession": "0001193125-26-277521",
+              "form": "10-K"
+            },
+            {
+              "start": "2022-06-01",
+              "end": "2023-05-31",
+              "filed": "2025-06-18",
+              "value": 8695000000,
+              "unit": "USD",
+              "tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+              "period": "annual",
+              "accession": "0000950170-25-087926",
+              "form": "10-K"
+            },
+            {
+              "start": "2021-06-01",
+              "end": "2022-05-31",
+              "filed": "2024-06-20",
+              "value": 4511000000,
+              "unit": "USD",
+              "tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+              "period": "annual",
+              "accession": "0000950170-24-075605",
+              "form": "10-K"
+            }
+          ],
+          "quarter": []
+        }
+      },
+      "source": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001341439.json"
+    }
+  ]
+}
