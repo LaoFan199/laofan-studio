@@ -39,6 +39,14 @@ try {
       document.getElementById('auth-status').textContent='本地测试 · 合成数据';
     ` }));
     let offline = false, closed = false;
+    let bulkBlocked = false;
+    const rawFinancial = JSON.parse(await readFile('stock-ai/data/financials.json','utf8'));
+    const ko = rawFinancial.companies.find(x=>x.symbol==='KO');
+    await page.route('**/data/bulk/progress.json',route=>route.fulfill({json:bulkBlocked ? {version:'sec-bulk-v1',phase:'blocked',counts:null,entries:[],lastAttemptAt:new Date().toISOString(),updateError:'SEC HTTP 403'} : {
+      version:'sec-bulk-v1',runId:'1234567890abcdef',phase:'completed_with_errors',updatedAt:new Date().toISOString(),retrievedAt:rawFinancial.generatedAt,counts:{total:3,completed:3,available:1,unsupported:1,failed:1,pending:0},listedDirectoryCompanies:1,directoryMissingFromArchive:0,entries:[{cik:ko.cik,symbols:['KO'],name:ko.name,status:'available'}],failureReasons:{issuer_identity_mismatch:1}
+    }}));
+    await page.route('**/data/bulk/companies-*.json',route=>route.fulfill({json:{version:'sec-bulk-v1',runId:'1234567890abcdef',companies:{[ko.cik]:ko}}}));
+
     await page.route('https://laofan-studio.vercel.app/api/**', async route => {
       const url = new URL(route.request().url()), now = new Date().toISOString();
       let json = { status: 'unavailable', reason: '隔离测试，不连接实际服务', items: [], candidates: [] };
@@ -67,6 +75,13 @@ try {
     assert.equal(await page.locator('[data-suggested-sell="MSFT"]').isDisabled(), true);
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
     await page.locator('.v2-panel').screenshot({ path: `${output}/v2-${width}.png` });
+
+    await page.waitForFunction(()=>document.querySelector('#bulk-total').textContent==='3');
+    await page.locator('#bulk-query').fill('KO');await page.locator('#bulk-search button[type="submit"]').click();await page.locator('#bulk-results button').first().click();
+    await page.waitForFunction(()=>document.querySelector('#bulk-detail').textContent.includes('营收'));
+    const bulkStyle=await page.addStyleTag({content:'header { position: static !important; }'});
+    await page.locator('#bulk-panel').screenshot({path:`${output}/bulk-${width}.png`});await bulkStyle.evaluate(el=>el.remove());
+    await page.locator('#bulk-query').fill('NO_SUCH_TICKER');await page.locator('#bulk-search button[type="submit"]').click();assert.equal(await page.locator('#bulk-results button').count(),0);
     await page.waitForFunction(() => document.querySelector('#financial-symbol option'));
     await page.locator('#financial-symbol').selectOption('MSFT');
     assert.ok((await page.locator('#financial-rows').textContent()).includes('全年'));
@@ -101,7 +116,11 @@ try {
     assert.equal(await page.locator('#sell-advice-confirm').isDisabled(), true);
     await page.locator('#sell-advice-close').click();
     await page.route('**/data/financials.json', route => route.fulfill({status:503,body:'Unavailable'}));
+    bulkBlocked = true;
     offline = true; await page.reload();
+    await page.waitForFunction(()=>document.querySelector('#bulk-status').textContent.includes('HTTP 403'));
+    assert.equal(await page.locator('#bulk-total').textContent(),'—');assert.equal(await page.locator('#bulk-results button').count(),0);
+
     await page.waitForFunction(() => document.querySelector('#financial-status').textContent.includes('加载失败'));
     assert.equal(await page.locator('#financial-rows').textContent(), '');
 

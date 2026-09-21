@@ -46,3 +46,33 @@ collect newer SEC facts.
 Still required before V2 activation: verified quarterly growth, full quality and
 valuation inputs, dated analyst-consensus revisions/surprises, earnings calendar,
 complete universe, corporate-action ledger and continuous matched simulation.
+
+## Full archive ingestion and progress
+
+Run `python scripts/bulk-financials.py --cache /path/outside/repo --resume`.
+`--archive /path/companyfacts.zip` accepts an official downloaded archive;
+`--retry-failed` reattempts failed issuer members. No scheduler is installed.
+An ETag/length check protects download resumption. ZIP members are CRC checked;
+archive and ticker-map hashes pin processing checkpoints. Missing cached issuer
+records are reprocessed. Reports distinguish attempted, usable, unsupported,
+failed and pending. Missing ticker-directory issuers are separate from failures.
+All companyfacts files are scanned, including historical and delisted issuers;
+this is not a tradable universe or a strategy change.
+
+The website shows the last published checkpoint, not a live background service.
+A full archive is never fetched by the browser. Selected issuer details come
+from one of 64 small shards, with at most four cached in memory and run IDs checked.
+Only latest direct quarter/annual observations are retained for bulk lookup.
+Original first-batch longer history remains separate. US-GAAP/USD scope and all
+previous normalization and point-in-time limitations still apply.
+
+If the archive or mapping cannot be obtained, keep any last published statistics
+with an update-error warning. Without previous results, publish a blocked state
+with unknown counts, not fake zero/completion. Do not bypass SEC access denials.
+On 2026-09-21 SEC HEAD and GET both returned HTTP 403 (undeclared automated tool).
+The unpublished 2026-09-16 full result is not present in the restored workspace;
+its historical conversation counts are not relabelled as current data.
+
+Validation: `npm test`, `python scripts/test-bulk-financials.py`, `npm run build`
+and the fixture-only desktop/mobile UI verifier. Whole-archive data publishing
+remains pending restoration of permitted access or provision of an official ZIP.
