@@ -751,3 +751,21 @@ follow the strategy promotion process above.
   SEC retrieval succeeded for all 10 identities; 9 have supported observations.
   Continuous refresh and complete V2 fundamentals/consensus/execution remain
   outstanding; V2 stays disabled.
+
+### Product change: resumable full financial ingestion (2026-09-21)
+
+- Restore the previously unpublished bulk scanner after temporary workspace loss.
+  No strategy, signal, risk limit, holdings or V2 activation changes.
+- One maintenance worker scans the full SEC companyfacts archive; identity checks,
+  source timestamps, unsupported states and checksum-pinned resumable checkpoints
+  are required. Browser loads bounded detail shards; failed versions fail closed.
+- Progress counters must reconcile; processing does not imply usable data. The
+  web view is the latest published checkpoint, not a scheduled background job.
+- Current source blocker: SEC official archive HEAD and GET returned HTTP 403
+  automated-tool denial. Do not retry through disguised access. Publish unknown
+  counts and clear failure status; preserve first-batch historical observations.
+- Validation: 76 Node tests plus offline ZIP/resume integration checks pass.
+  Build, syntax and diff checks pass. 1280px/390px fixture checks cover company
+  detail, no matches, blocked download with unknown counters, retained V2 gate,
+  sell cancellation/confirmation and reconciled $980 fixture equity. No user
+  account modified. Full current archive remains blocked and is not published.

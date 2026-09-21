@@ -1,0 +1,8 @@
+{
+  "version": "sec-bulk-v1",
+  "phase": "blocked",
+  "counts": null,
+  "entries": [],
+  "lastAttemptAt": "2026-09-21T12:39:26.438019+00:00",
+  "updateError": "SEC 全量下载受阻：HTTP 403（自动访问限制）"
+}

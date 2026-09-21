@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="app.css?v=20260901-1">
   <link rel="stylesheet" href="momentum.css?v=20260901-4">
   <link rel="stylesheet" href="chart.css?v=20260901-2">
-  <link rel="stylesheet" href="v2.css?v=20260916-1">
+  <link rel="stylesheet" href="v2.css?v=20260921-1">
   <style>
     #core-list .momentum-row{grid-template-columns:1fr 1fr 1fr .65fr 1.6fr 1fr} @media(max-width:650px){#core-list .momentum-row{grid-template-columns:1fr 1fr}}
     .updated{font-weight:700}.market-open{color:#36d399}.market-closed{color:#8fa3bb}.reason{display:block;color:#6f86a2;font-size:10px;line-height:1.45;margin-top:5px;max-width:250px}
@@ -79,9 +79,19 @@
         <li>验证：至少6个月与30笔完成交易，再结合成本、最大回撤及相对SPY收益判断；不保证收益。</li>
       </ul></details>
       <p id="v2-source">等待数据接口。</p>
+      <section id="bulk-panel" aria-labelledby="bulk-title">
+        <h3 id="bulk-title">SEC 全量财报扫描</h3><p id="bulk-status" role="status">正在读取进度…</p>
+        <div class="bulk-counts"><div><span>文件总数</span><strong id="bulk-total">—</strong></div><div><span>已处理</span><strong id="bulk-completed">—</strong></div><div><span>可用</span><strong id="bulk-available">—</strong></div><div><span>失败</span><strong id="bulk-failed">—</strong></div><div><span>暂不支持</span><strong id="bulk-unsupported">—</strong></div><div><span>待处理</span><strong id="bulk-pending">—</strong></div></div>
+        <progress id="bulk-progress" max="1" value="0" aria-label="财报处理进度"></progress>
+        <p>已处理 = 可用 + 失败 + 暂不支持。“可用”仅代表至少一项可展示数据，不代表指标齐全或适合买入。</p>
+        <p id="bulk-scope"></p><details><summary>失败与暂不支持说明</summary><p id="bulk-reasons"></p></details>
+        <form id="bulk-search" class="v2-actions"><label for="bulk-query">公司查询</label><input id="bulk-query" placeholder="股票代码、公司名或CIK" maxlength="100"><button type="submit" class="ghost">查询</button><label for="bulk-filter">状态</label><select id="bulk-filter"><option value="all">全部</option><option value="available">可用</option><option value="unsupported">暂不支持</option><option value="failed">失败</option><option value="not_in_archive">包中无财报</option></select><button id="bulk-refresh" type="button" class="ghost">重新读取进度</button></form>
+        <p id="bulk-matches"></p><div id="bulk-results"></div><div id="bulk-detail" aria-live="polite"></div>
+        <p>页面显示最近一次发布的扫描统计；重新读取不会启动扫描，尚未设置每日自动任务。历史值可能经重述，不用于 V2 评分或历史回测。</p>
+      </section>
       <section id="financial-panel" aria-labelledby="financial-title">
-        <h3 id="financial-title">历史财报 · 首批数据</h3>
-        <p>覆盖固定股票中的4家公司及7只核心观察股（合计10家公司）；SCHD 为基金，其他持仓暂未覆盖。这里只展示可核对的财报，不参与评分或买卖。</p>
+        <h3 id="financial-title">多年历史 · 首批公司</h3>
+        <p>下方保留首批10家公司较长历史；更多公司使用上方全量查询。这里只展示可核对的财报，不参与评分或买卖。</p>
         <div class="v2-actions"><label for="financial-symbol">公司</label><select id="financial-symbol" aria-label="查看公司财报"></select><button class="ghost" id="financial-reload" type="button">重新读取快照</button></div>
         <p id="financial-status" role="status">等待读取历史财报…</p>
         <div id="financial-rows"></div>
@@ -290,5 +300,6 @@
   </div>
   <script type="module" src="auth.bundle.js?v=20260915-1"></script>
   <script type="module" src="financial-view.js?v=20260916-1"></script>
+  <script type="module" src="bulk-financial-view.js?v=20260921-1"></script>
 </body>
 </html>
