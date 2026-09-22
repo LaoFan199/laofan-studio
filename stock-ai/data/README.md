@@ -76,3 +76,13 @@ its historical conversation counts are not relabelled as current data.
 Validation: `npm test`, `python scripts/test-bulk-financials.py`, `npm run build`
 and the fixture-only desktop/mobile UI verifier. Whole-archive data publishing
 remains pending restoration of permitted access or provision of an official ZIP.
+
+## Declared access identity (2026-09-22)
+
+Set `SEC_USER_AGENT` to the real application name plus a maintainer-approved
+contact email before an online refresh. Keep personal contact details in the
+execution environment, not this public repository. The project-URL-only default
+was denied; a truthful contact identity received HTTP 200 and the full archive
+download succeeded. This observation does not guarantee future availability.
+Do not rotate identities or networks on a denial; stop and investigate.
+No payment, API key, recurring refresh or V2 activation was added.
