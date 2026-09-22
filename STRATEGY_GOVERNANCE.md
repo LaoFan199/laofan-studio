@@ -769,3 +769,18 @@ follow the strategy promotion process above.
   detail, no matches, blocked download with unknown counters, retained V2 gate,
   sell cancellation/confirmation and reconciled $980 fixture equity. No user
   account modified. Full current archive remains blocked and is not published.
+
+### Data refresh: declared SEC access restored (2026-09-22)
+
+- A real maintainer-approved contact in SEC_USER_AGENT received HTTP 200.
+  Downloaded the complete 1,409,282,747-byte official archive. Personal contact
+  stays in the execution environment, not public code or data.
+- Scanned 20,393 issuer files: 14,520 with supported observations, 3,396
+  unsupported, 2,477 failed identity validation; pending 0. Availability means
+  at least one supported fact, not complete V2 inputs or investable eligibility.
+- All directory-backed detail shards and counter invariants validated.
+  76 Node tests, offline ZIP/resume integration and build pass. No UI or trading
+  logic changed. Existing ledger/risk tests pass. Optional browser rerun was
+  unavailable because the restored Chromium runtime crashed on launch (SIGSEGV).
+- No payment, scheduler, real trading or V2 activation. Published snapshot is
+  research-only, with source times and explicit unsupported/failed states.
